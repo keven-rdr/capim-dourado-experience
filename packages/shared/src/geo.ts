@@ -5,15 +5,20 @@ export interface LatLng {
 
 /**
  * Área de check-in: polígono que cobre o prédio e o estacionamento externo.
- * ATENÇÃO: coordenadas aproximadas, só para o protótipo. A CONFIRMAR em campo e com o shopping.
- * Em produção a área vem do banco (tabela `mall_area`), e não deste arquivo.
+ * Fonte: OpenStreetMap (way 301107764). O prédio fica entre as latitudes -10.1843 e -10.1811 e as
+ * longitudes -48.3499 e -48.3475; o retângulo abaixo (cerca de 410 m por 350 m) soma uma margem
+ * para os estacionamentos abertos. Os limites são A CONFIRMAR em campo e com o shopping.
+ * Em produção a área vem do banco (tabela `mall_area`) ou de `MALL_AREA_JSON`, e não deste arquivo.
  */
 export const MALL_AREA_APPROX: readonly LatLng[] = [
-  { lat: -10.1742, lng: -48.3352 },
-  { lat: -10.1742, lng: -48.3312 },
-  { lat: -10.1778, lng: -48.3312 },
-  { lat: -10.1778, lng: -48.3352 },
+  { lat: -10.1808, lng: -48.3502 },
+  { lat: -10.1808, lng: -48.347 },
+  { lat: -10.1845, lng: -48.347 },
+  { lat: -10.1845, lng: -48.3502 },
 ];
+
+/** Centro do shopping segundo o OpenStreetMap. */
+export const MALL_CENTER: LatLng = { lat: -10.1826618, lng: -48.3483973 };
 
 /** Precisão máxima aceita do GPS, em metros. Acima disso, o app oferece o QR da entrada. */
 export const MAX_GPS_ACCURACY_M = 150;

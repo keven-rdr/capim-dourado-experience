@@ -1,0 +1,492 @@
+/*
+ * @cde/ui: tokens de design e temas por temporada.
+ *
+ * Camada 1 (este bloco :root e os blocos [data-season]): tokens brutos --cde-*.
+ * As temporadas redefinem SÓ esta camada. Nenhum componente muda de estrutura.
+ * Camada 2 (@theme inline): expõe os tokens para o Tailwind (bg-primary, font-display, shadow-hard...).
+ *
+ * Quem consome: importe este arquivo DEPOIS de `@import 'tailwindcss'` e aponte o
+ * Tailwind para os componentes com `@source` (veja apps/web/src/index.css).
+ */
+
+/* ---------- Base: identidade do jogo (vermelho, preto, azul e um toque de dourado) ---------- */
+:root {
+  /* cor */
+  --cde-bg: #eaf2fb;
+  --cde-surface: #ffffff;
+  --cde-surface-2: #f6efe1;
+  --cde-ink: #141414;
+  --cde-ink-soft: #3b3b45;
+  --cde-line: #141414;
+  --cde-shadow-color: #141414;
+  --cde-primary: #d91f16;
+  --cde-on-primary: #ffffff;
+  --cde-secondary: #1e56d0;
+  --cde-on-secondary: #ffffff;
+  --cde-accent: #1e56d0;
+  --cde-on-accent: #ffffff;
+  --cde-gold: #f2b630;
+  --cde-on-gold: #141414;
+  --cde-gold-deep: #9a6a0e;
+  --cde-success: #1d7a45;
+  --cde-on-success: #ffffff;
+  --cde-danger: #b4231b;
+  --cde-on-danger: #ffffff;
+  --cde-paper: #fff6dc;
+  --cde-on-paper: #1f1a12;
+  --cde-focus: #1e56d0;
+  --cde-scrim: rgb(20 20 20 / 0.55);
+
+  /* fantasia da Capi e faixa da temporada */
+  --cde-costume-main: #d91f16;
+  --cde-costume-trim: #ffffff;
+  --cde-banner-bg: #1e56d0;
+  --cde-banner-ink: #ffffff;
+  --cde-banner-pattern:
+    radial-gradient(circle, rgb(255 255 255 / 0.22) 0 2px, transparent 2.5px) 0 0 / 20px 20px;
+
+  /* tipografia */
+  --cde-font-display: "Bricolage Grotesque", "Trebuchet MS", system-ui, sans-serif;
+  --cde-font-body: "Manrope", "Segoe UI", system-ui, sans-serif;
+  --cde-font-mono: "JetBrains Mono", ui-monospace, "Cascadia Mono", monospace;
+  --cde-text-xs: 0.875rem;
+  --cde-text-sm: 0.9375rem;
+  --cde-text-base: 1rem;
+  --cde-text-lg: 1.1875rem;
+  --cde-text-xl: 1.5rem;
+  --cde-text-2xl: 2rem;
+  --cde-text-3xl: 2.75rem;
+  --cde-text-4xl: 3.75rem;
+
+  /* forma */
+  --cde-radius-xs: 4px;
+  --cde-radius-sm: 8px;
+  --cde-radius-md: 14px;
+  --cde-radius-lg: 22px;
+  --cde-radius-xl: 32px;
+  --cde-radius-blob: 26px 10px 22px 12px;
+  --cde-border-thin: 2px;
+  --cde-border: 3px;
+  --cde-border-thick: 4px;
+
+  /* espaço */
+  --cde-space-1: 4px;
+  --cde-space-2: 8px;
+  --cde-space-3: 12px;
+  --cde-space-4: 16px;
+  --cde-space-5: 24px;
+  --cde-space-6: 32px;
+  --cde-space-7: 48px;
+
+  /* movimento */
+  --cde-ease-pop: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --cde-duration-fast: 120ms;
+  --cde-duration: 220ms;
+}
+
+/* ---------- Natal: Fábrica de Presentes (vermelho-cereja, verde-pinheiro, dourado) ---------- */
+[data-season="natal"] {
+  --cde-bg: #fbf0e2;
+  --cde-surface: #fffcf6;
+  --cde-surface-2: #f4e2c9;
+  --cde-ink: #1b1210;
+  --cde-ink-soft: #4a3a33;
+  --cde-line: #1b1210;
+  --cde-shadow-color: #1b1210;
+  --cde-primary: #b3122e;
+  --cde-on-primary: #ffffff;
+  --cde-secondary: #1d5c3f;
+  --cde-on-secondary: #ffffff;
+  --cde-accent: #1e56d0;
+  --cde-on-accent: #ffffff;
+  --cde-gold: #e3a92b;
+  --cde-on-gold: #1b1210;
+  --cde-gold-deep: #8a5d08;
+  --cde-success: #1d5c3f;
+  --cde-paper: #fff3da;
+  --cde-on-paper: #1b1210;
+  --cde-focus: #1e56d0;
+  --cde-costume-main: #c8102e;
+  --cde-costume-trim: #ffffff;
+  --cde-banner-bg: #1d5c3f;
+  --cde-banner-ink: #ffffff;
+  --cde-banner-pattern:
+    radial-gradient(circle, rgb(255 255 255 / 0.3) 0 2px, transparent 2.5px) 0 0 / 22px 22px;
+}
+
+/* ---------- Páscoa: Caça aos Ovos (lilás, amarelo-manteiga, rosa) ---------- */
+[data-season="pascoa"] {
+  --cde-bg: #fff8e6;
+  --cde-surface: #ffffff;
+  --cde-surface-2: #f2e9fd;
+  --cde-ink: #24173a;
+  --cde-ink-soft: #4f4363;
+  --cde-line: #24173a;
+  --cde-shadow-color: #24173a;
+  --cde-primary: #c4a8f5;
+  --cde-on-primary: #24173a;
+  --cde-secondary: #ffe27a;
+  --cde-on-secondary: #24173a;
+  --cde-accent: #ea72a6;
+  --cde-on-accent: #24173a;
+  --cde-gold: #f6c445;
+  --cde-on-gold: #24173a;
+  --cde-gold-deep: #8b6408;
+  --cde-success: #2f7d52;
+  --cde-paper: #fffdf1;
+  --cde-on-paper: #24173a;
+  --cde-focus: #7340cc;
+  --cde-costume-main: #ffc6dc;
+  --cde-costume-trim: #ffffff;
+  --cde-banner-bg: #c4a8f5;
+  --cde-banner-ink: #24173a;
+  --cde-banner-pattern:
+    radial-gradient(circle, rgb(234 114 166 / 0.45) 0 3px, transparent 3.5px) 0 0 / 26px 26px;
+  --cde-font-display: "Fredoka", "Bricolage Grotesque", system-ui, sans-serif;
+  --cde-radius-sm: 12px;
+  --cde-radius-md: 20px;
+  --cde-radius-lg: 28px;
+}
+
+/* ---------- Halloween: Noite dos Monstrinhos (modo escuro: ameixa, laranja-abóbora, verde-ácido) ---------- */
+[data-season="halloween"] {
+  color-scheme: dark;
+  --cde-bg: #22102b;
+  --cde-surface: #3a1d48;
+  --cde-surface-2: #4b2a5b;
+  --cde-ink: #fff3e4;
+  --cde-ink-soft: #e8d2ef;
+  --cde-line: #0b0410;
+  --cde-shadow-color: #0b0410;
+  --cde-primary: #ff7a1a;
+  --cde-on-primary: #1a0a00;
+  --cde-secondary: #b8f23a;
+  --cde-on-secondary: #1a0a00;
+  --cde-accent: #b8f23a;
+  --cde-on-accent: #1a0a00;
+  --cde-gold: #ffc24b;
+  --cde-on-gold: #1a0a00;
+  --cde-gold-deep: #ffd27a;
+  --cde-success: #7be08f;
+  --cde-on-success: #0b0410;
+  --cde-danger: #ff6b85;
+  --cde-on-danger: #1a0a00;
+  --cde-paper: #f3e3c4;
+  --cde-on-paper: #22102b;
+  --cde-focus: #b8f23a;
+  --cde-scrim: rgb(5 0 10 / 0.7);
+  --cde-costume-main: #2a1036;
+  --cde-costume-trim: #ff7a1a;
+  --cde-banner-bg: #12061a;
+  --cde-banner-ink: #ffc24b;
+  --cde-banner-pattern:
+    radial-gradient(circle, rgb(184 242 58 / 0.35) 0 1.5px, transparent 2px) 0 0 / 18px 18px;
+  --cde-radius-sm: 4px;
+  --cde-radius-md: 8px;
+  --cde-radius-lg: 14px;
+}
+
+/* Tokens compostos: recalculados em cada escopo de temporada (por isso o seletor duplo). */
+:root,
+[data-season] {
+  --cde-shadow-sm: 2px 2px 0 0 var(--cde-shadow-color);
+  --cde-shadow-md: 4px 4px 0 0 var(--cde-shadow-color);
+  --cde-shadow-lg: 7px 7px 0 0 var(--cde-shadow-color);
+  --cde-shadow-pressed: 1px 1px 0 0 var(--cde-shadow-color);
+  background-color: var(--cde-bg);
+  color: var(--cde-ink);
+}
+
+/* ---------- Ponte para o Tailwind v4 ---------- */
+@theme inline {
+  --color-*: initial;
+  --color-white: #ffffff;
+  --color-black: #000000;
+  --color-bg: var(--cde-bg);
+  --color-surface: var(--cde-surface);
+  --color-surface-2: var(--cde-surface-2);
+  --color-ink: var(--cde-ink);
+  --color-ink-soft: var(--cde-ink-soft);
+  --color-line: var(--cde-line);
+  --color-primary: var(--cde-primary);
+  --color-on-primary: var(--cde-on-primary);
+  --color-secondary: var(--cde-secondary);
+  --color-on-secondary: var(--cde-on-secondary);
+  --color-accent: var(--cde-accent);
+  --color-on-accent: var(--cde-on-accent);
+  --color-gold: var(--cde-gold);
+  --color-on-gold: var(--cde-on-gold);
+  --color-gold-deep: var(--cde-gold-deep);
+  --color-success: var(--cde-success);
+  --color-on-success: var(--cde-on-success);
+  --color-danger: var(--cde-danger);
+  --color-on-danger: var(--cde-on-danger);
+  --color-paper: var(--cde-paper);
+  --color-on-paper: var(--cde-on-paper);
+  --color-banner: var(--cde-banner-bg);
+  --color-on-banner: var(--cde-banner-ink);
+
+  --font-display: var(--cde-font-display);
+  --font-body: var(--cde-font-body);
+  --font-mono: var(--cde-font-mono);
+
+  --text-xs: var(--cde-text-xs);
+  --text-sm: var(--cde-text-sm);
+  --text-base: var(--cde-text-base);
+  --text-lg: var(--cde-text-lg);
+  --text-xl: var(--cde-text-xl);
+  --text-2xl: var(--cde-text-2xl);
+  --text-3xl: var(--cde-text-3xl);
+  --text-4xl: var(--cde-text-4xl);
+
+  --radius-xs: var(--cde-radius-xs);
+  --radius-sm: var(--cde-radius-sm);
+  --radius-md: var(--cde-radius-md);
+  --radius-lg: var(--cde-radius-lg);
+  --radius-xl: var(--cde-radius-xl);
+  --radius-blob: var(--cde-radius-blob);
+
+  --shadow-hard-sm: var(--cde-shadow-sm);
+  --shadow-hard: var(--cde-shadow-md);
+  --shadow-hard-lg: var(--cde-shadow-lg);
+  --shadow-pressed: var(--cde-shadow-pressed);
+}
+
+@theme {
+  --animate-pulse-ring: cde-pulse-ring 1.8s ease-out infinite;
+  --animate-scan-line: cde-scan-line 2.2s ease-in-out infinite;
+  --animate-bob: cde-bob 3.2s ease-in-out infinite;
+  --animate-spin-slow: cde-spin 0.9s linear infinite;
+  --animate-foil: cde-foil 3.5s linear infinite;
+  --animate-shake: cde-shake 0.4s ease;
+
+  @keyframes cde-pulse-ring {
+    0% {
+      transform: scale(0.85);
+      opacity: 0.9;
+    }
+    100% {
+      transform: scale(1.45);
+      opacity: 0;
+    }
+  }
+  @keyframes cde-scan-line {
+    0%,
+    100% {
+      top: 8%;
+    }
+    50% {
+      top: 88%;
+    }
+  }
+  @keyframes cde-bob {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-5px);
+    }
+  }
+  @keyframes cde-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  @keyframes cde-shake {
+    0%,
+    100% {
+      translate: 0 0;
+    }
+    25% {
+      translate: -6px 0;
+    }
+    50% {
+      translate: 5px 0;
+    }
+    75% {
+      translate: -3px 0;
+    }
+  }
+  @keyframes cde-foil {
+    to {
+      background-position: 200% 0;
+    }
+  }
+}
+
+/* ---------- Utilitários da identidade: borda grossa, sombra dura, foco visível, apertar ---------- */
+@utility chunk {
+  border: var(--cde-border) solid var(--cde-line);
+}
+@utility chunk-thin {
+  border: var(--cde-border-thin) solid var(--cde-line);
+}
+@utility chunk-thick {
+  border: var(--cde-border-thick) solid var(--cde-line);
+}
+@utility focus-ring {
+  &:focus-visible {
+    outline: 3px solid var(--cde-focus);
+    outline-offset: 3px;
+  }
+}
+@utility pressable {
+  transition:
+    translate var(--cde-duration-fast) ease,
+    box-shadow var(--cde-duration-fast) ease;
+  &:active:not(:disabled) {
+    translate: 3px 3px;
+    box-shadow: var(--cde-shadow-pressed);
+  }
+}
+@utility banner-pattern {
+  background: var(--cde-banner-pattern), var(--cde-banner-bg);
+}
+
+@layer base {
+  html {
+    background-color: var(--cde-bg);
+    color: var(--cde-ink);
+    font-family: var(--cde-font-body);
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    margin: 0;
+    background-color: var(--cde-bg);
+  }
+  :focus-visible {
+    outline: 3px solid var(--cde-focus);
+    outline-offset: 2px;
+  }
+}
+
+/* ---------- Peças com forma própria ---------- */
+
+/* Cupom em formato de ingresso: furos do picote recortados por máscara; a sombra dura vem do filtro. */
+.cde-ticket-shadow {
+  filter: drop-shadow(4px 4px 0 var(--cde-shadow-color));
+}
+.cde-ticket {
+  --notch: 13px;
+  --stub: 104px;
+  --notch-x: calc(100% - var(--stub));
+  -webkit-mask:
+    radial-gradient(circle var(--notch) at var(--notch-x) 0, #0000 98%, #000) top / 100% 51%
+    no-repeat,
+    radial-gradient(circle var(--notch) at var(--notch-x) 100%, #0000 98%, #000) bottom / 100% 51%
+    no-repeat;
+  mask:
+    radial-gradient(circle var(--notch) at var(--notch-x) 0, #0000 98%, #000) top / 100% 51%
+    no-repeat,
+    radial-gradient(circle var(--notch) at var(--notch-x) 100%, #0000 98%, #000) bottom / 100% 51%
+    no-repeat;
+}
+.cde-ticket-notch,
+.cde-ticket-perforation {
+  position: absolute;
+  /* posição em coordenadas da caixa interna: compensa a borda para alinhar com a máscara */
+  left: calc(100% + var(--cde-border) - var(--stub));
+}
+.cde-ticket-perforation {
+  top: 16px;
+  bottom: 16px;
+  border-left: var(--cde-border) dashed var(--cde-line);
+  translate: -50% 0;
+}
+.cde-ticket-stub {
+  width: calc(var(--stub) - var(--cde-border));
+}
+.cde-ticket-notch {
+  width: calc(var(--notch) * 2 + var(--cde-border) * 2);
+  height: calc(var(--notch) * 2 + var(--cde-border) * 2);
+  border: var(--cde-border) solid var(--cde-line);
+  border-radius: 50%;
+  translate: -50% -50%;
+  pointer-events: none;
+}
+.cde-ticket-notch[data-edge="top"] {
+  top: calc(-1 * var(--cde-border));
+}
+.cde-ticket-notch[data-edge="bottom"] {
+  top: calc(100% + var(--cde-border));
+}
+
+/* Figurinha rara: brilho metálico que corre na borda. */
+.cde-foil {
+  background:
+    linear-gradient(
+      110deg,
+      var(--cde-gold) 0%,
+      #fff7d1 18%,
+      var(--cde-gold) 32%,
+      var(--cde-accent) 50%,
+      var(--cde-gold) 68%,
+      #fff7d1 82%,
+      var(--cde-gold) 100%
+    )
+    0 0 / 200% 100%;
+}
+
+/* Moldura de celular: só aparece em telas largas. No celular, a tela ocupa tudo. */
+.cde-phone-screen {
+  position: relative;
+  min-height: 100dvh;
+  background-color: var(--cde-bg);
+}
+.cde-phone-scroller {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+}
+@media (min-width: 960px) {
+  .cde-phone-device {
+    position: relative;
+    padding: 14px;
+    border-radius: 58px;
+    background: #141414;
+    box-shadow:
+      0 0 0 3px #3a3a3a,
+      12px 14px 0 0 var(--cde-shadow-color);
+  }
+  .cde-phone-device::before {
+    content: "";
+    position: absolute;
+    top: 24px;
+    left: 50%;
+    z-index: 60;
+    width: 112px;
+    height: 28px;
+    border-radius: 999px;
+    background: #141414;
+    translate: -50% 0;
+  }
+  .cde-phone-screen {
+    width: 390px;
+    height: 844px;
+    min-height: 0;
+    overflow: hidden;
+    border-radius: 44px;
+    transform: translateZ(0);
+  }
+  .cde-phone-scroller {
+    height: 100%;
+    min-height: 0;
+    overflow-y: auto;
+    padding-top: 30px;
+    scrollbar-width: thin;
+  }
+}
+
+/* biome-ignore-start lint/complexity/noImportantStyles: "reduzir movimento" precisa vencer qualquer animação */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+/* biome-ignore-end lint/complexity/noImportantStyles: fim do bloco de reduzir movimento */

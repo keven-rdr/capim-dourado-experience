@@ -1,0 +1,21 @@
+{
+  "name": "Capim Dourado Experience",
+  "short_name": "CD Experience",
+  "description": "O Capim Dourado Shopping virou um jogo. Protótipo.",
+  "lang": "pt-BR",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#fbf0e2",
+  "theme_color": "#b3122e",
+  "icons": [
+    { "src": "/icons/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    {
+      "src": "/icons/icon-maskable.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}
