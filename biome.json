@@ -1,7 +1,9 @@
 {
   "$schema": "https://biomejs.dev/schemas/2.6.7/schema.json",
   "vcs": { "enabled": true, "clientKind": "git", "useIgnoreFile": true },
-  "files": { "includes": ["**", "!docs", "!**/dist", "!**/*.gen.ts", "!package-lock.json"] },
+  "files": {
+    "includes": ["**", "!docs", "!**/*.md", "!**/dist", "!**/*.gen.ts", "!package-lock.json"]
+  },
   "formatter": { "indentStyle": "space", "indentWidth": 2, "lineWidth": 100 },
   "javascript": { "formatter": { "quoteStyle": "single", "semicolons": "always" } },
   "css": { "parser": { "tailwindDirectives": true } },
