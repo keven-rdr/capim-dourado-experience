@@ -15,6 +15,7 @@ import { Link, Navigate, Outlet, useLocation, useNavigate } from 'react-router-d
 import { useGame } from '../data/GameProvider';
 import { DemoPanel } from '../demo/DemoPanel';
 import { lookOf } from '../lib/content';
+import { CapiCompanion } from './CapiCompanion';
 import { ProjectAside } from './ProjectAside';
 
 const NAV: BottomNavItem[] = [
@@ -149,6 +150,7 @@ function Overlays() {
           </div>,
           target,
         )}
+      <CapiCompanion />
       <TreasureReveal
         open={!!reveal}
         title={reveal?.title ?? ''}

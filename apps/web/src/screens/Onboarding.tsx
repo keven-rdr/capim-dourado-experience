@@ -5,6 +5,7 @@ import { type FormEvent, useId, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { friendlyError } from '../data/errors';
 import { useGame } from '../data/GameProvider';
+import { Capi3D } from '../layout/Capi3D';
 import { TRAIL_HINT } from '../lib/content';
 import { requestLocationPermission } from '../lib/geo';
 
@@ -106,7 +107,7 @@ export function Onboarding() {
                   </span>
                 </h1>
                 <div className="mt-8 flex items-end gap-1">
-                  <Capi size={170} expression="animada" animate />
+                  <Capi3D size={170} intro="Acenar" />
                   <SpeechBubble className="mb-28">Eu sou a Capi. Bora caçar?</SpeechBubble>
                 </div>
               </div>
@@ -159,7 +160,7 @@ export function Onboarding() {
           {step === 2 && (
             <>
               <div className="mt-6 flex items-end gap-2">
-                <Capi size={110} expression="curiosa" />
+                <Capi3D size={110} intro="AcenoLeve" />
                 <SpeechBubble className="mb-12 flex-1">
                   Posso ver onde você está? Só um pouquinho.
                 </SpeechBubble>

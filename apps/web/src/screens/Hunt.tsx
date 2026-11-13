@@ -13,6 +13,7 @@ import {
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useGame, useGameQuery } from '../data/GameProvider';
+import { Capi3D } from '../layout/Capi3D';
 import { Screen, SectionTitle } from '../layout/Screen';
 import { HUNT_NOUN, lookOf, rewardLine, seasonInfo, stickerName } from '../lib/content';
 
@@ -44,6 +45,10 @@ export function Hunt() {
   const { hunt, solved, completed } = state;
   const clue = hunt.clues.find((c) => c.order === solved + 1);
   const look = lookOf(profile?.character);
+  const huntLine =
+    solved === 0
+      ? 'A primeira é fácil. Confia.'
+      : `Já foram ${solved}. Faltam ${hunt.clues.length - solved}, bora!`;
 
   return (
     <Screen kicker={`caça · ${seasonInfo(hunt.seasonId).name}`} title={hunt.title} back="/missoes">
@@ -97,18 +102,22 @@ export function Hunt() {
           <Button size="lg" block icon="qr" className="mt-6" onClick={() => navigate('/scanner')}>
             Achei! Ler o QR
           </Button>
-          <div className="mt-6 flex items-end gap-2">
-            <Capi size={72} look={look} expression="curiosa" />
-            <SpeechBubble className="mb-6 flex-1">
-              {solved === 0
-                ? 'A primeira é fácil. Confia.'
-                : `Já foram ${solved}. Faltam ${hunt.clues.length - solved}, bora!`}
-            </SpeechBubble>
-          </div>
+          {look === 'capi' ? (
+            <Capi3D className="mt-6" size={90} intro="AcenoLeve" say={huntLine} />
+          ) : (
+            <div className="mt-6 flex items-end gap-2">
+              <Capi size={72} look={look} expression="curiosa" />
+              <SpeechBubble className="mb-6 flex-1">{huntLine}</SpeechBubble>
+            </div>
+          )}
         </>
       ) : (
         <Card tone="gold" tilt="right" className="mt-7 p-5 text-center">
-          <Capi size={120} look={look} expression="comemorando" className="mx-auto" />
+          {look === 'capi' ? (
+            <Capi3D size={130} intro="Festa" className="justify-center" />
+          ) : (
+            <Capi size={120} look={look} expression="comemorando" className="mx-auto" />
+          )}
           <h2 className="mt-2 font-display text-3xl font-extrabold leading-none">
             Baú final aberto!
           </h2>

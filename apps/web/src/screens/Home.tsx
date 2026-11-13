@@ -16,6 +16,7 @@ import {
 } from '@cde/ui';
 import { Link, useNavigate } from 'react-router-dom';
 import { useGame, useGameQuery } from '../data/GameProvider';
+import { Capi3D } from '../layout/Capi3D';
 import { HUNT_NOUN, levelInfo, lookOf, SEASON_COPY, seasonInfo } from '../lib/content';
 
 const FLOOR_SHORTCUTS: Array<{ id: Floor; short: string; tilt: string }> = [
@@ -41,6 +42,10 @@ export function Home() {
   const firstVisit = profile.wallet.xp <= 50 && !today?.checkInDone;
   const atRisk = profile.streak.days > 0 && profile.streak.lastActiveDate !== today?.date;
   const huntState = hunt.data;
+  const hint =
+    huntState && !huntState.completed
+      ? `Psiu: a pista ${huntState.solved + 1} está esperando. Quer ler?`
+      : 'Dá uma volta pelo mapa, tem segredo escondido.';
 
   return (
     <div className="flex flex-1 flex-col px-4 pb-8">
@@ -148,14 +153,20 @@ export function Home() {
         <div className="h-48 animate-pulse rounded-blob bg-surface-2 chunk" />
       )}
 
-      <div className="mt-6 flex items-end gap-2">
-        <Capi size={70} look={look} expression="curiosa" />
-        <SpeechBubble className="mb-6 flex-1">
-          {huntState && !huntState.completed
-            ? `Psiu: a pista ${huntState.solved + 1} está esperando. Quer ler?`
-            : 'Dá uma volta pelo mapa, tem segredo escondido.'}
-        </SpeechBubble>
-      </div>
+      {look === 'capi' ? (
+        <Capi3D
+          className="mt-6"
+          size={120}
+          intro={new Date().getHours() < 12 ? 'Espreguica' : 'Acenar'}
+          say={hint}
+          idleReactions
+        />
+      ) : (
+        <div className="mt-6 flex items-end gap-2">
+          <Capi size={70} look={look} expression="curiosa" />
+          <SpeechBubble className="mb-6 flex-1">{hint}</SpeechBubble>
+        </div>
+      )}
 
       <SeasonBanner
         className="mt-2"

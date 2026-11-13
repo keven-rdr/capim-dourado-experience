@@ -14,6 +14,7 @@ import { useNavigate } from 'react-router-dom';
 import { friendlyError, isGameApiError } from '../data/errors';
 import { useGame } from '../data/GameProvider';
 import { demoNow } from '../demo/demoStore';
+import { Capi3D } from '../layout/Capi3D';
 import { Screen } from '../layout/Screen';
 import { levelInfo, lookOf, stickerName } from '../lib/content';
 import { GeoError, getPosition } from '../lib/geo';
@@ -103,7 +104,17 @@ export function CheckIn() {
     <Screen kicker="check-in" title="Cheguei!" back="/">
       <div className="flex flex-col items-center pt-2 text-center">
         <StatusRing state={ring} size={210}>
-          <Capi size={150} look={look} expression={expression} className="mt-8" />
+          {look === 'capi' ? (
+            <Capi3D
+              size={130}
+              intro="AcenoLeve"
+              rest={phase.kind === 'done' || phase.kind === 'closed' ? 'Dormindo' : 'Parado'}
+              cue={phase.kind === 'success' ? { clip: 'Festa', id: 1 } : null}
+              className="mt-6 justify-center"
+            />
+          ) : (
+            <Capi size={150} look={look} expression={expression} className="mt-8" />
+          )}
         </StatusRing>
 
         <div className="mt-6 min-h-40 w-full" aria-live="polite">
