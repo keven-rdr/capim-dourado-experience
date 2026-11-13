@@ -64,3 +64,10 @@ describe('local e horário', () => {
     expect(isMallOpen(new Date('2026-11-15T18:00:00Z'))).toBe(true); // domingo, 15h
   });
 });
+
+describe('área do shopping', () => {
+  it('contém o centro do shopping no OpenStreetMap', async () => {
+    const { MALL_CENTER } = await import('./geo.js');
+    expect(pointInPolygon(MALL_CENTER, MALL_AREA_APPROX)).toBe(true);
+  });
+});
