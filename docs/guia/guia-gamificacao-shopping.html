@@ -1,0 +1,901 @@
+<title>Guia da Caça no Shopping</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Manrope:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap">
+<style>
+/* Layout: leitura em coluna única larga, seções separadas por faixas; protótipos de tela em grade; prompts em blocos recolhíveis com botão de copiar. */
+:root{
+  --bg:#F1F5EF; --card:#FFFFFF; --ink:#15221D; --muted:#51635B; --line:#D3DDD5;
+  --floresta:#12372F; --tomate:#E8421F; --sol:#FFC933; --menta:#2FA67A; --tint:#E4EDE6;
+  --onfloresta:#F1F5EF; --shadow:#15221D;
+  --display:"Bricolage Grotesque","Trebuchet MS",sans-serif;
+  --body:"Manrope",system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0E1713; --card:#16231D; --ink:#EAF1EC; --muted:#9DB0A5; --line:#2A3B33;
+  --floresta:#0A1F1A; --tomate:#FF6A45; --sol:#FFD25A; --menta:#5CD1A3; --tint:#1D2E26;
+  --onfloresta:#EAF1EC; --shadow:#000; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0E1713; --card:#16231D; --ink:#EAF1EC; --muted:#9DB0A5; --line:#2A3B33;
+  --floresta:#0A1F1A; --tomate:#FF6A45; --sol:#FFD25A; --menta:#5CD1A3; --tint:#1D2E26;
+  --onfloresta:#EAF1EC; --shadow:#000; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.6;margin:0}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--floresta);z-index:30}
+.wrap{max-width:1080px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--display);line-height:1.08;text-wrap:balance;margin:0}
+h2{font-size:clamp(28px,4.4vw,44px);font-weight:800;letter-spacing:-.02em}
+h3{font-size:20px;font-weight:700}
+p{margin:0 0 12px;max-width:68ch}
+a{color:var(--tomate)}
+.label{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+:focus-visible{outline:3px solid var(--sol);outline-offset:2px}
+
+/* topo */
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--floresta);color:var(--onfloresta)}
+header.top .wrap{display:flex;gap:18px;align-items:center;padding-block:10px;overflow-x:auto;white-space:nowrap}
+header.top b{font-family:var(--display);font-size:18px;margin-right:8px}
+header.top a{color:var(--onfloresta);text-decoration:none;font-size:14px;font-weight:700;opacity:.85}
+header.top a:hover{opacity:1;text-decoration:underline}
+.hero{background:var(--floresta);color:var(--onfloresta);padding-block:48px 56px}
+.hero h1{font-size:clamp(38px,7vw,76px);font-weight:800;letter-spacing:-.03em;max-width:15ch}
+.hero h1 em{font-style:normal;color:var(--sol)}
+.hero p{font-size:18px;margin-top:18px;opacity:.92}
+.hero .row{display:flex;gap:12px;flex-wrap:wrap;margin-top:24px}
+.chip{display:inline-block;font-family:var(--mono);font-size:12px;border:2px solid currentColor;border-radius:99px;padding:4px 12px}
+.chip.hot{background:var(--tomate);border-color:var(--tomate);color:#fff}
+section{padding-block:56px}
+section+section{border-top:1px solid var(--line)}
+.head{display:grid;gap:10px;margin-bottom:28px}
+.head p{color:var(--muted);font-size:17px}
+
+/* checklist hoje */
+.todo{display:grid;gap:10px;counter-reset:t}
+.todo label{display:flex;gap:12px;align-items:flex-start;background:var(--card);border:2px solid var(--ink);border-radius:14px;padding:14px 16px;box-shadow:4px 4px 0 var(--shadow);cursor:pointer}
+.todo input{margin-top:5px;width:18px;height:18px;accent-color:var(--tomate);flex:none}
+.todo span{min-width:0}
+.todo small{display:block;color:var(--muted)}
+
+/* jornada */
+.steps{display:grid;gap:0;margin:0;padding:0;list-style:none}
+.steps li{display:grid;grid-template-columns:56px 1fr;gap:16px;padding:16px 0;border-bottom:1px dashed var(--line)}
+.steps li:last-child{border-bottom:0}
+.steps .t{font-family:var(--mono);font-size:13px;font-weight:700;background:var(--sol);color:#15221D;border-radius:8px;height:fit-content;padding:6px 0;text-align:center}
+.steps b{font-family:var(--display);font-size:19px}
+.steps p{margin:4px 0 0;color:var(--muted)}
+
+/* faq */
+details{background:var(--card);border:2px solid var(--ink);border-radius:14px;margin-bottom:12px;box-shadow:4px 4px 0 var(--shadow)}
+summary{cursor:pointer;padding:16px 18px;font-family:var(--display);font-weight:700;font-size:19px;list-style:none;display:flex;gap:12px;justify-content:space-between;align-items:center}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";font-family:var(--mono);font-size:22px;color:var(--tomate);flex:none}
+details[open] summary::after{content:"–"}
+details .in{padding:0 18px 18px}
+details .in p{margin-bottom:10px}
+.short{background:var(--tint);border-radius:10px;padding:10px 14px;font-weight:700}
+.warn{border-left:5px solid var(--tomate);padding:8px 14px;background:var(--tint);border-radius:0 10px 10px 0;margin:10px 0}
+
+/* economia */
+.tri{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px;margin-bottom:28px}
+.coin{background:var(--card);border:2px solid var(--ink);border-radius:16px;padding:18px;box-shadow:5px 5px 0 var(--shadow)}
+.coin .big{font-family:var(--display);font-size:34px;font-weight:800}
+.coin.xp .big{color:var(--menta)}.coin.mo .big{color:var(--sol);-webkit-text-stroke:1px var(--ink)}.coin.bi .big{color:var(--tomate)}
+.coin p{margin:6px 0 0;color:var(--muted);font-size:15px}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:640px;background:var(--card);border:2px solid var(--ink);border-radius:12px}
+th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line);font-size:15px;vertical-align:top}
+th{font-family:var(--mono);font-size:12px;text-transform:uppercase;letter-spacing:.06em;background:var(--tint)}
+td.n{font-family:var(--mono);font-weight:700;white-space:nowrap;font-variant-numeric:tabular-nums}
+.levels{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
+.levels span{border:2px solid var(--ink);border-radius:10px;padding:8px 14px;background:var(--card);font-weight:700}
+.levels small{font-family:var(--mono);color:var(--muted);display:block;font-weight:400}
+
+/* telas */
+.phones{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:24px 18px}
+figure{margin:0;display:flex;flex-direction:column;gap:10px;min-width:0}
+figcaption b{font-family:var(--display);font-size:18px;display:block}
+figcaption span{color:var(--muted);font-size:14px;line-height:1.4;display:block}
+.ph{width:100%;max-width:230px;aspect-ratio:9/17;border:3px solid var(--ink);border-radius:26px;background:var(--card);padding:12px 10px;display:flex;flex-direction:column;gap:7px;font-family:var(--mono);font-size:9.5px;line-height:1.25;box-shadow:6px 6px 0 var(--shadow);overflow:hidden}
+.ph small{font-size:8px;letter-spacing:.06em;color:var(--muted);text-transform:uppercase}
+.ph b{font-family:var(--body);font-size:10.5px}
+.w-top{display:flex;gap:7px;align-items:center}
+.w-av{width:26px;height:26px;border-radius:50%;background:var(--sol);border:2px solid var(--ink);flex:none}
+.w-col{flex:1;display:grid;gap:3px;min-width:0}
+.w-prog{height:7px;border-radius:9px;background:var(--tint);border:1.5px solid var(--ink);overflow:hidden;display:block}
+.w-prog i{display:block;height:100%;background:var(--menta)}
+.w-chip{border:1.5px solid var(--ink);border-radius:9px;padding:2px 5px;background:var(--sol);color:#15221D;font-style:normal;font-weight:700;flex:none}
+.w-card{border:1.5px solid var(--ink);border-radius:10px;padding:7px;background:var(--tint);display:grid;gap:4px}
+.w-card.hot{background:var(--tomate);color:#fff;border-color:var(--ink)}
+.w-card.hot small{color:#fff;opacity:.85}
+.w-btn{background:var(--ink);color:var(--bg);border-radius:7px;padding:5px;text-align:center;font-weight:700}
+.w-btn.sol{background:var(--sol);color:#15221D;border:1.5px solid var(--ink)}
+.w-floors{display:flex;gap:4px}.w-floors i{flex:1;text-align:center;border:1.5px solid var(--ink);border-radius:6px;padding:3px 0;font-style:normal}
+.w-floors i.on{background:var(--menta);color:#fff}
+.w-nav{margin-top:auto;display:flex;justify-content:space-around;border-top:1.5px solid var(--ink);padding-top:7px}
+.w-nav i{width:16px;height:16px;border-radius:5px;border:1.5px solid var(--ink)}.w-nav i.on{background:var(--tomate)}
+.w-ring{margin:10px auto 4px;width:98px;height:98px;border-radius:50%;border:3px solid var(--menta);display:grid;place-items:center;text-align:center;box-shadow:0 0 0 7px var(--tint),0 0 0 9px var(--menta);font-weight:700}
+.w-scan{margin:4px auto;width:110px;height:110px;position:relative;background:var(--tint);border-radius:6px}
+.w-scan::before,.w-scan::after{content:"";position:absolute;width:20px;height:20px;border:3px solid var(--tomate)}
+.w-scan::before{top:0;left:0;border-right:0;border-bottom:0}.w-scan::after{bottom:0;right:0;border-left:0;border-top:0}
+.w-map{flex:1;border:1.5px solid var(--ink);border-radius:10px;position:relative;background:
+  linear-gradient(var(--line) 1px,transparent 1px) 0 0/16px 16px,linear-gradient(90deg,var(--line) 1px,transparent 1px) 0 0/16px 16px,var(--tint)}
+.w-map u{position:absolute;width:14px;height:14px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:var(--tomate);border:1.5px solid var(--ink);text-decoration:none}
+.w-map u.s{background:var(--sol)}.w-map u.m{background:var(--menta)}
+.w-tk{border:1.5px dashed var(--ink);border-radius:9px;padding:6px 8px;display:flex;justify-content:space-between;gap:6px;background:var(--card)}
+.w-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}
+.w-grid i{aspect-ratio:3/4;border:1.5px solid var(--ink);border-radius:6px;background:var(--sol)}
+.w-grid i.lock{background:var(--tint);border-style:dashed}
+.w-row{display:flex;gap:4px;flex-wrap:wrap}.w-row em{font-style:normal;border:1.5px solid var(--ink);border-radius:9px;padding:2px 6px}.w-row em.on{background:var(--ink);color:var(--bg)}
+
+/* referencias */
+.refs{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px}
+.ref{background:var(--card);border:2px solid var(--ink);border-radius:16px;padding:20px;box-shadow:5px 5px 0 var(--shadow);display:grid;gap:10px;align-content:start}
+.ref ul{margin:0;padding-left:18px;display:grid;gap:5px}
+.ref .fonts{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.sw{display:flex;gap:6px}.sw i{width:26px;height:26px;border-radius:7px;border:2px solid var(--ink)}
+
+/* mercado */
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:22px}
+.box{background:var(--card);border:2px solid var(--ink);border-radius:16px;padding:20px}
+.box ul{margin:8px 0 0;padding-left:20px;display:grid;gap:8px}
+pre.mermaid{background:var(--card);border:2px solid var(--ink);border-radius:14px;padding:16px;overflow-x:auto;text-align:center}
+
+/* documento */
+.doc{display:grid;gap:14px;counter-reset:d}
+.doc article{background:var(--card);border:2px solid var(--ink);border-radius:14px;padding:18px 20px;display:grid;grid-template-columns:48px 1fr;gap:16px}
+.doc article::before{counter-increment:d;content:counter(d);font-family:var(--display);font-weight:800;font-size:26px;width:44px;height:44px;border-radius:12px;background:var(--floresta);color:var(--onfloresta);display:grid;place-items:center}
+.doc h3{margin-bottom:6px}.doc ul{margin:6px 0 0;padding-left:18px;display:grid;gap:4px}
+.doc .src{font-family:var(--mono);font-size:12px;color:var(--muted);margin-top:8px}
+.stack td:first-child{font-weight:700;white-space:nowrap}
+
+/* prompts */
+.pr{border-color:var(--ink)}
+.pr summary small{font-family:var(--mono);font-weight:400;font-size:12px;color:var(--muted);display:block;margin-top:2px}
+.pr .bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+.copy{font-family:var(--body);font-weight:800;font-size:15px;border:2px solid var(--ink);background:var(--tomate);color:#fff;border-radius:10px;padding:9px 16px;cursor:pointer;box-shadow:3px 3px 0 var(--shadow)}
+.copy:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--shadow)}
+pre.prompt{margin:0;white-space:pre-wrap;word-break:break-word;font-family:var(--mono);font-size:13px;line-height:1.6;background:var(--tint);border-radius:12px;padding:16px;max-height:520px;overflow:auto}
+.order{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px}
+.order span{font-family:var(--mono);font-size:13px;border:2px solid var(--ink);border-radius:99px;padding:4px 12px;background:var(--card)}
+
+/* apresentacao */
+.time{display:grid;gap:0}
+.time div{display:grid;grid-template-columns:110px 1fr;gap:14px;padding:12px 0;border-bottom:1px dashed var(--line)}
+.time b{font-family:var(--mono);font-size:13px}
+.q{display:grid;gap:10px;padding:0;margin:0;list-style:none}
+.q li{background:var(--card);border:2px solid var(--ink);border-radius:12px;padding:12px 16px}
+footer{background:var(--floresta);color:var(--onfloresta);padding-block:32px;font-size:14px}
+footer a{color:var(--sol)}
+@media (max-width:560px){.steps li{grid-template-columns:44px 1fr}.time div{grid-template-columns:1fr;gap:2px}.doc article{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:no-preference){.copy{transition:transform .08s}}
+</style>
+
+<header class="top"><div class="wrap">
+  <b>Guia da Caça</b>
+  <a href="#hoje">Hoje</a><a href="#ideia">A ideia</a><a href="#duvidas">Dúvidas</a><a href="#economia">Pontos</a><a href="#telas">Telas</a><a href="#validacao">Validação</a><a href="#refs">Referências</a><a href="#mercado">Pesquisa</a><a href="#documento">Documento</a><a href="#prompts">Prompts</a><a href="#pitch">Apresentação</a>
+</div></header>
+
+<div class="hero"><div class="wrap">
+  <span class="chip hot">Entrega 1 · sex 13/11 até 12h</span>
+  <h1>O shopping vira o <em>mapa</em> de um jogo.</h1>
+  <p>Tema 05, Engajamento e fidelização dos visitantes. Aqui está a ideia do grupo explicada do zero, as telas, a estrutura do documento e os prompts prontos para outra IA gerar os protótipos.</p>
+  <div class="row"><span class="chip">App web (PWA)</span><span class="chip">Localização com permissão</span><span class="chip">Caça aos tesouros com QR</span><span class="chip">Natal · Páscoa · Halloween</span></div>
+</div></div>
+
+<section id="hoje"><div class="wrap">
+  <div class="head"><span class="label">Plano de hoje</span><h2>O que fazer antes das 12h</h2><p>Ordem pensada para ter algo entregável mesmo se o tempo apertar. Marque conforme for fazendo.</p></div>
+  <div class="todo">
+    <label><input type="checkbox"><span><b>Decisões já fechadas: estão no fim desta página.</b><small>Colem o Prompt 1 e o 1b em cada conversa nova para a IA seguir as mesmas decisões.</small></span></label>
+    <label><input type="checkbox"><span><b>Gerar o documento com o Prompt D.</b><small>Ele já segue os 6 itens que a entrega pede. Revisem e ajustem o que for diferente do que vocês decidiram.</small></span></label>
+    <label><input type="checkbox"><span><b>Definir a identidade visual (Prompt 2) e gerar 3 telas essenciais: Home, Check-in e Caça ao Tesouro (Prompts 3, 4, 5).</b><small>Se der tempo: Recompensas e Painel do shopping. Onboarding fica para depois.</small></span></label>
+    <label><input type="checkbox"><span><b>Exportar capturas das telas e colocar no documento na seção "Proposta de telas".</b><small>A entrega é de planejamento, então telas navegáveis são bônus; imagens bem apresentadas já cumprem.</small></span></label>
+    <label><input type="checkbox"><span><b>Revisão final com a lista de 6 itens do edital.</b><small>Telas, documentação, linguagem, arquitetura, plataforma e tecnologias, como a gamificação entra.</small></span></label>
+  </div>
+  <div class="warn" style="margin-top:18px"><b>Correção importante:</b> a tecnologia sorteada é a <b>componentização</b>, e não a gamificação. A gamificação é a estratégia do produto. A componentização é o que precisa aparecer como tecnologia na apresentação e no item 6 do documento. Outras tecnologias podem ser usadas junto.</div>
+</div></section>
+
+<section id="ideia"><div class="wrap">
+  <div class="head"><span class="label">A ideia em linguagem de gente</span><h2>O que o visitante faz, do começo ao fim</h2><p>Pense em um jogo de celular, mas o cenário é o shopping de verdade. Quem visita, explora e volta ganha pontos. Os pontos viram cupons e chances em sorteios. A história abaixo é a cena que vocês podem contar para os jurados.</p></div>
+  <ol class="steps">
+    <li><span class="t">Dia 1</span><div><b>Marina abre o link pelo QR da entrada.</b><p>Não baixa nada. É um site que funciona como app. Ela escolhe um personagem e a trilha dela: Kids, Ela, Ele ou Para todos.</p></div></li>
+    <li><span class="t">Dia 1</span><div><b>O app pede para saber onde ela está.</b><p>Antes do aviso do celular, uma tela explica por quê: "só para saber que você chegou". Ela aceita.</p></div></li>
+    <li><span class="t">Chegou</span><div><b>Toca em "Cheguei!" e ganha 30 XP.</b><p>O app confere se o celular está dentro do perímetro do shopping. Vale uma vez por dia.</p></div></li>
+    <li><span class="t">Missão</span><div><b>A missão do dia: achar 3 presentes escondidos na Fábrica de Natal.</b><p>Cada presente é um QR code colado em um ponto do shopping, perto de uma atração temática. Ela lê o código com a câmera e o presente "abre" com uma animação.</p></div></li>
+    <li><span class="t">Loja</span><div><b>Entra em uma loja parceira e lê o QR do balcão.</b><p>Ganha pontos de visita e um cupom de 10% no café. A loja escolheu esse cupom e bancou o desconto.</p></div></li>
+    <li><span class="t">Troca</span><div><b>Na carteira, troca moedas por um sorvete para o filho e guarda bilhetes para o sorteio do mês.</b><p>O cupom aparece com código e prazo. No caixa, a loja confere.</p></div></li>
+    <li><span class="t">Dia 2</span><div><b>Ela volta amanhã porque tem sequência de dias e um baú no dia 7.</b><p>É isso que cria o vínculo contínuo que o desafio pede: motivo para voltar, não só para comprar uma vez.</p></div></li>
+  </ol>
+</div></section>
+
+<section id="duvidas"><div class="wrap">
+  <div class="head"><span class="label">Perguntas de quem nunca fez gamificação</span><h2>Todas as dúvidas, respondidas uma por uma</h2><p>Cada resposta tem uma versão curta e uma explicação. Onde eu estou propondo, e não afirmando, está escrito.</p></div>
+
+  <details open><summary>Como eu começo a ter pontos?</summary><div class="in">
+    <div class="short">Criando a conta ganha 50 XP de boas-vindas. Depois, cada ação do dia ganha mais.</div>
+    <p>Existem 3 jeitos de ganhar: <b>abrir o app todo dia</b> (pouco), <b>estar no shopping</b> (mais) e <b>cumprir missões</b> (o máximo). A tabela completa está na seção "Pontos".</p>
+  </div></details>
+
+  <details><summary>Preciso estar no shopping para pontuar?</summary><div class="in">
+    <div class="short">Para os pontos pequenos, não. Para os grandes, sim.</div>
+    <p>Abrir o app em casa dá poucos pontos (ex.: 5 XP), só para criar o hábito. Check-in, lojas, segredos e missões exigem estar no shopping. Essa diferença é a regra que vocês definiram e ela é boa: o hábito diário traz a pessoa de volta ao app, o ponto grande traz a pessoa de volta ao shopping.</p>
+  </div></details>
+
+  <details><summary>Como o app sabe que eu estou no shopping?</summary><div class="in">
+    <div class="short">Pela localização do celular, depois que a pessoa permitir.</div>
+    <p>O app compara a posição do celular com uma área desenhada no mapa que cobre o prédio e o estacionamento externo (e não um simples raio, porque o shopping é grande). Duas limitações reais que vocês devem citar no documento:</p>
+    <div class="warn"><b>1) Site não vigia em segundo plano.</b> Um app web só lê a localização enquanto está aberto. Por isso o check-in é um botão "Cheguei!", e não algo automático.<br><b>2) GPS dentro do prédio erra bastante.</b> Dentro do shopping, o erro pode passar de 50 metros. Então o GPS serve para dizer "você está no shopping", e o QR code serve para dizer "você está nesta loja ou neste ponto".</div>
+    <p>Proposta: se o GPS falhar, existe um QR de check-in na entrada como plano B.</p>
+  </div></details>
+
+  <details><summary>Preciso tirar foto para explorar?</summary><div class="in">
+    <div class="short">Não. Recomendo QR code em vez de foto.</div>
+    <p>Foto é difícil de conferir (como saber se é verdadeira?) e dá trabalho para o jogador. QR code é rápido: um segundo de câmera e pronto. Foto pode existir como missão opcional e social, tipo "tire uma foto com a árvore e compartilhe", valendo poucos pontos e sem validação automática. Eu deixaria isso para uma versão futura.</p>
+  </div></details>
+
+  <details><summary>As lojas vão participar? Como elas geram pontos?</summary><div class="in">
+    <div class="short">Sim, de três formas, da mais fácil para a mais difícil.</div>
+    <p><b>1) QR de visita no balcão ou vitrine</b>: o visitante lê, ganha XP, a loja ganha uma visita registrada. É o que eu usaria no MVP.<br><b>2) Missão da loja</b>: "experimente o novo sabor" ou "peça o café do mês", com o código dado pelo atendente.<br><b>3) Pontos por compra</b>: exige integração com nota fiscal ou caixa. É o mais poderoso, mas o mais complexo. Deixem para o roadmap.</p>
+    <p>Para a loja vale a pena porque ela recebe visitantes novos, sabe quantos vieram por causa do jogo e só dá desconto para quem entrou. Para o protótipo, usem lojas fictícias.</p>
+  </div></details>
+
+  <details><summary>Se eu tiver muito ponto, posso trocar por desconto?</summary><div class="in">
+    <div class="short">Sim. Quem gasta são as moedas, não o XP.</div>
+    <p>Existem 3 tipos de pontos e essa separação é importante (veja "Pontos"). As <b>moedas</b> compram cupons na Loja de Recompensas: cupons gerais (estacionamento, café, cinema) e cupons de loja, filtrados por Kids, Ela, Ele ou Para todos. O cupom vira um código com prazo.</p>
+  </div></details>
+
+  <details><summary>Concorro a sorteio?</summary><div class="in">
+    <div class="short">Sim, com bilhetes. Um bilhete = uma chance.</div>
+    <p>Bilhetes são ganhos em marcos (completar uma semana, achar um segredo raro) ou comprados com moedas. Sorteios podem ser mensais ou temáticos (um grande prêmio de Natal).</p>
+    <div class="warn"><b>Atenção legal.</b> No Brasil, sorteio promocional costuma precisar de autorização do governo federal (Lei 5.768/1971). Confirmem com o orientador. No MVP, apresentem o sorteio como funcionalidade planejada e simulada.</div>
+  </div></details>
+
+  <details><summary>Tem segredos escondidos e caça ao tesouro?</summary><div class="in">
+    <div class="short">Sim. É a parte mais memorável do jogo.</div>
+    <p><b>Segredos</b> são QR codes escondidos em lugares inesperados (atrás da árvore, perto do carrossel). Quem acha ganha XP e uma figurinha rara.</p>
+    <p><b>Caça ao tesouro</b> é uma sequência: o app mostra uma pista em forma de charada ("onde as renas descansam"), a pessoa encontra o QR, ele revela a próxima pista e uma peça do mapa. Ao juntar 5 a 7 peças, abre o baú final. Um shopping de Paris fez algo parecido com balões e QR codes (veja "Pesquisa").</p>
+  </div></details>
+
+  <details><summary>E se alguém trapacear?</summary><div class="in">
+    <div class="short">Algumas travas simples resolvem o grosso.</div>
+    <ul>
+      <li>Limite: 1 check-in por dia; 1 visita por loja por dia; máximo de pontos por dia.</li>
+      <li>QR com código que muda (ou expira), para a foto do QR mandada no grupo não funcionar por muito tempo.</li>
+      <li>A conferência da posição e a soma dos pontos acontecem no servidor, e não no celular da pessoa.</li>
+      <li>Cupom com prazo e uso único, conferido pela loja.</li>
+    </ul>
+    <p>Ninguém precisa resolver 100% disso agora. O documento só precisa mostrar que vocês pensaram.</p>
+  </div></details>
+
+  <details><summary>Como funciona para criança?</summary><div class="in">
+    <div class="short">Com conta ligada a um responsável.</div>
+    <p>A Trilha Kids tem missões de colecionar figurinhas do mascote e prêmios próprios (sorvete, brinquedo, sessão de cinema infantil). Dados de menores exigem consentimento de um dos pais ou responsável pela LGPD (art. 14). Proposta: o responsável cria a conta, e a criança joga dentro dela, sem localização exata nem ranking público.</p>
+  </div></details>
+
+  <details><summary>Como entram Natal, Páscoa e Halloween?</summary><div class="in">
+    <div class="short">Como "temporadas": o mesmo jogo com roupa e missões novas.</div>
+    <p>Cada temporada troca as cores, a fantasia do mascote, o tema da caça e as figurinhas. Natal: Fábrica de Presentes. Páscoa: Caça aos Ovos. Halloween: Noite dos Monstrinhos (modo escuro). Como hoje é 13/11, <b>Natal é a melhor temporada para demonstrar</b>.</p>
+  </div></details>
+</div></section>
+
+<section id="economia"><div class="wrap">
+  <div class="head"><span class="label">A economia do jogo</span><h2>Três tipos de ponto, cada um com um trabalho</h2><p>Se existir um tipo só, o jogador gasta o ponto e perde o nível. Por isso separam-se três coisas.</p></div>
+  <div class="tri">
+    <div class="coin xp"><span class="label">XP</span><div class="big">Nível</div><p>Mede o quanto você jogou. Só sobe, nunca se gasta. Dá título, personagem e status (Explorador, Aventureiro, Mestre).</p></div>
+    <div class="coin mo"><span class="label">Moedas</span><div class="big">Troca</div><p>Você ganha e gasta. Compram cupons e itens na Loja de Recompensas.</p></div>
+    <div class="coin bi"><span class="label">Bilhetes</span><div class="big">Sorteio</div><p>Cada um é uma chance em um sorteio. Vêm de marcos especiais ou são comprados com moedas.</p></div>
+  </div>
+  <div class="scroll"><table>
+    <thead><tr><th>Ação</th><th>XP</th><th>Moedas</th><th>Onde / limite</th></tr></thead>
+    <tbody>
+      <tr><td>Abrir o app no dia</td><td class="n">+5</td><td class="n">+2</td><td>Qualquer lugar. 1 por dia.</td></tr>
+      <tr><td>Chegar ao shopping ("Cheguei!")</td><td class="n">+30</td><td class="n">+10</td><td>Dentro do perímetro. 1 por dia.</td></tr>
+      <tr><td>Visitar loja parceira (QR do balcão)</td><td class="n">+15</td><td class="n">+5</td><td>Máximo 5 lojas por dia, 1 vez por loja.</td></tr>
+      <tr><td>Achar um segredo (QR escondido)</td><td class="n">+50</td><td class="n">+15</td><td>Cada segredo só uma vez.</td></tr>
+      <tr><td>Pista da caça ao tesouro</td><td class="n">+40</td><td class="n">+10</td><td>Pistas em ordem.</td></tr>
+      <tr><td>Completar a missão da temporada</td><td class="n">+100</td><td class="n">+40</td><td>Mais uma figurinha colecionável.</td></tr>
+      <tr><td>Sequência de 7 dias</td><td class="n">+60</td><td class="n">+30</td><td>Baú com bilhete de sorteio. Há um "dia de folga" por semana, para a sequência não quebrar por um deslize.</td></tr>
+      <tr><td>Convidar amigo que entra</td><td class="n">+50</td><td class="n">+20</td><td>Máximo 5 por mês.</td></tr>
+    </tbody>
+  </table></div>
+  <div class="levels">
+    <span>Explorador<small>0 XP</small></span><span>Aventureiro<small>300 XP</small></span><span>Caçador<small>800 XP</small></span><span>Mestre do Shopping<small>1.800 XP</small></span>
+  </div>
+  <p style="margin-top:16px;color:var(--muted)">Os números acima são exemplos para o protótipo. Em um piloto real, eles se ajustam olhando os dados: se todo mundo sobe de nível em uma semana, está fácil demais.</p>
+</div></section>
+
+<section id="telas"><div class="wrap">
+  <div class="head"><span class="label">Proposta e estrutura inicial das telas</span><h2>As telas principais</h2><p>Rascunhos de estrutura (wireframes), não o visual final. O visual vem do Prompt 2. Os fluxos que mostram o jogo são Home, Check-in, Caça e Recompensas. Os outros completam a história.</p></div>
+  <div class="phones">
+    <figure><div class="ph">
+      <div class="w-top"><i class="w-av"></i><div class="w-col"><b>Nível 3 · Explorador</b><span class="w-prog"><i style="width:62%"></i></span></div><em class="w-chip">5 dias</em></div>
+      <div class="w-card hot"><small>Missão do dia</small><b>Ache os 3 presentes da Fábrica de Natal</b><span class="w-btn sol">Começar</span></div>
+      <div class="w-card"><small>Andares</small><div class="w-floors"><i class="on">Térreo</i><i>2º Pav</i><i>Subs.</i></div></div>
+      <div class="w-card"><small>Temporada</small><b>Natal · baú no dia 7</b></div>
+      <div class="w-nav"><i></i><i class="on"></i><i></i><i></i><i></i></div>
+    </div><figcaption><b>Home</b><span>Nível, sequência, missão do dia e atalho para o mapa.</span></figcaption></figure>
+
+    <figure><div class="ph">
+      <small>Check-in</small>
+      <div class="w-ring"><span>Você está<br>no shopping</span></div>
+      <div class="w-btn sol" style="margin-top:6px">Cheguei! +30 XP</div>
+      <div class="w-card"><small>Se o GPS falhar</small><b>Leia o QR da entrada</b></div>
+      <div class="w-card"><small>Hoje</small><span>1 de 1 check-in · 3 lojas visitadas</span></div>
+      <div class="w-nav"><i></i><i></i><i class="on"></i><i></i><i></i></div>
+    </div><figcaption><b>Check-in</b><span>Valida a posição, dá o XP com animação e oferece o plano B.</span></figcaption></figure>
+
+    <figure><div class="ph">
+      <small>Caça ao tesouro · pista 3 de 7</small>
+      <div class="w-prog"><i style="width:43%"></i></div>
+      <div class="w-card"><small>Charada</small><b>"Onde as renas descansam, um presente espera."</b></div>
+      <div class="w-scan"></div>
+      <div class="w-btn">Abrir câmera</div>
+      <div class="w-row"><em class="on">peça 1</em><em class="on">peça 2</em><em>peça 3</em></div>
+    </div><figcaption><b>Caça e scanner</b><span>Pista, câmera para o QR e peças do mapa que se juntam. É o "momento uau" da demo.</span></figcaption></figure>
+
+    <figure><div class="ph">
+      <div class="w-floors"><i class="on">Térreo</i><i>2º Pav</i><i>Subs.</i></div>
+      <div class="w-map"><u style="left:20%;top:22%"></u><u class="s" style="left:58%;top:35%"></u><u class="m" style="left:34%;top:62%"></u><u style="left:72%;top:70%"></u><u class="s" style="left:14%;top:78%"></u></div>
+      <div class="w-card"><b>Toca do Brinquedo</b><span>Missão da loja: +15 XP</span></div>
+      <div class="w-nav"><i></i><i></i><i></i><i class="on"></i><i></i></div>
+    </div><figcaption><b>Mapa dos andares</b><span>Planta em desenho, não GPS. Vermelho: lojas. Amarelo: segredos. Verde: eventos.</span></figcaption></figure>
+
+    <figure><div class="ph">
+      <div class="w-top"><div class="w-col"><small>Suas moedas</small><b>340 moedas · 2 bilhetes</b></div></div>
+      <div class="w-row"><em class="on">Todos</em><em>Kids</em><em>Ela</em><em>Ele</em></div>
+      <div class="w-tk"><span><b>Pipoca média</b><br>Cine Aurora</span><b>120</b></div>
+      <div class="w-tk"><span><b>10% no café</b><br>Café Brasa</span><b>60</b></div>
+      <div class="w-tk"><span><b>Sorvete Kids</b><br>Praça de alimentação</span><b>90</b></div>
+      <div class="w-btn sol">Sorteio de Natal · 1 bilhete = 80</div>
+    </div><figcaption><b>Recompensas</b><span>Carteira, filtro por trilha e cupons em formato de ingresso. Resgate gera código com prazo.</span></figcaption></figure>
+
+    <figure><div class="ph">
+      <div class="w-top"><i class="w-av"></i><div class="w-col"><b>Álbum de Natal</b><span>5 de 12 figurinhas</span></div></div>
+      <div class="w-grid"><i></i><i></i><i class="lock"></i><i></i><i class="lock"></i><i class="lock"></i><i></i><i class="lock"></i><i class="lock"></i></div>
+      <div class="w-row"><em class="on">Natal</em><em>Páscoa</em><em>Halloween</em></div>
+      <div class="w-card"><small>Conquista</small><b>Primeiro segredo achado</b></div>
+    </div><figcaption><b>Álbum e conquistas</b><span>Coleção por temporada. Itens trancados dão motivo para voltar.</span></figcaption></figure>
+  </div>
+
+  <div class="two" style="margin-top:34px">
+    <div class="box"><h3>Telas que completam o fluxo</h3><ul>
+      <li><b>Onboarding:</b> abertura com o mascote, escolha da trilha (Kids, Ela, Ele, Para todos), tela que explica a permissão de localização, escolha do personagem.</li>
+      <li><b>Detalhe da loja:</b> missão da loja, cupom disponível, horário.</li>
+      <li><b>Cupom resgatado:</b> código, prazo, botão "marcar como usado" com conferência da loja.</li>
+      <li><b>Perfil:</b> nível, histórico, privacidade e como apagar os dados.</li>
+    </ul></div>
+    <div class="box"><h3>Painel do shopping e das lojas</h3><p style="margin-top:8px">Uma tela de visão de gestão responde "o que o shopping ganha com isso?". Sugestão de conteúdo:</p><ul>
+      <li>Visitas por dia e usuários que voltaram em 7 dias.</li>
+      <li>Lojas mais visitadas pelo jogo e cupons resgatados.</li>
+      <li>Criar missão, gerar QR de segredo, programar temporada.</li>
+    </ul></div>
+  </div>
+</div></section>
+
+<section id="validacao"><div class="wrap">
+  <div class="head"><span class="label">Validação com o caso real</span><h2>Capim Dourado Shopping e o site dos colegas</h2><p>Abri o <a href="https://www.capimdouradosc.com.br/">site oficial do shopping</a> e a <a href="https://01a1d2a4-1d4f-7da3-bdf8-f2524240dc5e.arena.site/">página Capim Dourado Experience</a> feita pelo grupo. Abaixo, o que confere, o que falta e o que ajustar.</p></div>
+  <div class="two">
+    <div class="box"><h3>O que descobri no shopping real</h3><ul>
+      <li><b>É o Capim Dourado Shopping, em Palmas (TO), da rede Soul Malls.</b> Endereço: Q. 107 Norte, Av. NS 5.</li>
+      <li><b>O Natal já está na vitrine:</b> o banner atual é "Doce Natal". Natal é a temporada certa para demonstrar.</li>
+      <li><b>Já existe um app do shopping</b> (o site cita pagar o estacionamento pelo aplicativo). Apresentem o jogo como complemento ou módulo, e não como substituição.</li>
+      <li><b>O consentimento atual cobre só a newsletter</b> ("seus dados serão utilizados apenas para envio da Newsletter"). O jogo precisa de consentimento próprio para localização, perfil e cupons. Ótimo ponto de LGPD para o documento.</li>
+      <li><b>Horários:</b> lojas de segunda a sábado, 10h às 22h; domingo, 14h às 20h. Check-in e QR devem valer só no horário de funcionamento.</li>
+      <li><b>Parceiros reais citados no site:</b> Cinemark, Bistrô 81, McDonald's, Super Soft, Academia Morofit, carregadores elétricos, Espaço do Cliente. Dão recompensas realistas, por exemplo ingresso ou pipoca.</li>
+      <li><b>Existem Vitrine Online e Portal do Lojista.</b> O portal é o canal natural para a loja cadastrar missões e cupons. A vitrine pode render pontos de "explorar".</li>
+    </ul></div>
+    <div class="box"><h3>O que está bom no site dos colegas</h3><ul>
+      <li><b>Identidade própria e forte:</b> turma de capivaras, vermelho, preto e azul, bordas grossas. Não parece template.</li>
+      <li><b>Raiz local:</b> capim dourado, cerrado, Jalapão. Conecta com Palmas e com os jurados melhor do que um tema genérico.</li>
+      <li><b>Moeda com nome</b> (capicoins), temporada, 10 QR secretos, missões diárias, semanais e lendárias.</li>
+      <li><b>Campanha patrocinada:</b> já mostra como o shopping ou uma marca paga pelo jogo, que é um modelo de negócio.</li>
+      <li><b>Regulamento da temporada e Balcão do Capi (Piso 1):</b> mostram preocupação com regra e com o ponto físico de resgate.</li>
+    </ul></div>
+  </div>
+  <h3 style="margin:34px 0 12px">O que a planta do shopping mostra</h3>
+  <div class="two">
+    <div class="box"><h3>Planta Mix, Operações, novembro de 2026</h3><ul>
+      <li><b>Pavimentos oficiais:</b> 1º Pavimento – Térreo, 2º Pavimento – Praça de Alimentação e Subsolo 1 (estacionamento). Usem esses nomes nas telas e no documento.</li>
+      <li><b>Área de 38.800,50 m²</b>, com as avenidas NS-05, JK e LO 2A ao redor e um estacionamento externo grande em volta do prédio.</li>
+      <li><b>Térreo:</b> âncoras Renner, C&A, Riachuelo, Centauro, Marisa e Cinemark. Também Pernambucanas, Big, Big Lar, Outback, Madero, Morofit, Burger King, Leitura, Hering, Vivara, Aramis, Carter's, Polo Wear e Brooksfield.</li>
+      <li><b>Para crianças:</b> Ri Happy, Wow Park, Zig Zag, Espaço Família e Cinemark.</li>
+      <li><b>Praça de Alimentação (2º):</b> McDonald's, Spoleto, Pizza Hut, Vivenda do Camarão, Dona Maria Express, Divino Fogão, Kin Sui, Giraffas, Spaghettinni, Subway e Express Grill.</li>
+      <li><b>Atrações:</b> Mundo Imersivo e Evento Imerso Mar no 2º pavimento, quatro Praças de Eventos no térreo e a Alameda das Cores.</li>
+    </ul><p style="margin:10px 0 0;color:var(--muted);font-size:14px">Li os nomes pelos logotipos da planta. Confiram antes de publicar.</p></div>
+    <div class="box"><h3>Como isso entra no jogo</h3><ul>
+      <li><b>Mapa dos andares com 3 abas:</b> Térreo, 2º Pavimento e Estacionamento, desenhado em SVG simples a partir da planta.</li>
+      <li><b>Praças de Eventos viram os palcos das temporadas.</b> No Natal, a Fábrica de Presentes pode ficar na praça central.</li>
+      <li><b>Mundo Imersivo e Evento Imerso Mar viram missões de atração</b> (conferir se estão ativos).</li>
+      <li><b>Trilha Kids:</b> Ri Happy, Wow Park, Zig Zag, Espaço Família, sessão infantil no Cinemark. <b>Ela, Ele e Para todos</b> usam as lojas de moda, esporte e a praça de alimentação. É sugestão, e o filtro é por interesse, não trava ninguém.</li>
+      <li><b>Missão "Sobe pra comer":</b> começa no térreo e termina na Praça de Alimentação, pelas escadas rolantes. Leva gente ao 2º pavimento.</li>
+      <li><b>Check-in por área, não por raio.</b> O shopping é grande e tem estacionamento externo. Desenhem no mapa uma área que cubra prédio e estacionamento. No Subsolo 1 o GPS é fraco, então ali vale o QR na entrada do estacionamento.</li>
+    </ul></div>
+  </div>
+  <div class="warn" style="margin-top:18px"><b>Cuidado com a planta:</b> é um documento interno de Operações e mostra subestação, CFTV, segurança, brigada e depósitos. Não coloquem a planta original nos slides nem no documento. Redesenhem uma versão simples só com áreas públicas, citem a fonte e confirmem com quem forneceu se pode usar. Os QR codes devem ficar só em áreas públicas, combinados com a Operação.</div>
+
+  <h3 style="margin:34px 0 12px">O que eu ajustaria no site dos colegas</h3>
+  <div class="scroll"><table>
+    <thead><tr><th>Ponto</th><th>Por quê</th><th>O que fazer</th></tr></thead>
+    <tbody>
+      <tr><td><b>Números inventados como reais</b></td><td>A página diz "+12 mil capivareiros", "340 resgates/mês" e "nota 4,9 no app". O app não existe ainda, e a banca pode perguntar a origem.</td><td>Trocar por "meta do piloto" ou "exemplo", ou remover.</td></tr>
+      <tr><td><b>Falta a regra central do grupo</b></td><td>Não aparece o check-in por localização, nem as trilhas Kids, Ela, Ele, nem cupons por perfil. Só aparece QR.</td><td>Incluir "Cheguei!" e a escolha de trilha nas telas do app (Prompts 3, 4 e 6).</td></tr>
+      <tr><td><b>É um site de divulgação, não as telas do app</b></td><td>A entrega pede a estrutura das telas do app.</td><td>Usar o site como abertura da apresentação e gerar as telas do app em moldura de celular.</td></tr>
+      <tr><td><b>Temporadas diferentes do combinado</b></td><td>O site usa "Cerrado Vivo" e Arraiá. O grupo definiu Natal, Páscoa e Halloween, e o shopping está em Doce Natal.</td><td>Natal como temporada principal; Cerrado pode ser a camada de identidade o ano todo.</td></tr>
+      <tr><td><b>Capivara lembra o Pibaru</b></td><td>É o mesmo animal do site de referência que vocês enviaram. A capivara faz sentido no cerrado, mas pode parecer cópia.</td><td>Dar identidade própria: o trançado de capim dourado como acessório, nome e personalidade da turma, uma história de origem.</td></tr>
+      <tr><td><b>Cores</b></td><td>O shopping usa dourado, marrom e vinho. O jogo usa vermelho, preto e azul.</td><td>Decidido: o jogo é extensão do shopping. Colocar o logotipo do Capim Dourado Shopping e um toque de dourado, mantendo o personagem e as cores do jogo.</td></tr>
+      <tr><td><b>Prêmios a conferir</b></td><td>O site cita kart e encontro com a Capi Dourada. Não encontrei kart no site do shopping. A planta mostra Wow Park e Zig Zag, então talvez exista, mas não confirmei.</td><td>Confirmar com o shopping, ou marcar como exemplo, ou usar atrações listadas na planta.</td></tr>
+      <tr><td><b>Ranking público</b></td><td>Pode funcionar para adultos. Para crianças, expõe dados.</td><td>Sem ranking na trilha Kids.</td></tr>
+      <tr><td><b>Faixa "Built with Arena"</b></td><td>Aparece na página como "conteúdo gerado por usuário e não verificado" e pode distrair na apresentação.</td><td>Testar em notebook e celular antes. Ao rolar, vi trechos em branco no meu navegador, possivelmente animações de entrada; confirmem.</td></tr>
+    </tbody>
+  </table></div>
+  <div class="warn" style="margin-top:20px"><b>Conclusão:</b> a base visual dos colegas é a melhor parte e vale usar como identidade e como vitrine da apresentação. Faltam as telas do app e a regra de localização. Com o Prompt 1b, os prompts de telas passam a usar o Capim Dourado real, no lugar do shopping fictício.</div>
+</div></section>
+
+<section id="refs"><div class="wrap">
+  <div class="head"><span class="label">Abri os três sites que vocês enviaram</span><h2>O que aprender de cada referência</h2><p>Visitei as páginas no navegador e anotei fontes e estratégia. A regra é aprender a técnica e não copiar a aparência.</p></div>
+  <div class="refs">
+    <div class="ref"><h3>Pibaru</h3><div class="sw"><i style="background:#1F4FE0"></i><i style="background:#FF3D8B"></i><i style="background:#7AE3B8"></i><i style="background:#FFC83D"></i><i style="background:#2B1D14"></i></div>
+      <div class="fonts">Fredoka (títulos) · Lexend (texto)</div>
+      <ul><li>Mascote que aparece em todos os blocos e "fala" com o usuário.</li><li>Blocos de cor chapada, botões com borda grossa e sombra dura.</li><li>Cartões levemente inclinados, como objetos reais.</li><li>Texto curto, em tom de conversa.</li></ul>
+      <b>Para nós:</b> o mascote como guia e a voz humana dos textos.</div>
+    <div class="ref"><h3>Nexo</h3><div class="sw"><i style="background:#050505"></i><i style="background:#FF3D8B"></i><i style="background:#8B5CF6"></i><i style="background:#17A2A8"></i></div>
+      <div class="fonts">Bricolage Grotesque · Manrope · JetBrains Mono · Shantell Sans</div>
+      <ul><li>A página é uma descida: "superfície", "camada 00", "role para mergulhar".</li><li>Rótulos em fonte mono e notas manuscritas que dão personalidade.</li><li>Números grandes em cartões translúcidos.</li></ul>
+      <b>Para nós:</b> trocar "profundidade" por andares: térreo, L1, L2. Progredir é subir. Ótimo para a apresentação.</div>
+    <div class="ref"><h3>Disco Dungeon</h3><div class="sw"><i style="background:#1A0F2E"></i><i style="background:#7A3CE0"></i><i style="background:#FF2E93"></i><i style="background:#2FB7E8"></i></div>
+      <div class="fonts">Poppins · Inter</div>
+      <ul><li>Abertura cinematográfica com camadas e profundidade.</li><li>Telas do jogo dentro de molduras de celular, em carrossel.</li><li>Logo com brilho, que lembra fliperama.</li></ul>
+      <b>Para nós:</b> a vitrine das telas do protótipo em moldura de celular, e o clima escuro para a temporada de Halloween.</div>
+  </div>
+  <div class="warn" style="margin-top:24px"><b>Decisão do grupo:</b> manter a turma de capivaras e as cores vermelho, preto e azul da página Capim Dourado Experience, com o logotipo e um toque de dourado do shopping, e usar o shopping como mapa com pavimentos. O Prompt 2 foi ajustado para isso.</div>
+</div></section>
+
+<section id="mercado"><div class="wrap">
+  <div class="head"><span class="label">Pesquisa rápida</span><h2>O que o mercado já faz e o que cuidar</h2><p>Busquei referências de gamificação em shopping e varejo. Boa parte do material vem de empresas que vendem esse tipo de software, então use como direção e não como prova. Não encontrei métricas de resultado confiáveis para citar.</p></div>
+  <div class="two">
+    <div class="box"><h3>Práticas que aparecem nas fontes</h3><ul>
+      <li><b>QR codes escondidos:</b> o Apsys Beaugrenelle, em Paris, espalhou balões com QR codes únicos, cada um liberando um presente (<a href="https://www.coniq.com/blog/resources/apsys-10-year-anniversary-celebration">Coniq</a>).</li>
+      <li><b>Pontos só por visitar:</b> recompensar a presença incentiva voltar mais vezes (<a href="https://wp-8xpbn4mn9g.mapvx.com/?p=9503">MapVX</a>).</li>
+      <li><b>Check-in diário com sequência:</b> apps de e-commerce usam isso há anos; a Shein dá pontos por sete dias seguidos e a Shopee espalha moedas e cupons (<a href="https://www.adjust.com/pt/blog/how-e-commerce-apps-can-engage-users-with-gamification/">Adjust</a>, <a href="https://centraldovarejo.com.br/gamificacao-impulsiona-programas-de-fidelidade-no-varejo/">Central do Varejo</a>).</li>
+      <li><b>Escolher poucas mecânicas e manter como hábito</b>, não como campanha única (<a href="https://www.openloyalty.io/insider/how-to-use-gamification-in-retail-examples">Open Loyalty</a>, <a href="https://www.mastercard.com/mt/en/news-and-trends/insights/2023/impact-gamification-loyalty-strategies.html">Mastercard</a>).</li>
+      <li><b>Recompensas que valem em várias lojas</b> levam o visitante a circular (<a href="https://www.nector.io/blog/customer-loyalty-programs-for-malls">Nector</a>).</li>
+      <li><b>Definir quem paga os prêmios</b> antes do lançamento (<a href="https://www.coniq.com/resources/building-an-effective-shopping-mall-loyalty-program/">Coniq</a>).</li>
+    </ul></div>
+    <div class="box"><h3>Cuidados que vocês devem citar</h3><ul>
+      <li><b>LGPD:</b> localização é dado pessoal. Peça permissão com clareza e permita apagar os dados. Para crianças, o consentimento vem do responsável.</li>
+      <li><b>Sorteio:</b> pode precisar de autorização oficial. Trate como simulado no MVP.</li>
+      <li><b>GPS em local fechado erra:</b> use o GPS para "estou no shopping" e o QR para "estou nesta loja".</li>
+      <li><b>Web app não roda em segundo plano:</b> notificações no iPhone só funcionam com o app instalado na tela inicial.</li>
+      <li><b>Pontos demais enjoam.</b> Poucas ações, claras, com progresso visível.</li>
+    </ul><p style="margin-top:12px;color:var(--muted)">Não achei guias de raio de check-in nem de antifraude nas fontes. Os valores deste guia (200 m, limites diários) são propostas para o protótipo.</p></div>
+  </div>
+</div></section>
+
+<section id="documento"><div class="wrap">
+  <div class="head"><span class="label">Documento da primeira entrega</span><h2>Estrutura que cobre os 6 itens pedidos</h2><p>Siga esta ordem. Assim quem corrige encontra cada item pedido no edital. Não é a entrega final do MVP, então seja claro e curto.</p></div>
+  <div class="doc">
+    <article><div><h3>Proposta e estrutura inicial das telas</h3><ul><li>Persona e jornada (a história da Marina).</li><li>Mapa de telas e as 6 telas principais com imagem.</li><li>Princípios visuais: mascote, paleta, temporadas.</li></ul><div class="src">Vem desta página: "A ideia" e "Telas", e das imagens geradas pelos Prompts 3 a 8.</div></div></article>
+    <article><div><h3>Documentação inicial do projeto</h3><ul><li>Contexto, problema e objetivo (usar o texto do desafio 05).</li><li>Público: visitantes adultos, famílias, crianças com responsável. Interessados: shopping e lojas.</li><li>Escopo do MVP: o que entra (check-in, QR, missões, carteira, cupom) e o que fica fora (compra, sorteio real).</li><li>Requisitos funcionais e não funcionais, regras de negócio (a tabela de pontos), riscos, LGPD.</li><li>Indicadores: frequência de visitas, retorno em 7 dias, cupons resgatados, lojas visitadas por visita.</li></ul></div></article>
+    <article><div><h3>Linguagem de programação escolhida</h3><ul><li>TypeScript no front e no back. Justifique: uma linguagem só, tipagem que evita erros, grande comunidade.</li><li>Se o grupo domina outra, escreva essa. O importante é a justificativa.</li></ul></div></article>
+    <article><div><h3>Arquitetura proposta</h3><ul><li>Diagrama de blocos (abaixo) e a explicação de cada bloco.</li><li>Fluxo de um check-in: celular manda posição, servidor confere o raio, o motor de regras soma pontos, o banco registra.</li><li>Decisão importante: cálculo de pontos e validação sempre no servidor.</li></ul></div></article>
+    <article><div><h3>Plataforma e tecnologias adotadas</h3><ul><li>Tabela de tecnologias (abaixo), com o motivo de cada uma.</li></ul></div></article>
+    <article><div><h3>Como a componentização entra na solução (tecnologia sorteada)</h3><ul><li><b>O que é:</b> montar a interface e a API em peças pequenas, reutilizáveis e testáveis.</li><li><b>No front:</b> biblioteca packages/ui com Botão, Cartão de missão, Barra de XP, Chip de sequência, Cupom em formato de ingresso, Figurinha, Pin do mapa, Aviso de conquista e Navegação inferior, usados no app do visitante e no painel.</li><li><b>Temporadas:</b> a mesma biblioteca troca de tema (Natal, Páscoa, Halloween) mudando só os tokens de design. É a prova visível da componentização.</li><li><b>Na API:</b> módulos independentes (check-in, missões, QR, recompensas, sorteios, lojas), cada um em camadas.</li><li><b>No monorepo:</b> pacotes compartilhados (ui, shared, config) evitam código repetido.</li><li><b>Na apresentação:</b> mostrar o catálogo de componentes e a troca de temporada ao vivo.</li><li><b>A gamificação é a estratégia do produto</b> (XP, moedas, bilhetes, sequência, missões, segredos, coleção, temporadas) e entra nos itens 1 e 2: transforma visita pontual em hábito.</li></ul></div></article>
+  </div>
+
+  <h3 style="margin:34px 0 12px">Arquitetura (sugestão)</h3>
+<pre class="mermaid">
+flowchart LR
+  A["Visitante no celular"] --> W["apps/web: PWA React"]
+  L["Equipe do shopping e lojas"] --> P["apps/admin: painel React"]
+  W --> U["packages/ui: componentes e temas"]
+  P --> U
+  W --> API["apps/api: Node em camadas"]
+  P --> API
+  API --> R["Regras: pontos, missões, antifraude"]
+  API --> DB[("Supabase: Postgres e Auth")]
+</pre>
+
+  <div class="two" style="margin-top:22px">
+    <div class="box"><h3>Monorepo (front e pacotes)</h3>
+<pre class="prompt">capim-dourado-experience/
+  apps/
+    web/      PWA do visitante (React, Vite)
+    admin/    painel do shopping e das lojas
+    api/      API Node em camadas, por módulo
+  packages/
+    ui/       componentes e temas (Natal, Páscoa, Halloween)
+    shared/   tipos, validações e regras de pontos
+    config/   ESLint, TypeScript, Tailwind
+  docs/       documento da entrega e decisões
+  .github/    CI, modelos de issue e de PR</pre></div>
+    <div class="box"><h3>API em camadas, por módulo</h3>
+<pre class="prompt">apps/api/src/
+  modules/
+    checkin/   controller, service, repository, dto
+    missions/
+    qr/
+    rewards/   cupons e loja de recompensas
+    raffles/   bilhetes e sorteios
+    stores/
+    users/
+  shared/      erros, validação, autenticação, logs
+  server.ts</pre>
+<p style="margin:10px 0 0;color:var(--muted);font-size:14px"><b>Controller</b> recebe e valida a requisição. <b>Service</b> tem as regras (pontos, limites, antifraude). <b>Repository</b> fala com o Supabase. Cada camada só chama a de baixo.</p></div>
+  </div>
+
+  <h3 style="margin:30px 0 12px">Tecnologias (sugestão: troquem pelas que o grupo domina)</h3>
+  <div class="scroll"><table class="stack">
+    <thead><tr><th>Camada</th><th>Escolha</th><th>Por quê</th></tr></thead>
+    <tbody>
+      <tr><td>Plataforma</td><td>Web app PWA, mobile first</td><td>Abre por QR ou link, sem loja de apps, funciona em qualquer celular.</td></tr>
+      <tr><td>Linguagem</td><td>TypeScript</td><td>Mesma linguagem no front e no back.</td></tr>
+      <tr><td>Organização do front</td><td>Monorepo (pnpm workspaces e Turborepo)</td><td>App do visitante, painel e componentes compartilhados no mesmo repositório, sem duplicar código.</td></tr>
+      <tr><td>Interface</td><td>React + Vite + Tailwind; Framer Motion para animações</td><td>Rápido de montar e boa para telas animadas de jogo.</td></tr>
+      <tr><td>Componentização</td><td>packages/ui com tokens de design e temas por temporada</td><td>É a tecnologia sorteada: os mesmos componentes servem ao app, ao painel e às três temporadas.</td></tr>
+      <tr><td>Mapa dos andares</td><td>SVG da planta, ou Leaflet</td><td>GPS interno é impreciso; o desenho mostra os andares com clareza.</td></tr>
+      <tr><td>Localização</td><td>API de geolocalização do navegador + cálculo de distância no servidor</td><td>Sem custo. Raio configurável.</td></tr>
+      <tr><td>QR codes</td><td>Leitura com html5-qrcode; geração com a biblioteca qrcode; token que expira</td><td>Funciona na câmera do celular e reduz fraude.</td></tr>
+      <tr><td>API</td><td>Node + TypeScript, arquitetura em camadas (controller, service, repository), um módulo por funcionalidade</td><td>Regras de pontos e antifraude ficam no servidor e cada módulo evolui sem mexer nos outros.</td></tr>
+      <tr><td>Banco e login</td><td>Supabase (Postgres e Auth)</td><td>Entrega banco, login e regras de segurança sem montar servidor do zero.</td></tr>
+      <tr><td>Repositório e processo</td><td>GitHub: repositório, Issues e Projects, Pull Requests, Actions</td><td>Tudo no mesmo lugar: código, documentação, tarefas e verificação automática a cada PR.</td></tr>
+      <tr><td>Hospedagem</td><td>Vercel (front; a API Node pode rodar como funções da Vercel no MVP)</td><td>Publicação em minutos e um link de prévia por pull request. Se a API precisar de servidor contínuo, Render ou Railway são alternativas.</td></tr>
+      <tr><td>Notificações</td><td>Web Push (opcional)</td><td>Lembrar da sequência. No iPhone só com o app instalado.</td></tr>
+    </tbody>
+  </table></div>
+</div></section>
+
+<section id="prompts"><div class="wrap">
+  <div class="head"><span class="label">Prompts prontos</span><h2>Copie, cole e use na outra IA</h2><p>O Prompt 1 é a versão melhorada do seu pedido original. Cole-o primeiro em uma conversa nova. Os demais partem do contexto dele, então usem a mesma conversa ou colem o Prompt 1 antes. Os nomes de lojas são fictícios de propósito.</p></div>
+  <div class="order"><span>1 Contexto</span><span>1b Capim Dourado</span><span>2 Identidade</span><span>3 Home</span><span>4 Check-in</span><span>5 Caça</span><span>6 Recompensas</span><span>7 Temporadas</span><span>8 Painel</span><span>G Repositório</span><span>D Documento</span><span>A Apresentação</span></div>
+
+  <details class="pr" open><summary><span>Prompt 1 · Contexto e pesquisa<small>Seu prompt original, melhorado. Cole primeiro.</small></span></summary><div class="in">
+    <div class="bar"><button class="copy" data-copy="p1">Copiar prompt</button></div>
+<pre class="prompt" id="p1">PAPEL
+Você é estrategista de produto e game designer sênior, especialista em gamificação para varejo físico e em apps mobile-first. Vai me ajudar a validar uma ideia e desenhar as telas de um protótipo. Responda em português do Brasil, com linguagem simples, como se eu fosse leigo em jogos. Explique cada termo técnico na primeira vez que usar.
+
+CONTEXTO DO DESAFIO
+Desafio 05, "Engajamento e fidelização dos visitantes".
+Contexto: o shopping busca atrair visitantes, estimular novas visitas e fortalecer o relacionamento com seu público.
+Problemática: a relação entre o consumidor e o shopping muitas vezes se limita à visita ou ao consumo pontual, sem necessariamente gerar um vínculo contínuo.
+Objetivo: ampliar o relacionamento, a participação e o engajamento dos visitantes com o shopping.
+Tecnologia sorteada, obrigatória na apresentação: componentização (interface e API em peças reutilizáveis). Outras tecnologias podem ser usadas junto. A gamificação é a estratégia do produto, não a tecnologia sorteada.
+Primeira entrega (sexta, 13/11, até 12h): planejamento técnico inicial, com proposta e estrutura das telas, documentação inicial, linguagem de programação, arquitetura, plataforma e tecnologias e descrição de como a gamificação entra na solução. Não é a entrega final do MVP.
+Os jurados valorizam uma apresentação forte e uma identidade visual própria. Layouts genéricos de IA serão penalizados.
+
+A IDEIA DO GRUPO
+- App web (PWA), abre no navegador do celular, sem loja de apps.
+- Pede permissão de localização. Pontua mais por estar no shopping e menos por acesso diário ao app.
+- Mistura o jogo com atrações físicas do shopping e com épocas temáticas: Natal, Páscoa e Halloween.
+- Prêmios: cupons gerais e cupons específicos para criança, mulher e homem.
+- A validar: QR codes escondidos no shopping (caça ao tesouro), lojas parceiras que geram pontos, troca de pontos por desconto e sorteios.
+
+O QUE EU QUERO DE VOCÊ, NESTA ORDEM
+1. PESQUISA: 5 a 8 cases reais de gamificação em shopping e varejo físico (priorize o Brasil). Para cada um: o que fizeram, o que funcionou, o que falhou, link da fonte. Se não achar dado, diga que não achou. Não invente números.
+2. MECÂNICA COMPLETA: tipos de ponto (nível, moeda de troca, bilhete de sorteio), tabela de ações e pontos com valores de exemplo, níveis, sequência diária, missões, caça ao tesouro, temporadas e regras antifraude.
+3. PERGUNTAS DE LEIGO: responda uma por uma, com exemplo concreto: Como eu começo a ter pontos? Preciso tirar foto para explorar? As lojas participam e como geram pontos? Posso trocar pontos por desconto? Concorro a sorteio? Existem segredos escondidos e caça ao tesouro? Como evitar trapaça?
+4. TELAS E FLUXOS: no máximo 10 telas. Para cada uma: objetivo, componentes, estados (vazio, carregando, erro, sucesso) e o "momento uau".
+5. RISCOS: LGPD (localização e crianças), regras de sorteio no Brasil, imprecisão do GPS dentro de prédios, limites de web app (sem segundo plano, push no iPhone).
+6. FECHAMENTO: liste o que o grupo ainda precisa decidir.
+
+REGRAS
+- Sempre ligue as sugestões ao caso de um shopping, com exemplos concretos.
+- Cite a fonte de cada fato.
+- Dê uma recomendação clara quando houver mais de uma opção, e diga por quê.
+- Sem respostas genéricas de manual de gamificação.</pre>
+  </div></details>
+
+  <details class="pr"><summary><span>Prompt 1b · Dados reais do Capim Dourado<small>Cole logo depois do Prompt 1. Substitui o shopping fictício dos outros prompts.</small></span></summary><div class="in">
+    <div class="bar"><button class="copy" data-copy="p1b">Copiar prompt</button></div>
+<pre class="prompt" id="p1b">DADOS REAIS DO ESTUDO DE CASO
+A partir de agora, em todos os prompts seguintes, use estes dados no lugar do "Shopping Aurora" e das lojas fictícias.
+
+Shopping: Capim Dourado Shopping, Palmas, Tocantins (rede Soul Malls). Endereço: Q. 107 Norte, Av. NS 5, Plano Diretor Norte.
+Horários: lojas e quiosques de segunda a sábado, 10h às 22h, e domingo, 14h às 20h. Restaurantes de segunda a sábado, 11h às 22h, e domingo, 11h às 20h. A Academia Morofit tem horário próprio. Check-in e QR só valem dentro do horário de funcionamento.
+Campanha em andamento no site: Doce Natal.
+O que já existe: site oficial, vitrine online, newsletter (o consentimento atual é só para newsletter), portal do lojista e um app do shopping com pagamento de estacionamento. Nossa solução é complementar a isso, e não substitui.
+Espaços citados no site, que podem aparecer como contexto das telas: Cinemark Capim Dourado, Bistrô 81, McDonald's, Super Soft, Academia Morofit, carregadores elétricos, Espaço do Cliente, achados e perdidos.
+
+PLANTA OFICIAL (Planta Mix, Operações do Capim Dourado Shopping, novembro de 2026; nomes lidos dos logotipos, conferir)
+Pavimentos: 1º Pavimento – Térreo; 2º Pavimento – Praça de Alimentação; Subsolo 1 (estacionamento, sem bom sinal de GPS). Há estacionamento externo grande ao redor do prédio. Avenidas: NS-05, JK e LO 2A. Área: 38.800,50 m².
+Térreo: âncoras Renner, C&A, Riachuelo, Centauro, Marisa e Cinemark; também Pernambucanas, Big, Big Lar, Outback, Madero, Morofit, Wow Park, Zig Zag, Ri Happy, Burger King, Leitura, Hering, Vivara, Aramis, Carter's, Polo Wear, Brooksfield; Espaço Família; quatro Praças de Eventos; Alameda das Cores.
+2º Pavimento: McDonald's, Spoleto, Pizza Hut, Vivenda do Camarão, Dona Maria Express, Divino Fogão, Kin Sui, Giraffas, Spaghettinni, Subway, Express Grill; Mundo Imersivo e Evento Imerso Mar [CONFIRMAR se estão ativos]; escadas rolantes.
+Nos mapas e telas, represente apenas áreas públicas. Não represente áreas internas (subestação, CFTV, segurança, depósitos, docas). O check-in usa uma área desenhada que cobre prédio e estacionamento externo, e não um raio.
+
+IDENTIDADE DO PROJETO (o grupo já criou uma página de apresentação)
+Nome de trabalho: Capim Dourado Experience. Moeda: capicoins. Turma de capivaras guiando as missões (a Capi). Cores: vermelho, preto e azul, com bordas grossas. Raiz local: capim dourado do Jalapão e cerrado tocantinense. Temporada principal para a demonstração: Natal. Decisão do grupo: o jogo é uma extensão do shopping (o hackathon é financiado pelo shopping). A marca do Capim Dourado Shopping aparece nas telas (logotipo e um toque de dourado), e a turma de capivaras é o personagem do jogo.
+Dê à turma de capivaras uma identidade própria (nome, personalidade, acessório de capim trançado) para não parecer cópia de outros mascotes de capivara.
+
+REGRAS
+- Nomes reais servem de contexto. Descontos, prêmios, preços e quantidades são EXEMPLOS e devem aparecer marcados como tais nas telas.
+- Use os nomes oficiais dos pavimentos. Não invente lojas, planta ou atrações que não estejam listadas aqui: escreva [CONFIRMAR].
+- Não use números de usuários, avaliações ou resultados como se fossem reais. Use "meta do piloto" ou "exemplo".
+- Sem ranking público na trilha Kids.</pre>
+  </div></details>
+
+  <details class="pr"><summary><span>Prompt 2 · Identidade visual<small>Define mascote, cores, fontes e regras. Faça antes das telas.</small></span></summary><div class="in">
+    <div class="bar"><button class="copy" data-copy="p2">Copiar prompt</button></div>
+<pre class="prompt" id="p2">Use o contexto da conversa. Agora crie a IDENTIDADE VISUAL do app. Entregue primeiro um guia curto e aplicável. Depois aplique em uma tela de exemplo (a Home, 390x844).
+
+CONCEITO
+"O shopping é o mapa de um jogo." Os andares são as fases, as lojas são pontos no mapa, os segredos são QR codes escondidos e um mascote guia o visitante. Deve parecer um produto feito à mão, com personalidade, e não um template.
+
+REFERÊNCIAS (o que aprender, sem copiar)
+- Pibaru: mascote simpático presente em tudo, cores chapadas em blocos, botões com borda escura grossa e sombra dura deslocada, cartões levemente inclinados, texto curto em tom de conversa.
+- Nexo: narrativa de profundidade por camadas (aqui, andares), rótulos em fonte mono, anotações manuscritas, números grandes em cartões.
+- Disco Dungeon: abertura cinematográfica em camadas, telas do jogo em molduras de celular, clima escuro e brilhante.
+NÃO copiar paleta, fonte exata ou mascote de nenhuma das três.
+
+MASCOTE
+A turma de capivaras que o grupo já criou na página Capim Dourado Experience (a Capi). Dê identidade própria (nome, personalidade, acessório de capim dourado trançado) e uma fantasia por temporada (gorro no Natal, orelhas de coelho na Páscoa, chapéu de bruxo no Halloween). Proponha 4 expressões (animado, comemorando, curioso, dormindo) e entregue uma versão em SVG simples, com formas geométricas.
+
+PALETA BASE (tokens)
+as cores do jogo que o grupo já usa na página Capim Dourado Experience: vermelho (ação principal), preto (texto e bordas), azul (apoio e progresso), mais um toque de dourado do shopping (XP e recompensas) e um fundo claro azulado. Defina cada um como token com nome e valor.
+Temporadas trocam a paleta: Natal usa vermelho-cereja, verde-pinheiro e dourado. Páscoa usa lilás, amarelo-manteiga e rosa. Halloween usa fundo ameixa escuro, laranja-abóbora e verde-ácido.
+
+TIPOGRAFIA
+Títulos: Bricolage Grotesque ou Fredoka. Texto: Manrope ou Lexend. Números e rótulos: JetBrains Mono. Defina a escala (tamanhos) e uma regra para números de XP grandes.
+
+COMPONENTES PARA DESENHAR
+Botão primário e secundário (borda grossa e sombra dura), cartão de missão, barra de XP, chip de sequência de dias, cupom em formato de ingresso com picote, cartinha de figurinha (comum e rara), pin do mapa, aviso de conquista, navegação inferior com 5 itens.
+
+COMPONENTIZAÇÃO (tecnologia obrigatória na apresentação)
+Entregue também um catálogo de componentes pensado como biblioteca reutilizável (pacote packages/ui, usado no app do visitante e no painel). Para cada componente: nome, variações, estados (padrão, foco, desabilitado, carregando), tokens usados e em que telas aparece. As temporadas devem mudar SÓ os tokens (cores, mascote, textos) e nunca a estrutura dos componentes. Mostre o mesmo cartão de missão nas 3 temporadas lado a lado.
+
+MOVIMENTO
+Escolha UM momento de destaque: a revelação de um segredo ao ler um QR (sacode, abre, chuva de moedas). O resto, discreto.
+
+ACESSIBILIDADE
+Contraste AA, alvo de toque mínimo de 44px, texto mínimo de 14px, modo escuro, respeito a "reduzir movimento".
+
+EVITAR
+Gradiente roxo para azul genérico, emojis como ícones, tudo centralizado, mesmo raio de borda em tudo, listas de cartões idênticos, ícones de biblioteca sem adaptação.</pre>
+  </div></details>
+
+  <details class="pr"><summary><span>Prompt 3 · Onboarding e Home<small>Primeira impressão e tela inicial.</small></span></summary><div class="in">
+    <div class="bar"><button class="copy" data-copy="p3">Copiar prompt</button></div>
+<pre class="prompt" id="p3">Use o contexto e a identidade visual da conversa. Crie um protótipo navegável, mobile 390x844, do ONBOARDING e da HOME. Se a ferramenta permitir, gere cada tela como um quadro separado e ligue com transições.
+
+SHOPPING FICTÍCIO: "Shopping Aurora", 3 andares (Térreo, L1, L2). Lojas fictícias: Café Brasa, Toca do Brinquedo, Moda Sol, Livraria Esquina, Cine Aurora, Barbearia Navalha.
+
+TELAS
+1. Abertura: o mascote, frase curta de impacto e botão "Começar a caça".
+2. Trilha: escolha entre Kids, Ela, Ele e Para todos (a pessoa pode trocar depois; trilha define só quais cupons aparecem primeiro).
+3. Permissão de localização: antes do aviso do celular, uma tela explica em 2 frases por que pedimos ("só para saber que você chegou") e o que NÃO fazemos ("não seguimos você pelo shopping"). Botões "Permitir" e "Agora não" (o app continua funcionando sem localização, com menos pontos).
+4. Personagem: escolher entre 4 visuais do mascote.
+5. HOME: nível e barra de XP, chip de sequência de dias ("5 dias"), cartão grande de missão do dia ("Ache os 3 presentes da Fábrica de Natal"), atalho para os andares, faixa da temporada ("Natal"), navegação inferior.
+
+DADOS DE EXEMPLO
+Nome: Marina. Nível 3, Explorador, 340 XP de 800. Sequência de 5 dias, baú no dia 7.
+
+ESTADOS
+Home sem permissão de localização (aviso discreto, não bloqueia). Primeiro acesso (sem pontos, com missão de boas-vindas +50 XP).
+
+SAÍDA
+Protótipo em HTML, CSS e JavaScript (ou React), com as cores e fontes do guia de identidade. Mostre os textos reais, sem lorem ipsum.</pre>
+  </div></details>
+
+  <details class="pr"><summary><span>Prompt 4 · Check-in "Cheguei!"<small>Mostra a regra de localização funcionando.</small></span></summary><div class="in">
+    <div class="bar"><button class="copy" data-copy="p4">Copiar prompt</button></div>
+<pre class="prompt" id="p4">Use o contexto e a identidade visual da conversa. Crie o fluxo de CHECK-IN, mobile 390x844, navegável, com os estados abaixo como quadros separados.
+
+REGRA DE NEGÓCIO
+O visitante toca "Cheguei!". O app compara a localização do celular com o perímetro do Capim Dourado Shopping (uma área desenhada que cobre o prédio e o estacionamento externo; no Subsolo 1 o GPS é fraco e vale o QR). Se estiver dentro, ganha +30 XP e +10 moedas, uma vez por dia. O app web só lê a localização com o app aberto.
+
+ESTADOS (um quadro para cada)
+1. Antes: tela com anel pulsando e o texto "Você está perto do Shopping Aurora?" e botão "Cheguei!".
+2. Verificando: animação curta, texto "Procurando o shopping...".
+3. Sucesso: mascote comemorando, "+30 XP, +10 moedas" que sobem como contador, barra de nível que avança, sequência de dias que sobe.
+4. Fora do perímetro: mensagem amigável ("Ainda não te vimos por aqui. Chegando, é só tocar de novo.") e mostra a distância aproximada.
+5. GPS impreciso ou sem permissão: plano B com botão "Ler o QR da entrada" que abre a câmera.
+6. Já fez hoje: "Check-in de hoje feito. Volte amanhã e mantenha a sequência!" com contagem regressiva.
+
+DETALHES
+- O texto de erro nunca culpa o usuário.
+- A tela de sucesso é a mais caprichada do fluxo: ela é o primeiro "momento de recompensa" do app.
+- Mostre uma observação pequena em cada estado explicando em uma linha o que o sistema está fazendo (para a apresentação).
+
+SAÍDA
+Protótipo em HTML, CSS e JavaScript, com botão de teste no canto para alternar entre os 6 estados.</pre>
+  </div></details>
+
+  <details class="pr"><summary><span>Prompt 5 · Caça ao tesouro e QR<small>O "momento uau" da demonstração.</small></span></summary><div class="in">
+    <div class="bar"><button class="copy" data-copy="p5">Copiar prompt</button></div>
+<pre class="prompt" id="p5">Use o contexto e a identidade visual da conversa. Crie o fluxo da CAÇA AO TESOURO DE NATAL, mobile 390x844, navegável. É o centro da apresentação, então caprichem na revelação.
+
+REGRA
+Uma caça tem 7 pistas em ordem. Cada pista é uma charada que leva a um QR code colado em um ponto do Shopping Aurora. Ler o QR revela uma peça do mapa e a próxima pista. Ao juntar as 7 peças, abre o baú final com moedas, uma figurinha rara e 1 bilhete de sorteio. Há também "segredos" avulsos, QR escondidos que dão +50 XP.
+
+TELAS
+1. Lista de missões: caça de Natal (3 de 7), segredos encontrados (2 de 9), missões de loja.
+2. Pista atual: charada ("Onde as renas descansam, um presente espera."), dica opcional que custa 5 moedas, barra de progresso, as peças do mapa já coletadas.
+3. Scanner: moldura para QR, texto de apoio ("Aponte para o QR escondido"), botão de lanterna, plano B de digitar o código impresso.
+4. REVELAÇÃO (momento uau): ao ler o QR, o presente treme, abre e solta moedas; aparece a peça do mapa encaixando no quebra-cabeça e o mascote reage. Dura no máximo 3 segundos e pode ser pulada.
+5. QR inválido ou já usado: mensagem amigável.
+6. Baú final: recompensa grande e botão para compartilhar o feito.
+
+DADOS DE EXEMPLO
+Pistas: 1) Onde as renas descansam. 2) Quem vende histórias por aqui guarda um segredo na prateleira de baixo. 3) Onde o inverno vira sorvete. Locais fictícios.
+
+SAÍDA
+Protótipo em HTML, CSS e JavaScript. Como a demonstração rodará em um notebook sem câmera, inclua um botão "Simular leitura do QR" que dispara a revelação.</pre>
+  </div></details>
+
+  <details class="pr"><summary><span>Prompt 6 · Recompensas, cupons e sorteio<small>Onde o ponto vira valor para o visitante.</small></span></summary><div class="in">
+    <div class="bar"><button class="copy" data-copy="p6">Copiar prompt</button></div>
+<pre class="prompt" id="p6">Use o contexto e a identidade visual da conversa. Crie o fluxo de RECOMPENSAS, mobile 390x844, navegável.
+
+REGRAS
+Existem três tipos de ponto: XP (nível, nunca se gasta), moedas (gastam em cupons) e bilhetes (chances em sorteios). Cupons podem ser gerais (estacionamento, café, cinema) ou de uma loja, e são organizados por trilha: Kids, Ela, Ele, Para todos. Resgatar um cupom desconta moedas e gera um código com prazo de uso e uso único.
+
+TELAS
+1. Carteira: saldo de moedas, bilhetes, nível; filtros Todos, Kids, Ela, Ele.
+2. Catálogo: cupons em formato de ingresso com picote. Exemplos: Pipoca média no Cine Aurora (120 moedas); 10% no Café Brasa (60); Sorvete Kids na praça de alimentação (90); 15% na Moda Sol (150); Corte na Barbearia Navalha com 20% (180).
+3. Detalhe do cupom: regras, validade, loja, botão "Resgatar" com confirmação.
+4. Cupom resgatado: código grande, contagem regressiva do prazo, botão "Mostrar no caixa". A loja marca como usado.
+5. Sorteio do mês: prêmio (Natal: vale-compras), seus bilhetes, botão "Trocar moedas por bilhete" (80 moedas), data do sorteio. Mostre a observação "Sorteio ilustrativo no protótipo".
+6. Estados: saldo insuficiente (mostrar quanto falta e sugerir missão), cupom expirado, catálogo vazio.
+
+DETALHES
+Mostre sempre a diferença entre XP e moedas com microtexto simples. Priorize o filtro da trilha escolhida pelo usuário, sem esconder as outras.
+
+SAÍDA
+Protótipo em HTML, CSS e JavaScript com dados fictícios, textos reais e as cores do guia.</pre>
+  </div></details>
+
+  <details class="pr"><summary><span>Prompt 7 · Temporadas (Natal, Páscoa, Halloween)<small>Prova que o app muda de cara com o calendário.</small></span></summary><div class="in">
+    <div class="bar"><button class="copy" data-copy="p7">Copiar prompt</button></div>
+<pre class="prompt" id="p7">Use o contexto e a identidade visual da conversa. Mostre o sistema de TEMPORADAS: a mesma Home do app em três versões, mais a tela de Álbum de figurinhas.
+
+TEMPORADAS
+1. Natal: Fábrica de Presentes. Paleta vermelho-cereja, verde-pinheiro e dourado. Mascote de gorro. Missão: achar os presentes escondidos.
+2. Páscoa: Caça aos Ovos. Lilás, amarelo-manteiga e rosa. Mascote com orelhas de coelho. Missão: encontrar ovos coloridos e montar uma cesta.
+3. Halloween: Noite dos Monstrinhos. Modo escuro com fundo ameixa, laranja-abóbora e verde-ácido. Mascote de chapéu de bruxo. Missão: coletar monstrinhos por andar.
+
+O QUE MUDA E O QUE FICA
+Muda: cores, fantasia do mascote, ilustrações, tema da caça, figurinhas, textos. Fica: estrutura das telas, tabela de pontos, regras. Explique isso em um quadro lateral, "Um jogo, três roupas".
+
+ÁLBUM
+Grade de figurinhas da temporada (12), algumas desbloqueadas e outras com silhueta trancada. Figurinhas raras com brilho. Mostrar "5 de 12" e a dica de onde ganhar a próxima. Aba para alternar as temporadas passadas.
+
+SAÍDA
+Um protótipo em HTML com um seletor de temporada que troca o tema ao vivo (cores, mascote e textos), usando variáveis de CSS.</pre>
+  </div></details>
+
+  <details class="pr"><summary><span>Prompt 8 · Painel do shopping e das lojas<small>Mostra o valor para quem paga o projeto.</small></span></summary><div class="in">
+    <div class="bar"><button class="copy" data-copy="p8">Copiar prompt</button></div>
+<pre class="prompt" id="p8">Use o contexto da conversa. Crie uma tela de PAINEL DE GESTÃO para a equipe do Shopping Aurora e para os lojistas, em formato de tela de computador (1440x900), com a mesma identidade visual, porém mais sóbria.
+
+OBJETIVO
+Responder: "o que o shopping e as lojas ganham com o jogo?"
+
+CONTEÚDO
+- Faixa de resumo: visitantes ativos na semana, retorno em 7 dias, check-ins do dia, cupons resgatados.
+- Gráfico de visitas por dia com marca para dias de evento.
+- Ranking de lojas por visitas vindas do jogo.
+- Lista de missões ativas com botão "Nova missão" e "Gerar QR de segredo".
+- Calendário de temporadas.
+- Cupons: criar oferta, ver resgates e marcar como usado.
+
+REGRAS
+Cada número mostra de onde vem ("check-ins dos visitantes que leram o QR"). Dados fictícios e marcados como exemplo. Sem gráficos decorativos: cada um deve ajudar a decidir algo.
+
+SAÍDA
+Protótipo em HTML, CSS e JavaScript.</pre>
+  </div></details>
+
+  <details class="pr"><summary><span>Prompt G · Base do repositório no GitHub<small>Pastas, README, documentos, CI e plano de tarefas.</small></span></summary><div class="in">
+    <div class="bar"><button class="copy" data-copy="pg">Copiar prompt</button></div>
+<pre class="prompt" id="pg">Use o contexto da conversa. Monte a base do repositório do projeto no GitHub.
+
+ARQUITETURA DECIDIDA
+- Front: monorepo (pnpm workspaces e Turborepo) com apps/web (PWA do visitante: React, Vite, TypeScript, Tailwind), apps/admin (painel do shopping e das lojas), packages/ui (biblioteca de componentes e temas por temporada), packages/shared (tipos, validações e regras de pontos) e packages/config (ESLint, TypeScript, Tailwind).
+- API: Node com TypeScript, arquitetura em camadas e organizada por módulo. Cada módulo tem controller, service, repository e dto. Módulos: auth, users, checkin, missions, qr, rewards, raffles, stores. O controller só recebe e valida a requisição, o service tem as regras de negócio (pontos, limites diários, antifraude) e o repository acessa o Supabase. Cada camada só chama a de baixo.
+- Dados e login: Supabase (Postgres e Auth).
+- Hospedagem inicial: Vercel.
+- Tecnologia obrigatória na apresentação: componentização.
+
+ENTREGUE
+1. A árvore de pastas completa, em texto.
+2. README.md da raiz: o que é o projeto, como rodar, estrutura e como contribuir.
+3. Pasta docs: arquitetura.md, decisoes (modelo ADR, com as 5 decisões já tomadas), componentizacao.md (catálogo inicial de packages/ui, com props de cada componente) e regras-de-pontos.md (a tabela de pontos).
+4. Pasta .github: workflow de CI (instalar, lint, typecheck, testes e build), modelo de pull request, 3 modelos de issue (história de usuário, bug e tarefa) e CODEOWNERS.
+5. Plano de 15 issues para o MVP, em ordem, cada uma com título, descrição curta e critério de aceite, para montar o quadro no GitHub Projects.
+6. Convenções: nomes de branch, commits no padrão Conventional Commits e regras de merge.
+
+Não escreva código de funcionalidade ainda, só a base e os documentos.</pre>
+  </div></details>
+
+  <details class="pr"><summary><span>Prompt D · Gerar o documento da entrega<small>Texto pronto, nos 6 itens do edital.</small></span></summary><div class="in">
+    <div class="bar"><button class="copy" data-copy="pd">Copiar prompt</button></div>
+<pre class="prompt" id="pd">Use o contexto da conversa. Escreva o DOCUMENTO DA PRIMEIRA ENTREGA, de planejamento técnico inicial, em português do Brasil, com linguagem clara, objetiva e profissional. Tamanho: 6 a 9 páginas. Use títulos numerados, tabelas quando ajudarem e deixe marcado em [COLCHETES] o que o grupo precisa confirmar.
+
+ESTRUTURA OBRIGATÓRIA (nesta ordem)
+0. Capa: nome do projeto, equipe, desafio 05, data.
+1. Resumo da solução em 5 linhas.
+2. Documentação inicial: contexto, problema, objetivo, público e interessados, escopo do MVP (dentro e fora), requisitos funcionais e não funcionais, regras de negócio (tabela de pontos), riscos, LGPD, indicadores de sucesso.
+3. Proposta e estrutura inicial das telas: persona e jornada, mapa de telas e descrição de cada tela principal (objetivo, componentes, estados), com espaço marcado para imagem.
+4. Linguagem de programação escolhida e justificativa.
+5. Arquitetura proposta: front em monorepo (apps/web, apps/admin, packages/ui, packages/shared, packages/config) e API Node em camadas (controller, service, repository) organizada por módulo (auth, users, checkin, missions, qr, rewards, raffles, stores). Inclua descrição dos blocos, fluxo de um check-in, decisões de segurança e antifraude, e um diagrama em texto.
+6. Plataforma e tecnologias adotadas: tabela com camada, escolha e motivo.
+7. Como a componentização (tecnologia sorteada) entra na solução: biblioteca de componentes reutilizáveis (packages/ui) usada no app e no painel, temporadas que trocam só os tokens de design, módulos independentes na API, pacotes compartilhados no monorepo, e como isso será mostrado na apresentação. Inclua uma tabela com os componentes principais e onde cada um é usado. Em seguida, uma subseção curta sobre a gamificação como estratégia do produto: elementos usados (XP, moedas, bilhetes, sequência, missões, segredos, coleção, temporadas), motivação de cada um e como responde ao problema.
+8. Próximos passos até o MVP.
+Fechamento: lista "O que ainda precisa ser decidido".
+
+DADOS DO PROJETO
+App web (PWA) com localização com permissão. Check-in no shopping vale mais do que o acesso diário. Caça aos tesouros com QR codes escondidos, lojas parceiras que geram pontos, loja de recompensas com cupons gerais e por trilha (Kids, Ela, Ele, Para todos), sorteios simulados no MVP, temporadas (Natal, Páscoa, Halloween). Stack decidida: TypeScript; React com Vite e Tailwind; front em monorepo; API em Node com arquitetura em camadas organizada por módulo; Supabase (Postgres e Auth); GitHub para repositório, tarefas e verificação automática; hospedagem inicial na Vercel. O jogo é uma extensão do Capim Dourado Shopping (um só shopping no MVP), com pontos por visita, QR e missão (compra fica no roadmap) e sorteio simulado. Limites assumidos: web app não roda em segundo plano; GPS interno é impreciso, então GPS confirma "estou no shopping" e QR confirma "estou nesta loja"; pontos calculados no servidor.
+
+REGRAS
+Não invente números nem cases. Onde faltar dado, escreva [A CONFIRMAR]. Não use frases genéricas de gamificação: tudo ligado ao shopping.</pre>
+  </div></details>
+
+  <details class="pr"><summary><span>Prompt A · Apresentação para os jurados<small>Roteiro de 5 minutos e site de apresentação.</small></span></summary><div class="in">
+    <div class="bar"><button class="copy" data-copy="pa">Copiar prompt</button></div>
+<pre class="prompt" id="pa">Use o contexto e a identidade visual da conversa. Crie dois materiais para convencer os jurados.
+
+PARTE 1: ROTEIRO DE 5 MINUTOS
+Estrutura: 0:00 a 0:40 problema como cena (uma pessoa que visita o shopping uma vez e esquece). 0:40 a 1:30 a solução em uma frase e o mascote. 1:30 a 3:30 demonstração ao vivo com UM momento de destaque (ler o QR escondido e ver a revelação). 3:30 a 4:15 valor para o shopping e para as lojas, com 3 indicadores. 4:15 a 5:00 arquitetura em um slide e próximos passos. Para cada bloco: fala sugerida (curta), o que aparece na tela e quem do grupo fala. Inclua um plano B se a demonstração falhar (vídeo gravado).
+
+PARTE 2: SITE DE APRESENTAÇÃO
+Uma página rolável, em vez de slides comuns. A página é uma subida pelos pavimentos do Capim Dourado Shopping: Subsolo e estacionamento (a chegada e o problema), Térreo (a solução e o mascote), 2º Pavimento e Praça de Alimentação (as mecânicas e a recompensa), e um final com o valor para o shopping. Cada andar muda de cor e revela uma parte da história. Inclua: abertura com o mascote e uma frase de impacto, vitrine das telas do protótipo em molduras de celular (carrossel), números de exemplo marcados como projeção, e botão "Testar o protótipo".
+Inclua um bloco dedicado à COMPONENTIZAÇÃO (tecnologia sorteada): o catálogo de componentes e a mesma tela vestindo as três temporadas, com um seletor que troca o tema ao vivo.
+Ofereça 3 opções de frase de abertura. Exemplos de direção: "O shopping virou um mapa." / "Cada andar tem um segredo." / "Volte amanhã. Tem baú."
+
+REGRAS
+Identidade própria, nada de layout padrão de IA. Linguagem simples. Dados de exemplo claramente marcados.</pre>
+  </div></details>
+</div></section>
+
+<section id="pitch"><div class="wrap">
+  <div class="head"><span class="label">Como convencer os jurados</span><h2>Apresentação: o que fazer e o que evitar</h2><p>Vocês ouviram que o foco é a apresentação e que layouts genéricos não passam. Estes são os pontos que eu cuidaria.</p></div>
+  <div class="two">
+    <div class="box"><h3>Faça</h3><ul>
+      <li><b>Comece por uma cena, não pelo app.</b> "Marina foi ao shopping em outubro, comprou uma blusa e nunca mais voltou."</li>
+      <li><b>Um só momento de destaque.</b> Ler o QR escondido e ver o presente abrir. O resto da demonstração serve para chegar nele.</li>
+      <li><b>Uma identidade completa.</b> Mascote, cores, voz e temporadas contando a mesma história.</li>
+      <li><b>Mostre o lado de quem paga.</b> O painel e três indicadores: retorno em 7 dias, cupons resgatados, lojas visitadas por visita.</li>
+      <li><b>Seja honesto sobre os limites.</b> GPS interno erra, por isso QR. Sorteio exige autorização. Os jurados confiam em quem enxerga o risco.</li>
+      <li><b>Tenha vídeo de backup</b> da demonstração.</li>
+    </ul></div>
+    <div class="box"><h3>Evite</h3><ul>
+      <li>Telas com gradiente roxo, cartões idênticos e ícones padrão.</li>
+      <li>Mostrar todas as telas. Mostre 4 e conte a história.</li>
+      <li>Prometer integração com notas fiscais ou compra, que está fora do MVP.</li>
+      <li>Falar de "gamificação" em geral. Fale do Natal do Shopping Aurora.</li>
+      <li>Inventar números de resultado. Use "projeção" e explique a conta.</li>
+    </ul></div>
+  </div>
+  <h3 style="margin:34px 0 8px">Roteiro de 5 minutos</h3>
+  <div class="time">
+    <div><b>0:00 – 0:40</b><span>A cena do problema e a pergunta do desafio.</span></div>
+    <div><b>0:40 – 1:30</b><span>A solução em uma frase, o mascote e as três moedas.</span></div>
+    <div><b>1:30 – 3:30</b><span>Demonstração: check-in, caça ao tesouro com QR, recompensa.</span></div>
+    <div><b>3:30 – 4:15</b><span>Valor para o shopping e as lojas, painel e indicadores.</span></div>
+    <div><b>4:15 – 5:00</b><span>Componentização (catálogo e troca de temporada ao vivo), arquitetura em um slide, riscos tratados e próximos passos.</span></div>
+  </div>
+</div></section>
+
+<section id="abertas"><div class="wrap">
+  <div class="head"><span class="label">Decisões do grupo</span><h2>As 7 decisões já fechadas</h2><p>Valem para o documento e para todos os prompts.</p></div>
+  <ul class="q">
+    <li><b>1. Tecnologia sorteada: componentização.</b> É obrigatória na apresentação e no item 6 do documento. Não impede usar outras tecnologias.</li>
+    <li><b>2. Marca do jogo: extensão do shopping.</b> O hackathon é financiado pelo shopping. Logotipo do Capim Dourado Shopping nas telas. Descontos e prêmios ficam marcados como exemplo.</li>
+    <li><b>3. Quem paga os prêmios:</b> lojas dão os descontos e o shopping dá os prêmios do sorteio. Vale uma frase no documento.</li>
+    <li><b>4. Sorteio:</b> simulado no MVP, por causa da regra legal.</li>
+    <li><b>5. Pontos:</b> por visita, QR e missão. Compra entra no roadmap.</li>
+    <li><b>6. Um só shopping no MVP:</b> o Capim Dourado, com área de check-in e planta próprias.</li>
+    <li><b>7. Stack:</b> TypeScript, React e Supabase. Front em monorepo, API Node em camadas por módulo, GitHub para tudo e Vercel para hospedar no início.</li>
+  </ul>
+</div></section>
+
+<footer><div class="wrap"><p>Referências visuais visitadas: <a href="https://pibaru.com/">Pibaru</a>, <a href="https://www.somosnexo.app/pt">Nexo</a>, <a href="https://discodungeongame.com/">Disco Dungeon</a>. Fontes da pesquisa estão na seção "Pesquisa". Os valores de pontos, raio e limites são propostas para o protótipo.</p></div></footer>
+
+<script>
+document.querySelectorAll('[data-copy]').forEach(function(btn){
+  btn.addEventListener('click',function(){
+    var el=document.getElementById(btn.dataset.copy);
+    var old=btn.textContent;
+    function done(m){btn.textContent=m;setTimeout(function(){btn.textContent=old},2200)}
+    function fallback(){var r=document.createRange();r.selectNodeContents(el);var s=window.getSelection();s.removeAllRanges();s.addRange(r);done('Selecionado. Use Ctrl+C')}
+    try{navigator.clipboard.writeText(el.innerText).then(function(){done('Copiado!')},fallback)}catch(e){fallback()}
+  });
+});
+</script>

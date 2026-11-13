@@ -1,0 +1,18 @@
+node_modules/
+dist/
+.turbo/
+.vercel/
+coverage/
+*.log
+.env
+.env.*
+!.env.example
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.tsbuildinfo
+# material interno do shopping: nunca versionar
+*planta*.pdf
+*PLANTA*.pdf

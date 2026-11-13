@@ -1,0 +1,30 @@
+{
+  "name": "capim-dourado-experience",
+  "private": true,
+  "type": "module",
+  "packageManager": "npm@11.19.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "turbo run dev",
+    "dev:web": "turbo run dev --filter=@cde/web",
+    "dev:api": "turbo run dev --filter=@cde/api",
+    "build": "turbo run build",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "lint": "biome ci .",
+    "format": "biome check --write .",
+    "check": "biome ci . && turbo run typecheck test build"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.6.7",
+    "turbo": "^2.11.11",
+    "typescript": "^7.0.2",
+    "vitest": "^5.1.0"
+  }
+}
