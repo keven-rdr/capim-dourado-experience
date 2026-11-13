@@ -1,0 +1,25 @@
+# O merge e por squash: o TITULO da PR vira a mensagem do commit na main.
+# Por isso o titulo precisa seguir Conventional Commits. Check obrigatorio: "pr-title".
+name: pr-title
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, edited, synchronize, reopened]
+permissions: { contents: read }
+
+jobs:
+  pr-title:
+    name: pr-title
+    runs-on: ubuntu-latest
+    steps:
+      - name: valida o titulo (Conventional Commits)
+        env:
+          TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          pattern='^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\([a-z0-9._/-]+\))?!?: .{3,100}$'
+          if printf '%s' "$TITLE" | grep -Eq "$pattern"; then
+            echo "ok: $TITLE"
+          else
+            echo "::error title=Titulo da PR invalido::'$TITLE' deve seguir Conventional Commits, ex.: feat(web): adiciona a tela de check-in"
+            exit 1
+          fi

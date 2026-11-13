@@ -1,0 +1,86 @@
+# CI do monorepo: lint (Biome), tipos, testes e build de todos os pacotes (Turborepo).
+# O check obrigatorio e o job "ci-gate". O deploy NAO passa por aqui: a Vercel publica pela integracao com o GitHub
+# (producao a cada push na main, previa a cada pull request). Ver docs/guia-vercel-supabase.md.
+name: ci
+on:
+  pull_request: { branches: [main] }
+  push: { branches: [main] }
+permissions: { contents: read }
+concurrency:
+  group: "ci-${{ github.ref }}"
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs: { run: "${{ steps.f.outputs.code }}" }
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - id: f
+        uses: dorny/paths-filter@0e4a8c6effa4802afeda77dc8d303f8176d7dfad # v3
+        with:
+          filters: |
+            code:
+              - 'apps/**'
+              - 'packages/**'
+              - 'package.json'
+              - 'package-lock.json'
+              - 'turbo.json'
+              - 'biome.json'
+              - 'tsconfig.base.json'
+              - '.github/workflows/ci.yml'
+
+  lint: # formatacao e lint em um passo so
+    needs: changes
+    if: needs.changes.outputs.run == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with: { node-version-file: .nvmrc, cache: npm }
+      - run: npm ci
+      - run: npx biome ci .
+
+  typecheck:
+    needs: changes
+    if: needs.changes.outputs.run == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with: { node-version-file: .nvmrc, cache: npm }
+      - run: npm ci
+      - run: npx turbo run typecheck
+
+  test:
+    needs: changes
+    if: needs.changes.outputs.run == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with: { node-version-file: .nvmrc, cache: npm }
+      - run: npm ci
+      - run: npx turbo run test
+
+  build:
+    needs: changes
+    if: needs.changes.outputs.run == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with: { node-version-file: .nvmrc, cache: npm }
+      - run: npm ci
+      - run: npx turbo run build
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with: { name: web-dist, path: apps/web/dist, if-no-files-found: ignore, retention-days: 7 }
+
+  ci-gate: # unico check obrigatorio: passa quando nada falhou (jobs pulados por falta de mudanca contam como ok)
+    name: ci-gate
+    if: always()
+    needs: [changes, lint, typecheck, test, build]
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          if [ "${{ contains(needs.*.result, 'failure') }}" = "true" ] || [ "${{ contains(needs.*.result, 'cancelled') }}" = "true" ]; then exit 1; fi

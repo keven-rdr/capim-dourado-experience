@@ -30,7 +30,7 @@ Leia antes de começar:
 1. **Fique na sua pasta.** Não edite arquivos de outro dono. Se precisar de mudança em `packages/shared` ou na raiz, descreva no relatório final o que falta e por quê, e contorne localmente.
 2. **Não rode `npm install` nem altere dependências.** Vários agentes trabalham na mesma árvore, e instalações simultâneas corrompem o `node_modules`. As dependências já estão instaladas. Se faltar alguma, relate.
 3. **Não faça commit, push nem troque de branch.** O orquestrador integra e versiona.
-4. **Rode só as verificações do seu pacote**, com `npx turbo run typecheck test build --filter=<pacote>` e `npx biome ci <sua pasta>`. Não rode `biome check --write` fora da sua pasta.
+4. **Rode só as verificações do seu pacote**, direto no workspace e sem Turborepo (o `packages/shared` já está compilado em `dist`): `npm run typecheck -w <pacote>`, `npm run test -w <pacote>`, `npm run build -w <pacote>` e `npx biome ci <sua pasta>`. Para formatar, `npx biome check --write <sua pasta>`, nunca fora dela.
 5. **O contrato manda.** App e API se entendem por `GameApi`, `ROUTES` e os tipos de `@cde/shared`. Não invente formato paralelo.
 6. **Relatório final**: o que foi entregue, o que foi verificado (com o resultado dos comandos), o que ficou de fora e as lacunas no contrato.
 
