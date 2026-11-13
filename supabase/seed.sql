@@ -98,7 +98,7 @@ insert into public.secrets (id, label, floor, sticker_id, active) values
 on conflict (id) do update set label = excluded.label, floor = excluded.floor, sticker_id = excluded.sticker_id, active = excluded.active;
 
 insert into public.mall_area (id, polygon, note, active) values
-  ('default', '[{"lat":-10.1742,"lng":-48.3352},{"lat":-10.1742,"lng":-48.3312},{"lat":-10.1778,"lng":-48.3312},{"lat":-10.1778,"lng":-48.3352}]', 'Polígono APROXIMADO do protótipo. Confirmar em campo e com o shopping.', true)
+  ('default', '[{"lat":-10.1808,"lng":-48.3502},{"lat":-10.1808,"lng":-48.347},{"lat":-10.1845,"lng":-48.347},{"lat":-10.1845,"lng":-48.3502}]', 'Polígono APROXIMADO do protótipo. Confirmar em campo e com o shopping.', true)
 on conflict (id) do update set polygon = excluded.polygon, note = excluded.note, active = excluded.active;
 
 commit;

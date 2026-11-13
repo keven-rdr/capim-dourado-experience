@@ -1,4 +1,4 @@
-import type { CreateProfileInput, Reward } from '@cde/shared';
+import { type CreateProfileInput, MALL_CENTER, type Reward } from '@cde/shared';
 import { createApp } from '../src/app.js';
 import { loadConfig } from '../src/config/env.js';
 import { buildDeps, type Services } from '../src/container.js';
@@ -16,8 +16,8 @@ export const OPEN_TIME = '2026-11-13T15:00:00Z';
 /** Sexta-feira, 13/11/2026, 5h em Palmas: shopping fechado. */
 export const CLOSED_TIME = '2026-11-13T08:00:00Z';
 
-/** Dentro do polígono aproximado do shopping. */
-export const INSIDE = { lat: -10.176, lng: -48.3332, accuracy: 20 };
+/** Centro do shopping (OpenStreetMap), dentro do polígono aproximado. */
+export const INSIDE = { ...MALL_CENTER, accuracy: 20 };
 /** Fora do polígono. */
 export const OUTSIDE = { lat: -10.2, lng: -48.3, accuracy: 20 };
 
