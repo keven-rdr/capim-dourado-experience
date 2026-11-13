@@ -11,7 +11,15 @@ export interface ChipProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 /** Chip selecionável (filtro, escolha rápida). */
-export function Chip({ selected = false, icon, count, className, children, type = 'button', ...rest }: ChipProps) {
+export function Chip({
+  selected = false,
+  icon,
+  count,
+  className,
+  children,
+  type = 'button',
+  ...rest
+}: ChipProps) {
   return (
     <button
       type={type}
@@ -58,7 +66,13 @@ export interface FilterChipsProps<T extends string> {
 }
 
 /** Grupo de chips com uma escolha por vez, em linha rolável. */
-export function FilterChips<T extends string>({ options, value, onChange, label, className }: FilterChipsProps<T>) {
+export function FilterChips<T extends string>({
+  options,
+  value,
+  onChange,
+  label,
+  className,
+}: FilterChipsProps<T>) {
   return (
     <fieldset className={cx('min-w-0', className)}>
       <legend className="sr-only">{label}</legend>

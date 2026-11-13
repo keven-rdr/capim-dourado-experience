@@ -1,5 +1,5 @@
-@import 'tailwindcss';
-@import '@cde/ui/styles.css';
+@import "tailwindcss";
+@import "@cde/ui/styles.css";
 
 /* Os componentes da @cde/ui ficam fora desta pasta: o Tailwind precisa ler as classes deles. */
-@source '../../../packages/ui/src';
+@source "../../../packages/ui/src";

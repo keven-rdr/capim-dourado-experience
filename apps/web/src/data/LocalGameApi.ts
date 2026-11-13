@@ -6,8 +6,9 @@ import {
   COMMON_STICKER_POOL,
   COUPONS,
   type Coupon,
-  CURRENT_SEASON,
   type CreateProfileInput,
+  CURRENT_SEASON,
+  checkInSchema,
   createProfileSchema,
   DAILY_LIMITS,
   DEMO_QR_PREFIX,
@@ -24,17 +25,18 @@ import {
   levelFor,
   localDate,
   MALL_AREA_APPROX,
+  MALL_CENTER,
   MAX_GPS_ACCURACY_M,
   MISSIONS,
   type Mission,
   type MissionWithProgress,
-  type PointEvent,
-  type PointsResult,
+  nextStreak,
   POINT_RULES,
   type PointAction,
+  type PointEvent,
+  type PointsResult,
   type Profile,
   pointInPolygon,
-  polygonCenter,
   type QrKind,
   type RedeemInput,
   type RedeemResult,
@@ -44,9 +46,9 @@ import {
   type ScanQrInput,
   type ScanResult,
   SECRETS,
+  type SeasonId,
   STICKERS,
   STORES,
-  type SeasonId,
   type Store,
   scanQrSchema,
   TICKET_COST,
@@ -55,8 +57,6 @@ import {
   type UpdateProfileInput,
   updateProfileSchema,
   type Wallet,
-  checkInSchema,
-  nextStreak,
 } from '@cde/shared';
 import { GameApiError } from './errors';
 
@@ -153,7 +153,10 @@ export function parseDemoToken(token: string): { kind: QrKind; id: string } | nu
   const cut = rest.indexOf(':');
   if (cut <= 0) return null;
   const kind = rest.slice(0, cut).toLowerCase();
-  const id = rest.slice(cut + 1).trim().toLowerCase();
+  const id = rest
+    .slice(cut + 1)
+    .trim()
+    .toLowerCase();
   if (!id) return null;
   if (kind !== 'checkin' && kind !== 'store' && kind !== 'secret' && kind !== 'clue') return null;
   return { kind, id };
@@ -341,7 +344,12 @@ export class LocalGameApi implements GameApi {
       if (this.missionProgress(state, mission) < mission.target) continue;
       state.claimed.push(key);
       const action = mission.kind === 'season' ? 'season_mission' : 'mission';
-      const amount = this.grant(state, action, `Missão concluída: ${mission.title}`, mission.reward);
+      const amount = this.grant(
+        state,
+        action,
+        `Missão concluída: ${mission.title}`,
+        mission.reward,
+      );
       bonus.push({ ...amount, stickerId: this.giveSticker(state, mission.reward.stickerId) });
     }
     return bonus;
@@ -370,7 +378,8 @@ export class LocalGameApi implements GameApi {
 
   async createProfile(input: CreateProfileInput): Promise<Profile> {
     const parsed = createProfileSchema.safeParse(input);
-    if (!parsed.success) throw new GameApiError('validation', 'Dados do perfil inválidos.', parsed.error.issues);
+    if (!parsed.success)
+      throw new GameApiError('validation', 'Dados do perfil inválidos.', parsed.error.issues);
     const state = EMPTY_STATE();
     state.profile = {
       id: this.id(),
@@ -386,10 +395,13 @@ export class LocalGameApi implements GameApi {
 
   async updateProfile(input: UpdateProfileInput): Promise<Profile> {
     const parsed = updateProfileSchema.safeParse(input);
-    if (!parsed.success) throw new GameApiError('validation', 'Dados do perfil inválidos.', parsed.error.issues);
+    if (!parsed.success)
+      throw new GameApiError('validation', 'Dados do perfil inválidos.', parsed.error.issues);
     const state = this.load();
     const profile = this.requireProfile(state);
-    const clean = Object.fromEntries(Object.entries(parsed.data).filter(([, v]) => v !== undefined));
+    const clean = Object.fromEntries(
+      Object.entries(parsed.data).filter(([, v]) => v !== undefined),
+    );
     state.profile = { ...profile, ...clean };
     this.save(state);
     return { ...state.profile };
@@ -421,19 +433,27 @@ export class LocalGameApi implements GameApi {
     log.dailyOpen = true;
     const amount = this.grantRule(state, 'daily_open');
     const { milestone, bonus } = this.touch(state);
-    const result = this.result(state, xpBefore, POINT_RULES.daily_open.label, [amount, ...bonus], milestone);
+    const result = this.result(
+      state,
+      xpBefore,
+      POINT_RULES.daily_open.label,
+      [amount, ...bonus],
+      milestone,
+    );
     this.save(state);
     return result;
   }
 
   async checkIn(input: CheckInInput): Promise<CheckInResult> {
     const parsed = checkInSchema.safeParse(input);
-    if (!parsed.success) throw new GameApiError('validation', 'Localização inválida.', parsed.error.issues);
+    if (!parsed.success)
+      throw new GameApiError('validation', 'Localização inválida.', parsed.error.issues);
     const state = this.load();
     const profile = this.requireProfile(state);
     const log = this.day(state, this.today());
     if (log.checkIn) throw new GameApiError('already_checked_in', 'Check-in de hoje já feito.');
-    if (!this.mallOpen()) throw new GameApiError('mall_closed', 'Fora do horário de funcionamento.');
+    if (!this.mallOpen())
+      throw new GameApiError('mall_closed', 'Fora do horário de funcionamento.');
     if (parsed.data.accuracy > MAX_GPS_ACCURACY_M) {
       throw new GameApiError('low_accuracy', 'Precisão do GPS insuficiente.', {
         accuracy: parsed.data.accuracy,
@@ -441,7 +461,7 @@ export class LocalGameApi implements GameApi {
       });
     }
     const point = { lat: parsed.data.lat, lng: parsed.data.lng };
-    const distance = Math.round(distanceM(point, polygonCenter(MALL_AREA_APPROX)));
+    const distance = Math.round(distanceM(point, MALL_CENTER));
     if (!pointInPolygon(point, MALL_AREA_APPROX)) {
       throw new GameApiError('outside_area', 'Fora da área do shopping.', { distanceM: distance });
     }
@@ -474,10 +494,17 @@ export class LocalGameApi implements GameApi {
     const log = this.day(state, date);
     const xpBefore = profile.wallet.xp;
 
-    const resolve = (): { kind: QrKind; floor: Floor; label: string; parts: Reward[]; extra: Partial<ScanResult> } => {
+    const resolve = (): {
+      kind: QrKind;
+      floor: Floor;
+      label: string;
+      parts: Reward[];
+      extra: Partial<ScanResult>;
+    } => {
       switch (token.kind) {
         case 'checkin': {
-          if (log.checkIn) throw new GameApiError('already_checked_in', 'Check-in de hoje já feito.');
+          if (log.checkIn)
+            throw new GameApiError('already_checked_in', 'Check-in de hoje já feito.');
           this.ensureOpen();
           log.checkIn = true;
           const amount = this.grantRule(state, 'checkin');
@@ -539,13 +566,20 @@ export class LocalGameApi implements GameApi {
           const solved = state.hunts[hunt.id] ?? 0;
           if (order <= solved) throw new GameApiError('qr_already_used', 'Pista já resolvida.');
           if (order !== solved + 1) {
-            throw new GameApiError('clue_out_of_order', 'Pista fora de ordem.', { expected: solved + 1 });
+            throw new GameApiError('clue_out_of_order', 'Pista fora de ordem.', {
+              expected: solved + 1,
+            });
           }
           state.hunts[hunt.id] = order;
           const parts: Reward[] = [this.grantRule(state, 'hunt_clue')];
           let stickerId: string | undefined;
           if (order === hunt.clues.length) {
-            const final = this.grant(state, 'hunt_complete', `Baú final: ${hunt.title}`, hunt.finalReward);
+            const final = this.grant(
+              state,
+              'hunt_complete',
+              `Baú final: ${hunt.title}`,
+              hunt.finalReward,
+            );
             stickerId = this.giveSticker(state, hunt.finalReward.stickerId);
             parts.push({ ...final, stickerId });
           }
@@ -565,7 +599,13 @@ export class LocalGameApi implements GameApi {
     const { milestone, bonus } = this.touch(state);
     const missions = this.settleMissions(state);
     const missionSticker = missions.find((m) => m.stickerId)?.stickerId;
-    const result = this.result(state, xpBefore, outcome.label, [...outcome.parts, ...bonus, ...missions], milestone);
+    const result = this.result(
+      state,
+      xpBefore,
+      outcome.label,
+      [...outcome.parts, ...bonus, ...missions],
+      milestone,
+    );
     let hunt: HuntState | undefined;
     if (outcome.kind === 'clue') {
       const id = token.id.slice(0, token.id.lastIndexOf(':'));
@@ -577,13 +617,15 @@ export class LocalGameApi implements GameApi {
       ...result,
       kind: outcome.kind,
       ...outcome.extra,
-      stickerId: outcome.extra.stickerId ?? missionSticker ?? bonus.find((b) => b.stickerId)?.stickerId,
+      stickerId:
+        outcome.extra.stickerId ?? missionSticker ?? bonus.find((b) => b.stickerId)?.stickerId,
       ...(hunt ? { hunt } : {}),
     };
   }
 
   private ensureOpen(): void {
-    if (!this.mallOpen()) throw new GameApiError('mall_closed', 'Fora do horário de funcionamento.');
+    if (!this.mallOpen())
+      throw new GameApiError('mall_closed', 'Fora do horário de funcionamento.');
   }
 
   async listMissions(): Promise<MissionWithProgress[]> {
@@ -648,7 +690,10 @@ export class LocalGameApi implements GameApi {
 
   private code(): string {
     const pick = (n: number) =>
-      Array.from({ length: n }, () => CODE_ALPHABET[Math.floor(this.random() * CODE_ALPHABET.length)]).join('');
+      Array.from(
+        { length: n },
+        () => CODE_ALPHABET[Math.floor(this.random() * CODE_ALPHABET.length)],
+      ).join('');
     return `CDE-${pick(4)}-${pick(2)}`;
   }
 
@@ -686,7 +731,10 @@ export class LocalGameApi implements GameApi {
     const owned = new Set(this.load().stickers);
     return {
       seasonId,
-      stickers: STICKERS.filter((s) => s.seasonId === seasonId).map((s) => ({ ...s, owned: owned.has(s.id) })),
+      stickers: STICKERS.filter((s) => s.seasonId === seasonId).map((s) => ({
+        ...s,
+        owned: owned.has(s.id),
+      })),
     };
   }
 

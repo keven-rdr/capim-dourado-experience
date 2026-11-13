@@ -66,7 +66,11 @@ export function XpBar({
           className="h-full border-r-[3px] border-line bg-accent"
           initial={{ width: `${fromPct}%` }}
           animate={{ width: `${pct}%` }}
-          transition={{ duration: fromXp === undefined ? 0 : 1.1, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
+          transition={{
+            duration: fromXp === undefined ? 0 : 1.1,
+            ease: [0.22, 1, 0.36, 1],
+            delay: 0.2,
+          }}
         />
         <span
           aria-hidden="true"

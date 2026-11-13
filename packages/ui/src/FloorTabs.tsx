@@ -19,7 +19,13 @@ export interface FloorTabsProps<T extends string = string> {
 }
 
 /** Abas dos pavimentos, como "fases" do mapa. Setas do teclado trocam de aba. */
-export function FloorTabs<T extends string>({ floors, value, onChange, panelId, className }: FloorTabsProps<T>) {
+export function FloorTabs<T extends string>({
+  floors,
+  value,
+  onChange,
+  panelId,
+  className,
+}: FloorTabsProps<T>) {
   const refs = useRef<Array<HTMLButtonElement | null>>([]);
 
   function onKey(event: KeyboardEvent<HTMLButtonElement>, index: number) {
@@ -56,7 +62,9 @@ export function FloorTabs<T extends string>({ floors, value, onChange, panelId, 
               active ? 'bg-ink text-bg shadow-hard-sm -rotate-1' : 'bg-surface text-ink',
             )}
           >
-            <span className="font-mono text-xs font-bold opacity-80">{String(index + 1).padStart(2, '0')}</span>
+            <span className="font-mono text-xs font-bold opacity-80">
+              {String(index + 1).padStart(2, '0')}
+            </span>
             <span className="font-display text-sm font-extrabold leading-tight">{floor.short}</span>
           </button>
         );

@@ -35,7 +35,10 @@ export function isApiErrorBody(value: unknown): value is ApiErrorBody {
 /** Mensagens que nunca culpam quem está jogando. */
 const FRIENDLY: Record<AppErrorCode, { title: string; message: string }> = {
   unauthorized: { title: 'Sessão expirou', message: 'Vamos entrar de novo rapidinho.' },
-  profile_not_found: { title: 'Perfil não encontrado', message: 'Bora criar o seu, leva 20 segundos.' },
+  profile_not_found: {
+    title: 'Perfil não encontrado',
+    message: 'Bora criar o seu, leva 20 segundos.',
+  },
   validation: { title: 'Algo não fechou', message: 'Confere os campos e tenta mais uma vez.' },
   outside_area: {
     title: 'Ainda não te vimos por aqui',
@@ -61,7 +64,10 @@ const FRIENDLY: Record<AppErrorCode, { title: string; message: string }> = {
     title: 'Esse código não abriu nada',
     message: 'Pode ser um QR de outra coisa. Tenta outro ou digite o código impresso.',
   },
-  qr_expired: { title: 'Esse QR já trocou', message: 'Os códigos mudam de tempos em tempos. Leia o da hora.' },
+  qr_expired: {
+    title: 'Esse QR já trocou',
+    message: 'Os códigos mudam de tempos em tempos. Leia o da hora.',
+  },
   qr_already_used: {
     title: 'Esse você já achou',
     message: 'Ele já está na sua coleção. Que tal procurar o próximo?',
@@ -82,7 +88,11 @@ const FRIENDLY: Record<AppErrorCode, { title: string; message: string }> = {
   },
 };
 
-export function friendlyError(error: unknown): { code: AppErrorCode; title: string; message: string } {
+export function friendlyError(error: unknown): {
+  code: AppErrorCode;
+  title: string;
+  message: string;
+} {
   const code: AppErrorCode = isGameApiError(error) ? error.code : 'network';
   return { code, ...FRIENDLY[code] };
 }

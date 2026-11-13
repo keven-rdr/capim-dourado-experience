@@ -43,13 +43,21 @@ export function StickerArt({ motif, silhouette = false, size = 84 }: StickerArtP
       aria-hidden="true"
       className={silhouette ? 'opacity-25' : undefined}
     >
-      <g stroke={silhouette ? 'var(--cde-ink)' : L} strokeWidth="4.5" strokeLinejoin="round" strokeLinecap="round">
+      <g
+        stroke={silhouette ? 'var(--cde-ink)' : L}
+        strokeWidth="4.5"
+        strokeLinejoin="round"
+        strokeLinecap="round"
+      >
         {motif === 'gift' && (
           <>
             <rect x="18" y="40" width="64" height="46" rx="4" fill={fill('--cde-primary')} />
             <rect x="12" y="28" width="76" height="16" rx="3" fill={fill('--cde-primary')} />
             <path d="M50 28v58" stroke={fill('--cde-gold')} strokeWidth="9" />
-            <path d="M50 28c-10-18-28-14-22-4 4 6 22 4 22 4Zm0 0c10-18 28-14 22-4-4 6-22 4-22 4Z" fill={fill('--cde-gold')} />
+            <path
+              d="M50 28c-10-18-28-14-22-4 4 6 22 4 22 4Zm0 0c10-18 28-14 22-4-4 6-22 4-22 4Z"
+              fill={fill('--cde-gold')}
+            />
           </>
         )}
         {motif === 'tree' && (
@@ -62,25 +70,37 @@ export function StickerArt({ motif, silhouette = false, size = 84 }: StickerArtP
         )}
         {motif === 'cookie' && (
           <>
-            <path d="M50 12a12 12 0 0 1 9 20h14a6 6 0 0 1 0 12H62l8 34a6 6 0 0 1-11 4L50 64l-9 18a6 6 0 0 1-11-4l8-34H27a6 6 0 0 1 0-12h14a12 12 0 0 1 9-20Z" fill={fill('--cde-gold-deep')} />
+            <path
+              d="M50 12a12 12 0 0 1 9 20h14a6 6 0 0 1 0 12H62l8 34a6 6 0 0 1-11 4L50 64l-9 18a6 6 0 0 1-11-4l8-34H27a6 6 0 0 1 0-12h14a12 12 0 0 1 9-20Z"
+              fill={fill('--cde-gold-deep')}
+            />
             <circle cx="46" cy="23" r="2" fill={L} />
             <circle cx="54" cy="23" r="2" fill={L} />
             <path d="M44 48h12M45 56h10" stroke={fill('--cde-surface')} />
           </>
         )}
         {motif === 'star' && (
-          <path d="m50 8 11 26 28 2-21 18 7 28-25-15-25 15 7-28-21-18 28-2z" fill={fill('--cde-gold')} />
+          <path
+            d="m50 8 11 26 28 2-21 18 7 28-25-15-25 15 7-28-21-18 28-2z"
+            fill={fill('--cde-gold')}
+          />
         )}
         {motif === 'bow' && (
           <>
             <path d="M50 46 18 28v40zM50 46l32-18v40z" fill={fill('--cde-accent')} />
-            <path d="m44 50-12 34 10-4 6 8 4-36M56 50l12 34-10-4-6 8-4-36" fill={fill('--cde-accent')} />
+            <path
+              d="m44 50-12 34 10-4 6 8 4-36M56 50l12 34-10-4-6 8-4-36"
+              fill={fill('--cde-accent')}
+            />
             <rect x="42" y="38" width="16" height="16" rx="4" fill={fill('--cde-gold')} />
           </>
         )}
         {motif === 'bell' && (
           <>
-            <path d="M50 14c16 0 24 12 24 30v18l8 10H18l8-10V44c0-18 8-30 24-30Z" fill={fill('--cde-gold')} />
+            <path
+              d="M50 14c16 0 24 12 24 30v18l8 10H18l8-10V44c0-18 8-30 24-30Z"
+              fill={fill('--cde-gold')}
+            />
             <circle cx="50" cy="80" r="7" fill={fill('--cde-primary')} />
             <path d="M34 60h32" stroke={fill('--cde-gold-deep')} />
           </>
@@ -104,7 +124,14 @@ export function StickerArt({ motif, silhouette = false, size = 84 }: StickerArtP
         )}
         {motif === 'wreath' && (
           <>
-            <circle cx="50" cy="50" r="32" fill="none" stroke={fill('--cde-gold')} strokeWidth="16" />
+            <circle
+              cx="50"
+              cy="50"
+              r="32"
+              fill="none"
+              stroke={fill('--cde-gold')}
+              strokeWidth="16"
+            />
             <circle cx="50" cy="50" r="40" fill="none" />
             <circle cx="50" cy="50" r="24" fill="none" />
             <path d="M28 34l8 6M70 32l-6 8M30 68l8-4M70 68l-8-4" stroke={fill('--cde-gold-deep')} />
@@ -113,8 +140,16 @@ export function StickerArt({ motif, silhouette = false, size = 84 }: StickerArtP
         )}
         {motif === 'egg' && (
           <>
-            <path d="M50 10c18 0 30 30 30 48 0 18-13 30-30 30S20 76 20 58c0-18 12-48 30-48Z" fill={fill('--cde-primary')} />
-            <path d="M22 50c10-6 18 6 28 0s18-6 28 0" fill="none" stroke={fill('--cde-secondary')} strokeWidth="7" />
+            <path
+              d="M50 10c18 0 30 30 30 48 0 18-13 30-30 30S20 76 20 58c0-18 12-48 30-48Z"
+              fill={fill('--cde-primary')}
+            />
+            <path
+              d="M22 50c10-6 18 6 28 0s18-6 28 0"
+              fill="none"
+              stroke={fill('--cde-secondary')}
+              strokeWidth="7"
+            />
             <circle cx="40" cy="70" r="4" fill={fill('--cde-accent')} />
             <circle cx="60" cy="72" r="4" fill={fill('--cde-accent')} />
           </>
@@ -136,7 +171,10 @@ export function StickerArt({ motif, silhouette = false, size = 84 }: StickerArtP
         )}
         {motif === 'monster' && (
           <>
-            <path d="M22 86V46c0-18 12-30 28-30s28 12 28 30v40l-9-8-9 8-10-8-10 8-9-8z" fill={fill('--cde-secondary')} />
+            <path
+              d="M22 86V46c0-18 12-30 28-30s28 12 28 30v40l-9-8-9 8-10-8-10 8-9-8z"
+              fill={fill('--cde-secondary')}
+            />
             <circle cx="40" cy="44" r="8" fill={fill('--cde-surface')} />
             <circle cx="62" cy="44" r="6" fill={fill('--cde-surface')} />
             <circle cx="41" cy="45" r="3" fill={L} />

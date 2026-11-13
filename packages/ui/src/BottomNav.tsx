@@ -37,11 +37,19 @@ function PlainLink({ href, children, ...rest }: NavLinkLikeProps) {
 }
 
 /** Navegação inferior com cinco itens; o item central pode ganhar destaque. */
-export function BottomNav({ items, activeId, linkAs: Link = PlainLink, className }: BottomNavProps) {
+export function BottomNav({
+  items,
+  activeId,
+  linkAs: Link = PlainLink,
+  className,
+}: BottomNavProps) {
   return (
     <nav
       aria-label="Navegação principal"
-      className={cx('sticky bottom-0 z-30 border-t-[3px] border-line bg-surface px-2 pb-[max(8px,env(safe-area-inset-bottom))] pt-1.5', className)}
+      className={cx(
+        'sticky bottom-0 z-30 border-t-[3px] border-line bg-surface px-2 pb-[max(8px,env(safe-area-inset-bottom))] pt-1.5',
+        className,
+      )}
     >
       <ul className="flex items-end justify-between">
         {items.map((item) => {
@@ -80,7 +88,12 @@ export function BottomNav({ items, activeId, linkAs: Link = PlainLink, className
                 >
                   <Icon name={item.icon} size={22} />
                 </span>
-                <span className={cx('font-display text-xs', active ? 'font-extrabold' : 'font-semibold')}>
+                <span
+                  className={cx(
+                    'font-display text-xs',
+                    active ? 'font-extrabold' : 'font-semibold',
+                  )}
+                >
                   {item.label}
                 </span>
               </Link>

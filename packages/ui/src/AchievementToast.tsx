@@ -56,7 +56,9 @@ export function AchievementToast({
         className,
       )}
     >
-      <span className={cx('grid size-11 shrink-0 place-items-center rounded-sm chunk-thin', meta.tone)}>
+      <span
+        className={cx('grid size-11 shrink-0 place-items-center rounded-sm chunk-thin', meta.tone)}
+      >
         <Icon name={meta.icon} size={24} />
       </span>
       <div className="min-w-0 flex-1 py-0.5">

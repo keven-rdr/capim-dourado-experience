@@ -12,7 +12,11 @@ export interface SystemNoteProps {
  * Anotação de uma linha explicando o que o sistema está fazendo.
  * Pensada para a apresentação: fica discreta, em fonte mono e borda tracejada.
  */
-export function SystemNote({ label = 'o que o sistema faz', className, children }: SystemNoteProps) {
+export function SystemNote({
+  label = 'o que o sistema faz',
+  className,
+  children,
+}: SystemNoteProps) {
   return (
     <p
       className={cx(

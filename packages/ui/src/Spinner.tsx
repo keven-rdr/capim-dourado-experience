@@ -19,8 +19,22 @@ export function Spinner({ size = 20, label = 'Carregando', className }: SpinnerP
         className="animate-spin-slow"
         aria-hidden="true"
       >
-        <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" strokeOpacity="0.25" strokeWidth="4" />
-        <path d="M12 3a9 9 0 0 1 9 9" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
+        <circle
+          cx="12"
+          cy="12"
+          r="9"
+          fill="none"
+          stroke="currentColor"
+          strokeOpacity="0.25"
+          strokeWidth="4"
+        />
+        <path
+          d="M12 3a9 9 0 0 1 9 9"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="4"
+          strokeLinecap="round"
+        />
       </svg>
     </span>
   );

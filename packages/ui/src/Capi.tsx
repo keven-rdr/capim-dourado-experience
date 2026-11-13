@@ -83,11 +83,25 @@ export function Capi({
           <g>
             <g transform="rotate(-14 74 40)">
               <ellipse cx="74" cy="6" rx="15" ry="36" fill="var(--cde-costume-trim)" />
-              <ellipse cx="74" cy="8" rx="6.5" ry="24" fill="var(--cde-costume-main)" strokeWidth="0" />
+              <ellipse
+                cx="74"
+                cy="8"
+                rx="6.5"
+                ry="24"
+                fill="var(--cde-costume-main)"
+                strokeWidth="0"
+              />
             </g>
             <g transform="rotate(12 126 40)">
               <ellipse cx="126" cy="6" rx="15" ry="36" fill="var(--cde-costume-trim)" />
-              <ellipse cx="126" cy="8" rx="6.5" ry="24" fill="var(--cde-costume-main)" strokeWidth="0" />
+              <ellipse
+                cx="126"
+                cy="8"
+                rx="6.5"
+                ry="24"
+                fill="var(--cde-costume-main)"
+                strokeWidth="0"
+              />
             </g>
           </g>
         )}
@@ -95,8 +109,24 @@ export function Capi({
         {/* braços levantados (comemorando) */}
         {cheer && (
           <>
-            <rect x="20" y="96" width="22" height="52" rx="11" fill={c.fur} transform="rotate(-30 31 122)" />
-            <rect x="158" y="96" width="22" height="52" rx="11" fill={c.fur} transform="rotate(30 169 122)" />
+            <rect
+              x="20"
+              y="96"
+              width="22"
+              height="52"
+              rx="11"
+              fill={c.fur}
+              transform="rotate(-30 31 122)"
+            />
+            <rect
+              x="158"
+              y="96"
+              width="22"
+              height="52"
+              rx="11"
+              fill={c.fur}
+              transform="rotate(30 169 122)"
+            />
           </>
         )}
 
@@ -106,7 +136,14 @@ export function Capi({
         {!cheer && (
           <>
             <ellipse cx="70" cy="176" rx="11" ry="17" fill={c.fur} transform="rotate(16 70 176)" />
-            <ellipse cx="130" cy="176" rx="11" ry="17" fill={c.fur} transform="rotate(-16 130 176)" />
+            <ellipse
+              cx="130"
+              cy="176"
+              rx="11"
+              ry="17"
+              fill={c.fur}
+              transform="rotate(-16 130 176)"
+            />
           </>
         )}
 
@@ -115,7 +152,11 @@ export function Capi({
         <ellipse cx="138" cy="50" rx="13" ry="11" fill={c.dark} />
 
         {/* cabeça e focinho: a cara quadradona de capivara */}
-        <g transform={expression === 'curiosa' ? 'rotate(-6 100 96)' : asleep ? 'rotate(5 100 96)' : undefined}>
+        <g
+          transform={
+            expression === 'curiosa' ? 'rotate(-6 100 96)' : asleep ? 'rotate(5 100 96)' : undefined
+          }
+        >
           <rect x="44" y="44" width="112" height="90" rx="40" fill={c.fur} />
           <rect x="64" y="92" width="72" height="46" rx="21" fill={c.snout} />
           <ellipse cx="87" cy="106" rx="4.5" ry="3.2" fill={LINE} strokeWidth="0" />
@@ -124,8 +165,24 @@ export function Capi({
           {/* bochechas */}
           {!asleep && (
             <>
-              <ellipse cx="58" cy="100" rx="8" ry="5" fill="#ef8a7a" opacity="0.6" strokeWidth="0" />
-              <ellipse cx="142" cy="100" rx="8" ry="5" fill="#ef8a7a" opacity="0.6" strokeWidth="0" />
+              <ellipse
+                cx="58"
+                cy="100"
+                rx="8"
+                ry="5"
+                fill="#ef8a7a"
+                opacity="0.6"
+                strokeWidth="0"
+              />
+              <ellipse
+                cx="142"
+                cy="100"
+                rx="8"
+                ry="5"
+                fill="#ef8a7a"
+                opacity="0.6"
+                strokeWidth="0"
+              />
             </>
           )}
 
@@ -172,16 +229,41 @@ export function Capi({
 
         {costume && season === 'natal' && (
           <g>
-            <path d="M50 50 C56 12 112 -2 144 16 C162 26 172 44 176 64 L150 42 Z" fill="var(--cde-costume-main)" />
-            <rect x="40" y="42" width="120" height="20" rx="10" fill="var(--cde-costume-trim)" transform="rotate(-6 100 52)" />
+            <path
+              d="M50 50 C56 12 112 -2 144 16 C162 26 172 44 176 64 L150 42 Z"
+              fill="var(--cde-costume-main)"
+            />
+            <rect
+              x="40"
+              y="42"
+              width="120"
+              height="20"
+              rx="10"
+              fill="var(--cde-costume-trim)"
+              transform="rotate(-6 100 52)"
+            />
             <circle cx="176" cy="68" r="11" fill="var(--cde-costume-trim)" />
           </g>
         )}
         {costume && season === 'halloween' && (
           <g>
-            <path d="M64 48 L94 -12 Q102 -22 110 -12 L126 4 Q114 0 112 8 L138 44 Z" fill="var(--cde-costume-main)" />
-            <ellipse cx="100" cy="48" rx="70" ry="12" fill="var(--cde-costume-main)" transform="rotate(-5 100 48)" />
-            <path d="M70 38 Q100 30 132 36 L134 44 Q100 38 68 46 Z" fill="var(--cde-costume-trim)" strokeWidth="3.5" />
+            <path
+              d="M64 48 L94 -12 Q102 -22 110 -12 L126 4 Q114 0 112 8 L138 44 Z"
+              fill="var(--cde-costume-main)"
+            />
+            <ellipse
+              cx="100"
+              cy="48"
+              rx="70"
+              ry="12"
+              fill="var(--cde-costume-main)"
+              transform="rotate(-5 100 48)"
+            />
+            <path
+              d="M70 38 Q100 30 132 36 L134 44 Q100 38 68 46 Z"
+              fill="var(--cde-costume-trim)"
+              strokeWidth="3.5"
+            />
           </g>
         )}
         {costume && season === 'pascoa' && (

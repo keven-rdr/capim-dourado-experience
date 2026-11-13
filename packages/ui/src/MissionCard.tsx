@@ -100,7 +100,9 @@ export function MissionCard({
           {title}
         </h3>
         {description && !compact && (
-          <p className={cx('mt-1 text-sm text-ink-soft', featured && 'max-w-[26ch]')}>{description}</p>
+          <p className={cx('mt-1 text-sm text-ink-soft', featured && 'max-w-[26ch]')}>
+            {description}
+          </p>
         )}
       </div>
 
@@ -146,7 +148,11 @@ export function MissionCard({
 
   if (onClick) {
     return (
-      <button type="button" onClick={onClick} className={cx(shell, 'focus-ring pressable cursor-pointer')}>
+      <button
+        type="button"
+        onClick={onClick}
+        className={cx(shell, 'focus-ring pressable cursor-pointer')}
+      >
         {body}
       </button>
     );
@@ -154,7 +160,15 @@ export function MissionCard({
   return <article className={shell}>{body}</article>;
 }
 
-function Progress({ current, target, completed }: { current: number; target: number; completed: boolean }) {
+function Progress({
+  current,
+  target,
+  completed,
+}: {
+  current: number;
+  target: number;
+  completed: boolean;
+}) {
   if (target <= 7) {
     return (
       <ol className="mt-3 flex gap-1.5" aria-hidden="true">

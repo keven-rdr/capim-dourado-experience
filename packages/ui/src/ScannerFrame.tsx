@@ -33,7 +33,9 @@ export function ScannerFrame({ state = 'idle', message, children, className }: S
           state === 'error' && 'motion-safe:animate-shake',
         )}
       >
-        <div className="absolute inset-0 [&_video]:h-full [&_video]:w-full [&_video]:object-cover">{children}</div>
+        <div className="absolute inset-0 [&_video]:h-full [&_video]:w-full [&_video]:object-cover">
+          {children}
+        </div>
         {state === 'idle' && !children && (
           <div className="absolute inset-0 grid place-items-center text-white/70">
             <Icon name="qr" size={72} strokeWidth={1.6} />

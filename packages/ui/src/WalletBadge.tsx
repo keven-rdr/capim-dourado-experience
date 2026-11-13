@@ -17,7 +17,12 @@ export interface WalletBadgeProps {
 const META: Record<WalletKind, { label: string; icon: IconName; tone: string; short: string }> = {
   xp: { label: 'XP', short: 'XP', icon: 'star', tone: 'bg-accent text-on-accent' },
   coins: { label: 'Capicoins', short: 'moedas', icon: 'coin', tone: 'bg-gold text-on-gold' },
-  tickets: { label: 'Bilhetes', short: 'bilhetes', icon: 'ticket', tone: 'bg-primary text-on-primary' },
+  tickets: {
+    label: 'Bilhetes',
+    short: 'bilhetes',
+    icon: 'ticket',
+    tone: 'bg-primary text-on-primary',
+  },
 };
 
 /** Saldo de um tipo de ponto da carteira. */
@@ -41,9 +46,13 @@ export function WalletBadge({ kind, value, variant = 'pill', hint, className }: 
         'inline-flex min-h-9 items-center gap-1.5 rounded-full bg-surface py-0.5 pl-0.5 pr-2.5 chunk-thin',
         className,
       )}
+      role="img"
       aria-label={`${value} ${meta.short}`}
     >
-      <span className={cx('grid size-7 place-items-center rounded-full', meta.tone)} aria-hidden="true">
+      <span
+        className={cx('grid size-7 place-items-center rounded-full', meta.tone)}
+        aria-hidden="true"
+      >
         <Icon name={meta.icon} size={16} strokeWidth={2.8} />
       </span>
       <span className="font-mono text-sm font-extrabold tabular-nums" aria-hidden="true">

@@ -23,13 +23,25 @@ const TONE: Record<StatusRingState, string> = {
 /** Anel de status do check-in: pulsa enquanto espera, gira enquanto verifica. */
 export function StatusRing({ state = 'idle', size = 220, children, className }: StatusRingProps) {
   return (
-    <div className={cx('relative grid place-items-center', className)} style={{ width: size, height: size }}>
+    <div
+      className={cx('relative grid place-items-center', className)}
+      style={{ width: size, height: size }}
+    >
       {(state === 'idle' || state === 'success') && (
         <>
-          <span aria-hidden="true" className={cx('absolute inset-0 animate-pulse-ring rounded-full opacity-60', TONE[state])} />
           <span
             aria-hidden="true"
-            className={cx('absolute inset-0 animate-pulse-ring rounded-full opacity-60 [animation-delay:0.9s]', TONE[state])}
+            className={cx(
+              'absolute inset-0 animate-pulse-ring rounded-full opacity-60',
+              TONE[state],
+            )}
+          />
+          <span
+            aria-hidden="true"
+            className={cx(
+              'absolute inset-0 animate-pulse-ring rounded-full opacity-60 [animation-delay:0.9s]',
+              TONE[state],
+            )}
           />
         </>
       )}

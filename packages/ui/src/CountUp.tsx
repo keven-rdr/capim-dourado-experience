@@ -15,7 +15,14 @@ export interface CountUpProps {
 }
 
 /** Número que sobe como contador. Com "reduzir movimento", mostra o valor final direto. */
-export function CountUp({ to, from = 0, duration = 0.9, prefix = '', suffix = '', className }: CountUpProps) {
+export function CountUp({
+  to,
+  from = 0,
+  duration = 0.9,
+  prefix = '',
+  suffix = '',
+  className,
+}: CountUpProps) {
   const reduce = useReducedMotion();
   const [value, setValue] = useState(reduce ? to : from);
 

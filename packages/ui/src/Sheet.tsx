@@ -19,10 +19,20 @@ export interface SheetProps {
   children?: ReactNode;
 }
 
-const FOCUSABLE = 'button:not([disabled]), [href], input:not([disabled]), select, textarea, [tabindex]:not([tabindex="-1"])';
+const FOCUSABLE =
+  'button:not([disabled]), [href], input:not([disabled]), select, textarea, [tabindex]:not([tabindex="-1"])';
 
 /** Folha que sobe da base da tela. Fecha com Esc, com o fundo ou com o botão. */
-export function Sheet({ open, onClose, title, description, footer, hideClose, className, children }: SheetProps) {
+export function Sheet({
+  open,
+  onClose,
+  title,
+  description,
+  footer,
+  hideClose,
+  className,
+  children,
+}: SheetProps) {
   const target = usePortalTarget();
   const titleId = useId();
   const descId = useId();
@@ -89,7 +99,10 @@ export function Sheet({ open, onClose, title, description, footer, hideClose, cl
               className,
             )}
           >
-            <span aria-hidden="true" className="mx-auto mb-3 block h-1.5 w-12 rounded-full bg-ink/30" />
+            <span
+              aria-hidden="true"
+              className="mx-auto mb-3 block h-1.5 w-12 rounded-full bg-ink/30"
+            />
             <div className="mb-3 flex items-start justify-between gap-3">
               <div>
                 <h2 id={titleId} className="font-display text-2xl font-extrabold leading-tight">

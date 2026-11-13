@@ -67,7 +67,11 @@ export function CouponTicket({
         aria-label={`Cupom ${title}, ${storeName}`}
         className={cx(
           'cde-ticket relative flex min-h-36 rounded-md chunk',
-          muted ? 'bg-surface-2 text-ink-soft' : state === 'redeemed' ? 'bg-paper text-on-paper' : 'bg-surface text-ink',
+          muted
+            ? 'bg-surface-2 text-ink-soft'
+            : state === 'redeemed'
+              ? 'bg-paper text-on-paper'
+              : 'bg-surface text-ink',
         )}
       >
         <span aria-hidden="true" className="cde-ticket-notch" data-edge="top" />
@@ -84,9 +88,7 @@ export function CouponTicket({
 
           {state === 'redeemed' && code ? (
             <div className="mt-1">
-              <p className="font-mono text-2xl font-extrabold tracking-[0.12em]" aria-label={`Código ${code.split('').join(' ')}`}>
-                {code}
-              </p>
+              <p className="font-mono text-2xl font-extrabold tracking-[0.12em]">{code}</p>
               {deadlineLabel && (
                 <p className="flex items-center gap-1 text-xs font-semibold">
                   <Icon name="clock" size={14} /> {deadlineLabel}
@@ -129,7 +131,9 @@ export function CouponTicket({
 
         <div className="cde-ticket-stub relative flex shrink-0 flex-col items-center justify-center gap-0.5 px-2 text-center">
           <Icon name="coin" size={22} className={muted ? '' : 'text-gold-deep'} />
-          <span className="font-mono text-3xl font-extrabold leading-none tabular-nums">{cost}</span>
+          <span className="font-mono text-3xl font-extrabold leading-none tabular-nums">
+            {cost}
+          </span>
           <span className="font-mono text-xs font-bold uppercase">moedas</span>
           {stamp && (
             <span

@@ -1,4 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <title>Capim Dourado Experience</title>
   <rect x="24" y="24" width="464" height="464" rx="112" fill="#b3122e" stroke="#1b1210" stroke-width="24"/>
   <g stroke="#1b1210" stroke-width="16" stroke-linejoin="round" stroke-linecap="round">
     <ellipse cx="170" cy="168" rx="34" ry="30" fill="#7f4b2b"/>

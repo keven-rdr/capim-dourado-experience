@@ -1,4 +1,4 @@
-import { type CheckInInput, MALL_AREA_APPROX, polygonCenter } from '@cde/shared';
+import { type CheckInInput, MALL_CENTER } from '@cde/shared';
 import { getDemo } from '../demo/demoStore';
 
 export type GeoFailure = 'denied' | 'unavailable' | 'timeout';
@@ -23,10 +23,10 @@ export async function getPosition(demoActive: boolean): Promise<CheckInInput> {
   const demo = getDemo();
   if (demoActive && demo.location !== 'real') {
     await wait(900);
-    const center = polygonCenter(MALL_AREA_APPROX);
+    const center = MALL_CENTER;
     switch (demo.location) {
       case 'inside':
-        return { lat: center.lat + 0.0004, lng: center.lng - 0.0003, accuracy: 18 };
+        return { lat: center.lat, lng: center.lng, accuracy: 18 };
       case 'outside':
         // cerca de 2,4 km ao sul do shopping
         return { lat: center.lat - 0.0215, lng: center.lng + 0.002, accuracy: 22 };
@@ -40,11 +40,19 @@ export async function getPosition(demoActive: boolean): Promise<CheckInInput> {
   return new Promise((resolve, reject) => {
     navigator.geolocation.getCurrentPosition(
       (pos) =>
-        resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude, accuracy: pos.coords.accuracy }),
+        resolve({
+          lat: pos.coords.latitude,
+          lng: pos.coords.longitude,
+          accuracy: pos.coords.accuracy,
+        }),
       (err) =>
         reject(
           new GeoError(
-            err.code === err.PERMISSION_DENIED ? 'denied' : err.code === err.TIMEOUT ? 'timeout' : 'unavailable',
+            err.code === err.PERMISSION_DENIED
+              ? 'denied'
+              : err.code === err.TIMEOUT
+                ? 'timeout'
+                : 'unavailable',
           ),
         ),
       { enableHighAccuracy: true, timeout: 12_000, maximumAge: 0 },

@@ -42,13 +42,13 @@
   --cde-costume-trim: #ffffff;
   --cde-banner-bg: #1e56d0;
   --cde-banner-ink: #ffffff;
-  --cde-banner-pattern: radial-gradient(circle, rgb(255 255 255 / 0.22) 0 2px, transparent 2.5px) 0 0 /
-    20px 20px;
+  --cde-banner-pattern:
+    radial-gradient(circle, rgb(255 255 255 / 0.22) 0 2px, transparent 2.5px) 0 0 / 20px 20px;
 
   /* tipografia */
-  --cde-font-display: 'Bricolage Grotesque', 'Trebuchet MS', system-ui, sans-serif;
-  --cde-font-body: 'Manrope', 'Segoe UI', system-ui, sans-serif;
-  --cde-font-mono: 'JetBrains Mono', ui-monospace, 'Cascadia Mono', monospace;
+  --cde-font-display: "Bricolage Grotesque", "Trebuchet MS", system-ui, sans-serif;
+  --cde-font-body: "Manrope", "Segoe UI", system-ui, sans-serif;
+  --cde-font-mono: "JetBrains Mono", ui-monospace, "Cascadia Mono", monospace;
   --cde-text-xs: 0.875rem;
   --cde-text-sm: 0.9375rem;
   --cde-text-base: 1rem;
@@ -85,7 +85,7 @@
 }
 
 /* ---------- Natal: Fábrica de Presentes (vermelho-cereja, verde-pinheiro, dourado) ---------- */
-[data-season='natal'] {
+[data-season="natal"] {
   --cde-bg: #fbf0e2;
   --cde-surface: #fffcf6;
   --cde-surface-2: #f4e2c9;
@@ -110,12 +110,12 @@
   --cde-costume-trim: #ffffff;
   --cde-banner-bg: #1d5c3f;
   --cde-banner-ink: #ffffff;
-  --cde-banner-pattern: radial-gradient(circle, rgb(255 255 255 / 0.3) 0 2px, transparent 2.5px) 0 0 /
-    22px 22px;
+  --cde-banner-pattern:
+    radial-gradient(circle, rgb(255 255 255 / 0.3) 0 2px, transparent 2.5px) 0 0 / 22px 22px;
 }
 
 /* ---------- Páscoa: Caça aos Ovos (lilás, amarelo-manteiga, rosa) ---------- */
-[data-season='pascoa'] {
+[data-season="pascoa"] {
   --cde-bg: #fff8e6;
   --cde-surface: #ffffff;
   --cde-surface-2: #f2e9fd;
@@ -140,16 +140,16 @@
   --cde-costume-trim: #ffffff;
   --cde-banner-bg: #c4a8f5;
   --cde-banner-ink: #24173a;
-  --cde-banner-pattern: radial-gradient(circle, rgb(234 114 166 / 0.45) 0 3px, transparent 3.5px) 0 0 /
-    26px 26px;
-  --cde-font-display: 'Fredoka', 'Bricolage Grotesque', system-ui, sans-serif;
+  --cde-banner-pattern:
+    radial-gradient(circle, rgb(234 114 166 / 0.45) 0 3px, transparent 3.5px) 0 0 / 26px 26px;
+  --cde-font-display: "Fredoka", "Bricolage Grotesque", system-ui, sans-serif;
   --cde-radius-sm: 12px;
   --cde-radius-md: 20px;
   --cde-radius-lg: 28px;
 }
 
 /* ---------- Halloween: Noite dos Monstrinhos (modo escuro: ameixa, laranja-abóbora, verde-ácido) ---------- */
-[data-season='halloween'] {
+[data-season="halloween"] {
   color-scheme: dark;
   --cde-bg: #22102b;
   --cde-surface: #3a1d48;
@@ -179,8 +179,8 @@
   --cde-costume-trim: #ff7a1a;
   --cde-banner-bg: #12061a;
   --cde-banner-ink: #ffc24b;
-  --cde-banner-pattern: radial-gradient(circle, rgb(184 242 58 / 0.35) 0 1.5px, transparent 2px) 0 0 /
-    18px 18px;
+  --cde-banner-pattern:
+    radial-gradient(circle, rgb(184 242 58 / 0.35) 0 1.5px, transparent 2px) 0 0 / 18px 18px;
   --cde-radius-sm: 4px;
   --cde-radius-md: 8px;
   --cde-radius-lg: 14px;
@@ -372,11 +372,13 @@
   --stub: 104px;
   --notch-x: calc(100% - var(--stub));
   -webkit-mask:
-    radial-gradient(circle var(--notch) at var(--notch-x) 0, #0000 98%, #000) top / 100% 51% no-repeat,
+    radial-gradient(circle var(--notch) at var(--notch-x) 0, #0000 98%, #000) top / 100% 51%
+    no-repeat,
     radial-gradient(circle var(--notch) at var(--notch-x) 100%, #0000 98%, #000) bottom / 100% 51%
     no-repeat;
   mask:
-    radial-gradient(circle var(--notch) at var(--notch-x) 0, #0000 98%, #000) top / 100% 51% no-repeat,
+    radial-gradient(circle var(--notch) at var(--notch-x) 0, #0000 98%, #000) top / 100% 51%
+    no-repeat,
     radial-gradient(circle var(--notch) at var(--notch-x) 100%, #0000 98%, #000) bottom / 100% 51%
     no-repeat;
 }
@@ -403,16 +405,17 @@
   translate: -50% -50%;
   pointer-events: none;
 }
-.cde-ticket-notch[data-edge='top'] {
+.cde-ticket-notch[data-edge="top"] {
   top: calc(-1 * var(--cde-border));
 }
-.cde-ticket-notch[data-edge='bottom'] {
+.cde-ticket-notch[data-edge="bottom"] {
   top: calc(100% + var(--cde-border));
 }
 
 /* Figurinha rara: brilho metálico que corre na borda. */
 .cde-foil {
-  background: linear-gradient(
+  background:
+    linear-gradient(
       110deg,
       var(--cde-gold) 0%,
       #fff7d1 18%,
@@ -447,7 +450,7 @@
       12px 14px 0 0 var(--cde-shadow-color);
   }
   .cde-phone-device::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 24px;
     left: 50%;
@@ -475,6 +478,7 @@
   }
 }
 
+/* biome-ignore-start lint/complexity/noImportantStyles: "reduzir movimento" precisa vencer qualquer animação */
 @media (prefers-reduced-motion: reduce) {
   *,
   ::before,
@@ -485,3 +489,4 @@
     scroll-behavior: auto !important;
   }
 }
+/* biome-ignore-end lint/complexity/noImportantStyles: fim do bloco de reduzir movimento */

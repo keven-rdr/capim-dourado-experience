@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { CAPI_EXPRESSIONS, CAPI_LOOKS } from './Capi';
 import { cx } from './cx';
 import { ICON_NAMES } from './Icon';
-import { SEASON_IDS, SEASON_THEME } from './season';
 import { daysToChest } from './StreakChip';
+import { SEASON_IDS, SEASON_THEME } from './season';
 
 describe('helpers da biblioteca', () => {
   it('junta classes ignorando valores falsos', () => {

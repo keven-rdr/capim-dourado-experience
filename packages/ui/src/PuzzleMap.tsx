@@ -44,7 +44,9 @@ export function PuzzleMap({ total, collected, highlight, labels = [], className 
           >
             <span className="font-mono text-xs font-bold">{String(i + 1).padStart(2, '0')}</span>
             {has ? (
-              <span className="line-clamp-2 text-xs font-bold leading-tight">{labels[i] ?? 'Peça encontrada'}</span>
+              <span className="line-clamp-2 text-xs font-bold leading-tight">
+                {labels[i] ?? 'Peça encontrada'}
+              </span>
             ) : (
               <Icon name="puzzle" size={20} className="self-end opacity-40" />
             )}

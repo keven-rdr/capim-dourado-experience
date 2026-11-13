@@ -10,10 +10,10 @@ import {
   type PointEvent,
   type PointsResult,
   type Profile,
-  ROUTES,
   type RedeemInput,
   type RedeemResult,
   type Redemption,
+  ROUTES,
   type ScanQrInput,
   type ScanResult,
   type SeasonId,
@@ -92,7 +92,12 @@ export class HttpGameApi implements GameApi {
     }
     if (!response.ok) {
       if (isApiErrorBody(data)) throw GameApiError.fromBody(data, response.status);
-      const code = response.status === 401 ? 'unauthorized' : response.status === 404 ? 'not_found' : 'network';
+      const code =
+        response.status === 401
+          ? 'unauthorized'
+          : response.status === 404
+            ? 'not_found'
+            : 'network';
       throw new GameApiError(code, `Erro ${response.status} da API.`, data, response.status);
     }
     return data as T;

@@ -25,7 +25,15 @@ const META: Record<MapPinKind, { icon: IconName; tone: string }> = {
 };
 
 /** Pin do mapa dos pavimentos. Variações: loja, segredo, evento e "você está aqui". */
-export function MapPin({ kind, label, x, y, selected = false, dimmed = false, onSelect }: MapPinProps) {
+export function MapPin({
+  kind,
+  label,
+  x,
+  y,
+  selected = false,
+  dimmed = false,
+  onSelect,
+}: MapPinProps) {
   const meta = META[kind];
   return (
     <button

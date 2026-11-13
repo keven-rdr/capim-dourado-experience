@@ -6,8 +6,8 @@ import { CountUp } from './CountUp';
 import { Icon } from './Icon';
 import { usePortalTarget } from './PhoneFrame';
 import { PuzzleMap } from './PuzzleMap';
-import { type Season, useSeason } from './season';
 import { SpeechBubble } from './SpeechBubble';
+import { type Season, useSeason } from './season';
 
 type Phase = 'shake' | 'open' | 'piece' | 'done';
 
@@ -33,7 +33,11 @@ export interface TreasureRevealProps {
 const COINS = Array.from({ length: 14 }, (_, i) => {
   const angle = (-160 + (140 / 13) * i) * (Math.PI / 180);
   const dist = 90 + ((i * 37) % 60);
-  return { x: Math.cos(angle) * dist, y: Math.sin(angle) * dist, spin: (i % 2 ? 1 : -1) * (180 + i * 20) };
+  return {
+    x: Math.cos(angle) * dist,
+    y: Math.sin(angle) * dist,
+    spin: (i % 2 ? 1 : -1) * (180 + i * 20),
+  };
 });
 
 /**
@@ -149,14 +153,18 @@ export function TreasureReveal({
                 }
                 transition={
                   phase === 'shake'
-                    ? { scale: { type: 'spring', stiffness: 300, damping: 15 }, rotate: { duration: 0.6, delay: 0.25 } }
+                    ? {
+                        scale: { type: 'spring', stiffness: 300, damping: 15 },
+                        rotate: { duration: 0.6, delay: 0.25 },
+                      }
                     : { type: 'spring', stiffness: 260, damping: 18 }
                 }
               >
                 <Container season={season} opened={opened} reduce={!!reduce} />
               </motion.div>
 
-              {!reduce && phase !== 'shake' &&
+              {!reduce &&
+                phase !== 'shake' &&
                 COINS.map((coin, i) => (
                   <motion.span
                     // biome-ignore lint/suspicious/noArrayIndexKey: moedas decorativas
@@ -171,7 +179,12 @@ export function TreasureReveal({
                       opacity: [0, 1, 0],
                       rotate: coin.spin,
                     }}
-                    transition={{ duration: 1.5, delay: 0.05 + i * 0.025, ease: 'easeOut', times: [0, 0.38, 1] }}
+                    transition={{
+                      duration: 1.5,
+                      delay: 0.05 + i * 0.025,
+                      ease: 'easeOut',
+                      times: [0, 0.38, 1],
+                    }}
                   >
                     <Icon name="coin" size={16} strokeWidth={2.6} />
                   </motion.span>
@@ -254,15 +267,31 @@ export function TreasureReveal({
   );
 }
 
-function Container({ season, opened, reduce }: { season: Season; opened: boolean; reduce: boolean }) {
+function Container({
+  season,
+  opened,
+  reduce,
+}: {
+  season: Season;
+  opened: boolean;
+  reduce: boolean;
+}) {
   const lid = {
     initial: false as const,
-    animate: opened ? { y: -110, x: 40, rotate: 38, opacity: reduce ? 0 : [1, 1, 0] } : { y: 0, x: 0, rotate: 0, opacity: 1 },
+    animate: opened
+      ? { y: -110, x: 40, rotate: 38, opacity: reduce ? 0 : [1, 1, 0] }
+      : { y: 0, x: 0, rotate: 0, opacity: 1 },
     transition: { duration: 0.75, ease: 'easeOut' as const },
     style: { transformBox: 'fill-box' as const, transformOrigin: 'center' },
   };
   return (
-    <svg viewBox="0 0 160 160" width={176} height={176} aria-hidden="true" className="overflow-visible">
+    <svg
+      viewBox="0 0 160 160"
+      width={176}
+      height={176}
+      aria-hidden="true"
+      className="overflow-visible"
+    >
       <g stroke="var(--cde-line)" strokeWidth="5" strokeLinejoin="round" strokeLinecap="round">
         {opened && (
           <motion.circle
@@ -285,16 +314,30 @@ function Container({ season, opened, reduce }: { season: Season; opened: boolean
             <motion.g {...lid}>
               <rect x="18" y="50" width="124" height="24" rx="5" fill="var(--cde-primary)" />
               <path d="M80 50v24" stroke="var(--cde-gold)" strokeWidth="14" />
-              <path d="M80 50c-16-30-44-22-34-6 6 9 34 6 34 6Zm0 0c16-30 44-22 34-6-6 9-34 6-34 6Z" fill="var(--cde-gold)" />
+              <path
+                d="M80 50c-16-30-44-22-34-6 6 9 34 6 34 6Zm0 0c16-30 44-22 34-6-6 9-34 6-34 6Z"
+                fill="var(--cde-gold)"
+              />
             </motion.g>
           </>
         )}
         {season === 'pascoa' && (
           <>
-            <path d="M28 88c0 36 22 60 52 60s52-24 52-60l-14 8-12-12-13 12-13-12-13 12-13-12-12 12z" fill="var(--cde-secondary)" />
-            <path d="M40 120c14-8 26 8 40 0s26-8 40 0" fill="none" stroke="var(--cde-accent)" strokeWidth="8" />
+            <path
+              d="M28 88c0 36 22 60 52 60s52-24 52-60l-14 8-12-12-13 12-13-12-13 12-13-12-12 12z"
+              fill="var(--cde-secondary)"
+            />
+            <path
+              d="M40 120c14-8 26 8 40 0s26-8 40 0"
+              fill="none"
+              stroke="var(--cde-accent)"
+              strokeWidth="8"
+            />
             <motion.g {...lid}>
-              <path d="M28 88C28 50 52 12 80 12s52 38 52 76l-14 8-12-12-13 12-13-12-13 12-13-12-12 12z" fill="var(--cde-primary)" />
+              <path
+                d="M28 88C28 50 52 12 80 12s52 38 52 76l-14 8-12-12-13 12-13-12-13 12-13-12-12 12z"
+                fill="var(--cde-primary)"
+              />
               <circle cx="64" cy="54" r="7" fill="var(--cde-secondary)" />
               <circle cx="96" cy="44" r="6" fill="var(--cde-accent)" />
             </motion.g>
@@ -304,10 +347,18 @@ function Container({ season, opened, reduce }: { season: Season; opened: boolean
           <>
             <ellipse cx="80" cy="104" rx="66" ry="46" fill="var(--cde-primary)" />
             <path d="M80 60c-18 12-18 76 0 90M80 60c18 12 18 76 0 90" fill="none" />
-            <path d="M50 96l10-12 10 12zM90 96l10-12 10 12zM54 118q26 16 52 0l-8 6-8-6-9 7-9-7-9 7z" fill="var(--cde-line)" />
+            <path
+              d="M50 96l10-12 10 12zM90 96l10-12 10 12zM54 118q26 16 52 0l-8 6-8-6-9 7-9-7-9 7z"
+              fill="var(--cde-line)"
+            />
             <motion.g {...lid}>
               <path d="M52 66c8-10 48-10 56 0-8 6-48 6-56 0Z" fill="var(--cde-primary)" />
-              <path d="M78 62c0-14 4-22 14-26" fill="none" stroke="var(--cde-secondary)" strokeWidth="8" />
+              <path
+                d="M78 62c0-14 4-22 14-26"
+                fill="none"
+                stroke="var(--cde-secondary)"
+                strokeWidth="8"
+              />
               <path d="M78 62c0-14 4-22 14-26" fill="none" strokeWidth="3" />
             </motion.g>
           </>

@@ -1,10 +1,4 @@
-import {
-  createContext,
-  type ReactNode,
-  type RefObject,
-  useContext,
-  useState,
-} from 'react';
+import { createContext, type ReactNode, type RefObject, useContext, useState } from 'react';
 import { cx } from './cx';
 
 const PortalContext = createContext<HTMLElement | null>(null);
