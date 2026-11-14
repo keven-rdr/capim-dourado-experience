@@ -81,6 +81,8 @@ export interface Capi3DProps {
   cue?: CapiCue | null;
   /** Fala da Capi. Sem valor, não mostra balão (a não ser emburrada ou dormindo). */
   say?: string;
+  /** Lado da Capi em relação ao balão, de onde sai o rabinho. Use `right` se ela estiver à direita. */
+  bubbleFrom?: 'left' | 'right';
   /** Fica emburrada após 30 s sem toque e dorme após 1 min. Acorda com qualquer toque. */
   idleReactions?: boolean;
   /** Chamado quando tocam na Capi (além do gesto aleatório). */
@@ -106,6 +108,7 @@ export function Capi3D({
   rest = 'Parado',
   cue = null,
   say,
+  bubbleFrom = 'left',
   idleReactions = false,
   onTap: onTapProp,
   still = false,
@@ -293,7 +296,11 @@ export function Capi3D({
           )}
         </button>
       )}
-      {line && !raging && <SpeechBubble className="mb-6 flex-1">{line}</SpeechBubble>}
+      {line && !raging && (
+        <SpeechBubble from={bubbleFrom} className="mb-6 flex-1">
+          {line}
+        </SpeechBubble>
+      )}
       {raging && <CapiRage from={season} onDone={() => setRaging(false)} />}
     </div>
   );
@@ -356,7 +363,7 @@ function CapiRage({ from, onDone }: { from: Season; onDone: () => void }) {
           x: { duration: 0.4, repeat: angry ? Number.POSITIVE_INFINITY : 0, delay: 0.6 },
         }}
       >
-        <SpeechBubble>
+        <SpeechBubble from="bottom-center">
           {angry
             ? 'CHEGA!!!'
             : to === 'halloween'

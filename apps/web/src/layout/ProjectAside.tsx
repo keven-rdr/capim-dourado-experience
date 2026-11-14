@@ -30,10 +30,11 @@ export function ProjectAside() {
         SplitText.create('[data-title]', {
           type: 'lines,words',
           mask: 'lines',
+          linesClass: 'title-line',
           autoSplit: true,
           onSplit: (self) =>
             gsap.from(self.words, {
-              yPercent: 115,
+              yPercent: 135,
               rotation: 4,
               duration: 0.8,
               ease: 'power4.out',
@@ -69,7 +70,8 @@ export function ProjectAside() {
         <div>
           <h1
             data-title
-            className="font-display text-4xl font-extrabold leading-[0.92] tracking-tight"
+            // a máscara de cada linha corta com `overflow: clip`; a folga embaixo preserva g, p, j
+            className="font-display text-4xl font-extrabold leading-[0.92] tracking-tight [&_.title-line-mask]:-mb-[0.2em] [&_.title-line-mask]:pb-[0.2em]"
           >
             O shopping virou
             <br />o mapa de um jogo.

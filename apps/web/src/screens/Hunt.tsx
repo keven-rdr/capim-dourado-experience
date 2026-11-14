@@ -1,5 +1,5 @@
 import { CURRENT_SEASON, FLOOR_LABEL, type HuntState } from '@cde/shared';
-import { Button, Card, Icon, PuzzleMap, SystemNote, Tag, useSeason } from '@cde/ui';
+import { Button, Card, Icon, PuzzleMap, Tag, useSeason } from '@cde/ui';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useGameQuery } from '../data/GameProvider';
@@ -12,13 +12,7 @@ export function Hunt() {
   const navigate = useNavigate();
   const [hintOpen, setHintOpen] = useState(false);
   const query = useGameQuery(
-    async (api): Promise<{ state: HuntState; fallback: boolean }> => {
-      try {
-        return { state: await api.getHunt(season), fallback: false };
-      } catch {
-        return { state: await api.getHunt(CURRENT_SEASON), fallback: season !== CURRENT_SEASON };
-      }
-    },
+    (api): Promise<HuntState> => api.getHunt(season).catch(() => api.getHunt(CURRENT_SEASON)),
     [season],
   );
 
@@ -30,8 +24,7 @@ export function Hunt() {
       </Screen>
     );
   }
-  const { state, fallback } = query.data;
-  const { hunt, solved, completed } = state;
+  const { hunt, solved, completed } = query.data;
   const clue = hunt.clues.find((c) => c.order === solved + 1);
   const huntLine =
     solved === 0
@@ -40,12 +33,6 @@ export function Hunt() {
 
   return (
     <Screen kicker={`caça · ${seasonInfo(hunt.seasonId).name}`} title={hunt.title} back="/missoes">
-      {fallback && (
-        <SystemNote className="mb-4" label="no protótipo">
-          só a caça de Natal tem pistas cadastradas no seed; o visual segue a temporada escolhida.
-        </SystemNote>
-      )}
-
       <div className="flex items-baseline justify-between">
         <p className="font-display text-lg font-bold">
           {solved} de {hunt.clues.length} {noun.many}
@@ -143,11 +130,6 @@ export function Hunt() {
           </ol>
         </>
       )}
-
-      <SystemNote className="mt-6">
-        as pistas são cumpridas em ordem (RN05); ler um QR fora da vez não pontua e avisa sem
-        bronca.
-      </SystemNote>
     </Screen>
   );
 }

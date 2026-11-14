@@ -1,4 +1,4 @@
-import { Button, SystemNote } from '@cde/ui';
+import { Button } from '@cde/ui';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Capi3D } from '../layout/Capi3D';
@@ -27,9 +27,6 @@ export function NotFound() {
           Voltar pro shopping
         </Button>
       </div>
-      <SystemNote className="mt-6">
-        rota desconhecida: em vez de mandar a pessoa para a Home sem explicar, o app avisa.
-      </SystemNote>
     </Screen>
   );
 }

@@ -1,5 +1,5 @@
 import { POINT_RULES, TRAIL_LABEL, type Trail } from '@cde/shared';
-import { Button, CAPI_LOOKS, Capi, type CapiLook, cx, SpeechBubble, SystemNote } from '@cde/ui';
+import { Button, CAPI_LOOKS, Capi, type CapiLook, cx, SpeechBubble } from '@cde/ui';
 import { AnimatePresence, motion } from 'motion/react';
 import { type FormEvent, useEffect, useId, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -224,9 +224,6 @@ export function Onboarding() {
                   Agora não
                 </Button>
               </div>
-              <SystemNote className="mt-4">
-                esta tela aparece antes do aviso do navegador (LGPD).
-              </SystemNote>
             </>
           )}
 

@@ -1,5 +1,5 @@
 import { COUPONS, FLOOR_LABEL, type Floor, TRAIL_LABEL } from '@cde/shared';
-import { Button, Card, FloorTabs, MapPin, SystemNote, Tag } from '@cde/ui';
+import { Button, Card, FloorTabs, MapPin, Tag } from '@cde/ui';
 import { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useGame, useGameQuery } from '../data/GameProvider';
@@ -223,10 +223,6 @@ export function MapScreen() {
           Toque num pin para ver a loja. Lojas da sua trilha aparecem em destaque.
         </p>
       )}
-
-      <SystemNote className="mt-6">
-        desenho simplificado só com áreas públicas; as posições vêm de store.map em @cde/shared.
-      </SystemNote>
     </Screen>
   );
 }

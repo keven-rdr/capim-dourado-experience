@@ -5,7 +5,7 @@ import {
   type StoreStats,
   type UseCouponResult,
 } from '@cde/shared';
-import { Button, Card, Icon, SystemNote } from '@cde/ui';
+import { Button, Card, Icon } from '@cde/ui';
 import { type FormEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { friendlyError, isGameApiError } from '../data/errors';
@@ -211,11 +211,6 @@ export function StorePanel() {
             : 'Números reais da API. Prêmios e lojas do protótipo são exemplos.'}
         </p>
       </div>
-
-      <SystemNote>
-        a loja só vê três números e dá baixa no cupom (uso único, validade e loja conferidos pela
-        API).
-      </SystemNote>
     </div>
   );
 }
