@@ -16,6 +16,8 @@ import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { type ScanOutcome, useGame } from '../data/GameProvider';
+import { brl, storeOf } from '../lib/catalog';
+import { simulatePriceDrop } from '../lib/wishlist';
 import {
   consumeOpenOnStart,
   type DemoLocation,
@@ -260,6 +262,27 @@ export function DemoPanel() {
             />
             Forçar a hora dourada (giros em dobro)
           </label>
+        </section>
+
+        <section>
+          <h3 className="mb-2 font-mono text-xs font-bold uppercase text-ink-soft">Desejos</h3>
+          <Button
+            size="sm"
+            icon="bolt"
+            variant="secondary"
+            onClick={() => {
+              const r = simulatePriceDrop();
+              if (!r) return;
+              const { name } = storeOf(r.product);
+              notify({
+                variant: 'success',
+                title: `Baixou! ${r.product.name}`,
+                description: `De ${brl(r.from)} por ${brl(r.to)} na ${name}. Preço de exemplo.`,
+              });
+            }}
+          >
+            Simular queda de preço
+          </Button>
         </section>
 
         <section className="flex flex-col gap-2.5">

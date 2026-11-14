@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { friendlyError } from '../data/errors';
 import { useGame, useGameQuery } from '../data/GameProvider';
+import { Capi3D } from '../layout/Capi3D';
 import { Screen, SectionTitle } from '../layout/Screen';
 import { CAPI_NAME, levelInfo, lookOf } from '../lib/content';
 import { formatDateTime } from '../lib/time';
@@ -41,7 +42,11 @@ export function Profile() {
     <Screen kicker="sua conta" title={profile.name} back="/">
       <Card shape="blob" className="flex items-center gap-3 p-4">
         <span className="grid size-24 shrink-0 place-items-end overflow-hidden rounded-blob bg-gold chunk">
-          <Capi size={92} look={look} expression="animada" className="-mb-3" />
+          {look === 'capi' ? (
+            <Capi3D size={80} intro="AcenoLeve" />
+          ) : (
+            <Capi size={92} look={look} expression="animada" className="-mb-3" />
+          )}
         </span>
         <div className="min-w-0 flex-1">
           <p className="font-mono text-xs font-bold uppercase text-ink-soft">

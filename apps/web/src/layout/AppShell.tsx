@@ -15,6 +15,7 @@ import { Link, Navigate, Outlet, useLocation, useNavigate } from 'react-router-d
 import { useGame } from '../data/GameProvider';
 import { DemoPanel } from '../demo/DemoPanel';
 import { lookOf } from '../lib/content';
+import { CapiCompanion } from './CapiCompanion';
 import { ProjectAside } from './ProjectAside';
 
 const NAV: BottomNavItem[] = [
@@ -54,6 +55,12 @@ export function AppShell() {
     scroller.current?.scrollTo({ top: 0 });
     window.scrollTo({ top: 0 });
   }, [location.pathname]);
+
+  // trilhas adultas ganham o tom sóbrio; Kids e o cadastro ficam com o tom de jogo
+  const tone = profile && profile.trail !== 'kids' ? 'sobrio' : 'jogo';
+  useEffect(() => {
+    document.documentElement.dataset.tone = tone;
+  }, [tone]);
 
   if (ready && !profile && !onboarding) return <Navigate to="/bem-vindo" replace />;
 
@@ -149,6 +156,7 @@ function Overlays() {
           </div>,
           target,
         )}
+      <CapiCompanion />
       <TreasureReveal
         open={!!reveal}
         title={reveal?.title ?? ''}

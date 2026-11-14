@@ -1,7 +1,6 @@
 import { type Coupon, type Redemption, TICKET_COST, TRAIL_LABEL, type Trail } from '@cde/shared';
 import {
   Button,
-  Capi,
   Card,
   CouponTicket,
   ExampleTag,
@@ -17,6 +16,7 @@ import { useNavigate } from 'react-router-dom';
 import { friendlyError } from '../data/errors';
 import { useGame, useGameQuery } from '../data/GameProvider';
 import { demoNow } from '../demo/demoStore';
+import { Capi3D } from '../layout/Capi3D';
 import { Screen, SectionTitle } from '../layout/Screen';
 import { deadlineLabel } from '../lib/time';
 
@@ -159,7 +159,7 @@ export function Rewards() {
         ))}
         {!coupons.loading && visible.length === 0 && (
           <Card tone="muted" className="flex items-center gap-3 p-4">
-            <Capi size={70} expression="dormindo" />
+            <Capi3D size={80} intro={null} rest="Dormindo" />
             <p className="text-sm font-semibold">
               Nenhum cupom nesta trilha por enquanto. Os lojistas estão preparando novidades.
             </p>

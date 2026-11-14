@@ -1,8 +1,9 @@
-import { CURRENT_SEASON, FLOOR_LABEL, type Floor } from '@cde/shared';
+import { CURRENT_SEASON, FLOOR_LABEL, type Floor, TRAIL_LABEL } from '@cde/shared';
 import {
   Button,
   Capi,
   Card,
+  ExampleTag,
   Icon,
   type IconName,
   MissionCard,
@@ -15,9 +16,15 @@ import {
   WalletBadge,
   XpBar,
 } from '@cde/ui';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useGame, useGameQuery } from '../data/GameProvider';
+import { Capi3D } from '../layout/Capi3D';
+import { FlashCard } from '../layout/FlashCard';
+import { ProductArt, ProductCard, ProductSheet } from '../layout/Product';
+import { brl, productById, productsFor } from '../lib/catalog';
 import { HUNT_NOUN, levelInfo, lookOf, SEASON_COPY, seasonInfo } from '../lib/content';
+import { useWishlist, wishStatus } from '../lib/wishlist';
 
 const FLOOR_SHORTCUTS: Array<{ id: Floor; short: string; tilt: string }> = [
   { id: 'subsolo', short: 'Subsolo 1', tilt: 'rotate-1' },
@@ -33,8 +40,14 @@ export function Home() {
     (api) => api.getHunt(season).catch(() => api.getHunt(CURRENT_SEASON)),
     [season],
   );
+  const [openId, setOpenId] = useState<string | null>(null);
+  const { wishes, priceOf } = useWishlist();
 
   if (!profile) return null;
+  const myWishes = Object.entries(wishes).flatMap(([id, w]) => {
+    const product = productById(id);
+    return product ? [{ product, target: w.target, status: wishStatus(w, priceOf(product)) }] : [];
+  });
   const { level, next, number } = levelInfo(profile.wallet.xp);
   const info = seasonInfo(season);
   const look = lookOf(profile.character);
@@ -42,6 +55,10 @@ export function Home() {
   const firstVisit = profile.wallet.xp <= 50 && !today?.checkInDone;
   const atRisk = profile.streak.days > 0 && profile.streak.lastActiveDate !== today?.date;
   const huntState = hunt.data;
+  const hint =
+    huntState && !huntState.completed
+      ? `Psiu: a pista ${huntState.solved + 1} está esperando. Quer ler?`
+      : 'Dá uma volta pelo mapa, tem segredo escondido.';
 
   return (
     <div className="flex flex-1 flex-col px-4 pb-8">
@@ -65,7 +82,63 @@ export function Home() {
         </div>
       </header>
 
-      <Card className="mt-3 p-4" shape="blob">
+      {/* feed da trilha primeiro: vitrine, oferta relâmpago e desejos; o jogo vem depois */}
+      <section className="mt-3" aria-labelledby="vitrine">
+        <div className="mb-2 flex items-center justify-between gap-2">
+          <h2 id="vitrine" className="font-display text-xl font-extrabold">
+            Vitrine para você · {TRAIL_LABEL[profile.trail]}
+          </h2>
+          <ExampleTag />
+        </div>
+        <div className="-mx-4 flex snap-x gap-3 overflow-x-auto px-4 pb-2">
+          {productsFor(profile.trail).map((p) => (
+            <ProductCard key={p.id} product={p} onOpen={() => setOpenId(p.id)} />
+          ))}
+        </div>
+      </section>
+
+      <FlashCard trail={profile.trail} className="mt-4" />
+
+      {myWishes.length > 0 && (
+        <section className="mt-6" aria-labelledby="desejos">
+          <h2 id="desejos" className="mb-2 font-display text-xl font-extrabold">
+            Seus desejos
+          </h2>
+          <div className="flex flex-col gap-2">
+            {myWishes.map(({ product, status, target }) => (
+              <button
+                key={product.id}
+                type="button"
+                onClick={() => setOpenId(product.id)}
+                className={`flex min-h-11 items-center gap-3 rounded-md p-2 text-left chunk-thin focus-ring ${
+                  status.reached ? 'bg-gold text-on-gold' : 'bg-surface'
+                }`}
+              >
+                <ProductArt product={product} className="size-14 shrink-0 rounded-sm" />
+                <span className="min-w-0 flex-1">
+                  <span className="block truncate font-semibold">{product.name}</span>
+                  <span className="block text-xs">
+                    {status.reached
+                      ? 'Chegou no seu preço!'
+                      : status.dropped > 0
+                        ? `Baixou ${brl(status.dropped)} · aviso abaixo de ${brl(target)}`
+                        : `Aviso abaixo de ${brl(target)}`}
+                  </span>
+                </span>
+                <span className="shrink-0 font-display font-extrabold">
+                  {brl(priceOf(product))}
+                </span>
+              </button>
+            ))}
+          </div>
+        </section>
+      )}
+      <ProductSheet
+        product={openId ? (productById(openId) ?? null) : null}
+        onClose={() => setOpenId(null)}
+      />
+
+      <Card className="mt-6 p-4" shape="blob">
         <XpBar
           xp={profile.wallet.xp}
           levelMinXp={level.minXp}
@@ -97,13 +170,13 @@ export function Home() {
 
       {/* chamada do check-in: o primeiro passo do dia */}
       {!today?.checkInDone ? (
-        <Card tone="primary" tilt="right" className="mt-5 flex items-center gap-3 p-4">
+        <Card className="mt-5 flex items-center gap-3 p-4">
           <div className="flex-1">
             <p className="font-mono text-xs font-bold uppercase">primeiro passo de hoje</p>
             <p className="font-display text-2xl font-extrabold leading-none">Chegou ao shopping?</p>
             <p className="mt-1 text-sm">+30 XP e +10 moedas, uma vez por dia.</p>
           </div>
-          <Button variant="secondary" icon="location" onClick={() => navigate('/checkin')}>
+          <Button icon="location" onClick={() => navigate('/checkin')}>
             Cheguei!
           </Button>
         </Card>
@@ -151,14 +224,20 @@ export function Home() {
         <div className="h-48 animate-pulse rounded-blob bg-surface-2 chunk" />
       )}
 
-      <div className="mt-6 flex items-end gap-2">
-        <Capi size={70} look={look} expression="curiosa" />
-        <SpeechBubble className="mb-6 flex-1">
-          {huntState && !huntState.completed
-            ? `Psiu: a pista ${huntState.solved + 1} está esperando. Quer ler?`
-            : 'Dá uma volta pelo mapa, tem segredo escondido.'}
-        </SpeechBubble>
-      </div>
+      {look === 'capi' ? (
+        <Capi3D
+          className="mt-6"
+          size={120}
+          intro={new Date().getHours() < 12 ? 'Espreguica' : 'Acenar'}
+          say={hint}
+          idleReactions
+        />
+      ) : (
+        <div className="mt-6 flex items-end gap-2">
+          <Capi size={70} look={look} expression="curiosa" />
+          <SpeechBubble className="mb-6 flex-1">{hint}</SpeechBubble>
+        </div>
+      )}
 
       <SeasonBanner
         className="mt-2"

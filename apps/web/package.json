@@ -13,13 +13,15 @@
   "dependencies": {
     "@cde/shared": "^0.0.0",
     "@cde/ui": "^0.0.0",
+    "@google/model-viewer": "4.4.0",
     "@supabase/supabase-js": "^2.119.0",
     "html5-qrcode": "^2.3.8",
     "motion": "^14.13.0",
     "qrcode": "^1.5.4",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
-    "react-router-dom": "^7.18.5"
+    "react-router-dom": "^7.18.5",
+    "three": "0.183.2"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.3.5",
