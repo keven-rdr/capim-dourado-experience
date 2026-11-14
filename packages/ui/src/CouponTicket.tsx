@@ -52,7 +52,7 @@ export function CouponTicket({
   code,
   deadlineLabel,
   trailLabel,
-  example = true,
+  example = false,
   onRedeem,
   onShow,
   onEarn,

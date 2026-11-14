@@ -1,24 +1,13 @@
 import { CURRENT_SEASON, FLOOR_LABEL, type HuntState } from '@cde/shared';
-import {
-  Button,
-  Capi,
-  Card,
-  Icon,
-  PuzzleMap,
-  SpeechBubble,
-  SystemNote,
-  Tag,
-  useSeason,
-} from '@cde/ui';
+import { Button, Card, Icon, PuzzleMap, SystemNote, Tag, useSeason } from '@cde/ui';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useGame, useGameQuery } from '../data/GameProvider';
+import { useGameQuery } from '../data/GameProvider';
 import { Capi3D } from '../layout/Capi3D';
 import { Screen, SectionTitle } from '../layout/Screen';
-import { HUNT_NOUN, lookOf, rewardLine, seasonInfo, stickerName } from '../lib/content';
+import { HUNT_NOUN, rewardLine, seasonInfo, stickerName } from '../lib/content';
 
 export function Hunt() {
-  const { profile } = useGame();
   const { season } = useSeason();
   const navigate = useNavigate();
   const [hintOpen, setHintOpen] = useState(false);
@@ -44,7 +33,6 @@ export function Hunt() {
   const { state, fallback } = query.data;
   const { hunt, solved, completed } = state;
   const clue = hunt.clues.find((c) => c.order === solved + 1);
-  const look = lookOf(profile?.character);
   const huntLine =
     solved === 0
       ? 'A primeira é fácil. Confia.'
@@ -102,22 +90,11 @@ export function Hunt() {
           <Button size="lg" block icon="qr" className="mt-6" onClick={() => navigate('/scanner')}>
             Achei! Ler o QR
           </Button>
-          {look === 'capi' ? (
-            <Capi3D className="mt-6" size={90} intro="AcenoLeve" say={huntLine} />
-          ) : (
-            <div className="mt-6 flex items-end gap-2">
-              <Capi size={72} look={look} expression="curiosa" />
-              <SpeechBubble className="mb-6 flex-1">{huntLine}</SpeechBubble>
-            </div>
-          )}
+          <Capi3D className="mt-6" size={90} intro="AcenoLeve" say={huntLine} />
         </>
       ) : (
         <Card tone="gold" tilt="right" className="mt-7 p-5 text-center">
-          {look === 'capi' ? (
-            <Capi3D size={130} intro="Festa" className="justify-center" />
-          ) : (
-            <Capi size={120} look={look} expression="comemorando" className="mx-auto" />
-          )}
+          <Capi3D size={130} intro="Festa" className="justify-center" />
           <h2 className="mt-2 font-display text-3xl font-extrabold leading-none">
             Baú final aberto!
           </h2>

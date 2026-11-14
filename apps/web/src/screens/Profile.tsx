@@ -1,5 +1,5 @@
 import { LEVELS, TRAIL_LABEL, type Trail } from '@cde/shared';
-import { Button, Capi, Card, cx, FilterChips, Sheet, SystemNote, XpBar } from '@cde/ui';
+import { Button, Card, cx, FilterChips, Sheet, SystemNote, XpBar } from '@cde/ui';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { friendlyError } from '../data/errors';
@@ -42,11 +42,7 @@ export function Profile() {
     <Screen kicker="sua conta" title={profile.name} back="/">
       <Card shape="blob" className="flex items-center gap-3 p-4">
         <span className="grid size-24 shrink-0 place-items-end overflow-hidden rounded-blob bg-gold chunk">
-          {look === 'capi' ? (
-            <Capi3D size={80} intro="AcenoLeve" />
-          ) : (
-            <Capi size={92} look={look} expression="animada" className="-mb-3" />
-          )}
+          <Capi3D size={80} intro="AcenoLeve" />
         </span>
         <div className="min-w-0 flex-1">
           <p className="font-mono text-xs font-bold uppercase text-ink-soft">

@@ -49,7 +49,6 @@ export function Missions() {
             current={secrets.current}
             target={secrets.target}
             reward={{ ...secrets.reward, sticker: !!secrets.reward.stickerId }}
-            className="rotate-[0.8deg]"
           />
         </div>
       )}

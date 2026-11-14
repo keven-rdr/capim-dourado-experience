@@ -55,7 +55,7 @@ export function stickerName(id: string | undefined): string | undefined {
 export const HUNT_NOUN: Record<SeasonId, { one: string; many: string }> = {
   natal: { one: 'Presente', many: 'presentes' },
   pascoa: { one: 'Ovo', many: 'ovos' },
-  halloween: { one: 'Monstrinho', many: 'monstrinhos' },
+  halloween: { one: 'Oferta', many: 'ofertas' },
 };
 
 /** Missão do dia da Home, com o texto de cada temporada (o resto da tela é igual). */
@@ -66,12 +66,20 @@ export const SEASON_COPY: Record<SeasonId, { mission: string; greeting: string }
     greeting: 'Tem ovo escondido por aí.',
   },
   halloween: {
-    mission: 'Colete um monstrinho em cada pavimento',
-    greeting: 'Hoje a noite é dos monstrinhos.',
+    mission: 'Ache as ofertas escondidas da Black Friday',
+    greeting: 'A Black Friday chegou!',
   },
 };
 
 export function seasonInfo(season: SeasonId) {
+  // shortcut: o id `halloween` virou o tema Black Friday só no app; renomear no @cde/shared é com o orquestrador
+  if (season === 'halloween') {
+    return {
+      name: 'Black Friday',
+      theme: 'Caça às Ofertas',
+      tagline: 'Ache as ofertas escondidas pelo shopping.',
+    };
+  }
   return SEASON_INFO[season];
 }
 

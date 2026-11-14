@@ -3,7 +3,6 @@ import {
   Button,
   Card,
   CouponTicket,
-  ExampleTag,
   FilterChips,
   type FilterOption,
   Sheet,
@@ -92,13 +91,12 @@ export function Rewards() {
   return (
     <Screen kicker="carteira e cupons" title="Prêmios">
       {profile && (
-        <section aria-label="Carteira" className="grid grid-cols-[1.15fr_1fr_1fr] gap-2">
+        <section aria-label="Carteira" className="grid grid-cols-3 gap-2">
           <WalletBadge
             kind="coins"
             value={profile.wallet.coins}
             variant="tile"
             hint="Você troca por cupons."
-            className="-rotate-1 shadow-hard-sm"
           />
           <WalletBadge
             kind="xp"
@@ -126,7 +124,7 @@ export function Rewards() {
         Roleta de cupons
       </Button>
 
-      <SectionTitle aside="ofertas de exemplo">Troque suas moedas</SectionTitle>
+      <SectionTitle>Troque suas moedas</SectionTitle>
       <FilterChips
         label="Filtrar por trilha"
         options={options}
@@ -202,7 +200,6 @@ export function Rewards() {
               Vale-compras no shopping
             </p>
           </div>
-          <ExampleTag />
         </div>
         <p className="mt-2 text-sm">
           Sorteio em 20/12 (data de exemplo). Cada bilhete é uma chance.
@@ -318,7 +315,6 @@ function CodeSheet({
           <p className="font-mono text-sm font-bold">
             {deadlineLabel(redemption.expiresAt, demoNow())}
           </p>
-          <ExampleTag />
         </div>
       )}
     </Sheet>

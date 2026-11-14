@@ -5,7 +5,7 @@ import {
   type StoreStats,
   type UseCouponResult,
 } from '@cde/shared';
-import { Button, Card, ExampleTag, Icon, SystemNote } from '@cde/ui';
+import { Button, Card, Icon, SystemNote } from '@cde/ui';
 import { type FormEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { friendlyError, isGameApiError } from '../data/errors';
@@ -205,7 +205,6 @@ export function StorePanel() {
       </Card>
 
       <div className="flex items-center gap-2">
-        <ExampleTag />
         <p className="text-xs text-ink-soft">
           {mode === 'local'
             ? 'Modo demonstração: números e cupons deste aparelho.'

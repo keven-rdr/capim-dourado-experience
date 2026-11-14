@@ -1,5 +1,5 @@
 import type { Trail } from '@cde/shared';
-import { Button, Card, ExampleTag, Tag } from '@cde/ui';
+import { Button, Card, Tag } from '@cde/ui';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { countdown, currentFlash } from '../lib/flash';
@@ -22,7 +22,6 @@ export function FlashCard({ trail, className }: { trail: Trail; className?: stri
       <div className="flex flex-wrap items-center gap-2">
         <p className="font-mono text-xs font-bold uppercase tracking-wide">Hora do Capi</p>
         <Tag tone={live ? 'gold' : 'outline'}>{live ? 'ao vivo' : `às ${start.getHours()}h`}</Tag>
-        <ExampleTag className="ml-auto" />
       </div>
       <p className="mt-2 font-display text-2xl font-extrabold leading-tight">{offer.title}</p>
       <p className="text-sm font-semibold">{offer.storeName}</p>

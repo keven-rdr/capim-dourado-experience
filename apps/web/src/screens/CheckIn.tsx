@@ -1,7 +1,6 @@
 import { type CheckInResult, MAX_GPS_ACCURACY_M } from '@cde/shared';
 import {
   Button,
-  Capi,
   CountUp,
   StatusRing,
   type StatusRingState,
@@ -16,7 +15,7 @@ import { useGame, useGameQuery } from '../data/GameProvider';
 import { demoNow } from '../demo/demoStore';
 import { Capi3D } from '../layout/Capi3D';
 import { Screen } from '../layout/Screen';
-import { levelInfo, lookOf, stickerName } from '../lib/content';
+import { levelInfo, stickerName } from '../lib/content';
 import { GeoError, getPosition } from '../lib/geo';
 import { formatDuration, msUntilLocalMidnight } from '../lib/time';
 
@@ -90,31 +89,17 @@ export function CheckIn() {
             ? 'idle'
             : 'warning';
 
-  const look = lookOf(profile?.character);
-  const expression =
-    phase.kind === 'success'
-      ? 'comemorando'
-      : phase.kind === 'checking' || phase.kind === 'outside' || phase.kind === 'gps'
-        ? 'curiosa'
-        : phase.kind === 'done' || phase.kind === 'closed'
-          ? 'dormindo'
-          : 'animada';
-
   return (
     <Screen kicker="check-in" title="Cheguei!" back="/">
       <div className="flex flex-col items-center pt-2 text-center">
         <StatusRing state={ring} size={210}>
-          {look === 'capi' ? (
-            <Capi3D
-              size={130}
-              intro="AcenoLeve"
-              rest={phase.kind === 'done' || phase.kind === 'closed' ? 'Dormindo' : 'Parado'}
-              cue={phase.kind === 'success' ? { clip: 'Festa', id: 1 } : null}
-              className="mt-6 justify-center"
-            />
-          ) : (
-            <Capi size={150} look={look} expression={expression} className="mt-8" />
-          )}
+          <Capi3D
+            size={130}
+            intro="AcenoLeve"
+            rest={phase.kind === 'done' || phase.kind === 'closed' ? 'Dormindo' : 'Parado'}
+            cue={phase.kind === 'success' ? { clip: 'Festa', id: 1 } : null}
+            className="mt-6 justify-center"
+          />
         </StatusRing>
 
         <div className="mt-6 min-h-40 w-full" aria-live="polite">

@@ -1,14 +1,5 @@
 import { BASE_SPINS, describeGoldenWindow, GOLDEN_SPIN_FACTOR, type SpinResult } from '@cde/shared';
-import {
-  Button,
-  Card,
-  ExampleTag,
-  RouletteWheel,
-  rotationFor,
-  Sheet,
-  SystemNote,
-  Tag,
-} from '@cde/ui';
+import { Button, Card, RouletteWheel, rotationFor, Sheet, SystemNote, Tag } from '@cde/ui';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { friendlyError } from '../data/errors';
@@ -137,7 +128,7 @@ export function Roulette() {
         )}
       </div>
 
-      <SectionTitle aside="regras de exemplo">Como funciona</SectionTitle>
+      <SectionTitle>Como funciona</SectionTitle>
       <ul className="flex flex-col gap-2 text-sm">
         <li>
           O check-in do dia rende {BASE_SPINS} giro. Na hora dourada, rende{' '}
@@ -197,7 +188,6 @@ export function Roulette() {
               {deadlineLabel(result.redemption.expiresAt, now)}
             </p>
             <p className="text-sm text-ink-soft">Uso único. Mostre o código no caixa da loja.</p>
-            <ExampleTag />
           </div>
         )}
       </Sheet>

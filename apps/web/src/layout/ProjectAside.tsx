@@ -1,4 +1,4 @@
-import { Capi, Chip, SEASON_IDS, SEASON_THEME, useSeason } from '@cde/ui';
+import { Chip, SEASON_IDS, SEASON_THEME, useSeason } from '@cde/ui';
 import QRCode from 'qrcode';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -18,12 +18,9 @@ export function ProjectAside() {
 
   return (
     <div className="flex flex-col gap-5">
-      <div className="flex items-end gap-3">
-        <Capi size={86} expression="curiosa" />
-        <p className="mb-3 font-mono text-xs font-bold uppercase tracking-widest text-ink-soft">
-          protótipo · hackathon
-        </p>
-      </div>
+      <p className="font-mono text-xs font-bold uppercase tracking-widest text-ink-soft">
+        protótipo · hackathon
+      </p>
       <div>
         <h1 className="font-display text-4xl font-extrabold leading-[0.92] tracking-tight">
           O shopping virou
@@ -38,7 +35,7 @@ export function ProjectAside() {
 
       <div className="rounded-md border-2 border-dashed border-ink-soft/60 p-3">
         <p className="font-mono text-xs font-bold uppercase text-ink-soft">
-          Uma biblioteca, três temporadas
+          Uma biblioteca, dois temas
         </p>
         <div className="mt-2 flex flex-wrap gap-2">
           {SEASON_IDS.map((id) => (

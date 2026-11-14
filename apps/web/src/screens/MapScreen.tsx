@@ -1,5 +1,5 @@
 import { COUPONS, FLOOR_LABEL, type Floor, TRAIL_LABEL } from '@cde/shared';
-import { Button, Card, ExampleTag, FloorTabs, MapPin, SystemNote, Tag } from '@cde/ui';
+import { Button, Card, FloorTabs, MapPin, SystemNote, Tag } from '@cde/ui';
 import { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useGame, useGameQuery } from '../data/GameProvider';
@@ -192,7 +192,7 @@ export function MapScreen() {
           </div>
           {coupon && (
             <p className="mt-3 flex items-center gap-2 text-sm font-semibold">
-              Cupom: {coupon.title} por {coupon.cost} moedas <ExampleTag />
+              Cupom: {coupon.title} por {coupon.cost} moedas
             </p>
           )}
           <p className="mt-2 text-sm">
