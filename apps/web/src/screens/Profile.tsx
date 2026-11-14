@@ -1,10 +1,11 @@
 import { LEVELS, TRAIL_LABEL, type Trail } from '@cde/shared';
-import { Button, Card, cx, FilterChips, Sheet, SystemNote, Tag, XpBar } from '@cde/ui';
+import { Button, Card, cx, FilterChips, Sheet, Tag, XpBar } from '@cde/ui';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { friendlyError } from '../data/errors';
 import { useGame, useGameQuery } from '../data/GameProvider';
 import { Capi3D } from '../layout/Capi3D';
+import { AboutProject } from '../layout/ProjectCredits';
 import { Screen, SectionTitle } from '../layout/Screen';
 import { CAPI_NAME, levelInfo, lookOf } from '../lib/content';
 import { EGG_COUNT, foundEggs } from '../lib/eggs';
@@ -151,6 +152,9 @@ export function Profile() {
         </Button>
       </Card>
 
+      <SectionTitle>Sobre o projeto</SectionTitle>
+      <AboutProject />
+
       <div className="mt-6 flex flex-wrap gap-3">
         <Link
           to="/album"
@@ -165,9 +169,6 @@ export function Profile() {
           Catálogo de componentes
         </Link>
       </div>
-      <SystemNote className="mt-6">
-        o perfil é anônimo no protótipo; apagar remove tudo deste aparelho.
-      </SystemNote>
 
       <Sheet
         open={confirmDelete}

@@ -149,6 +149,7 @@ export function CapiCompanion() {
         intro="AcenoLeve"
         cue={cue}
         say={poke.line ?? tip ?? undefined}
+        bubbleFrom="right"
         idleReactions
         onTap={() => {
           // 3, 6 e 10 toques seguidos rendem uma fala do ovo; senão, a dica de sempre

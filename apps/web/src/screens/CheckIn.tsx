@@ -1,13 +1,5 @@
-import { type CheckInResult, MAX_GPS_ACCURACY_M } from '@cde/shared';
-import {
-  Button,
-  CountUp,
-  StatusRing,
-  type StatusRingState,
-  StreakChip,
-  SystemNote,
-  XpBar,
-} from '@cde/ui';
+import type { CheckInResult } from '@cde/shared';
+import { Button, CountUp, StatusRing, type StatusRingState, StreakChip, XpBar } from '@cde/ui';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { friendlyError, isGameApiError } from '../data/errors';
@@ -27,17 +19,6 @@ type Phase =
   | { kind: 'gps'; reason: 'imprecise' | 'denied' | 'unavailable' }
   | { kind: 'done' }
   | { kind: 'closed' };
-
-const NOTE: Record<Phase['kind'], string> = {
-  before: 'o app só lê a localização quando você toca, com o app aberto.',
-  checking:
-    'compara um ponto do GPS com a área desenhada do shopping (prédio e estacionamento externo).',
-  success: 'guarda só o resultado "dentro", nunca o trajeto. Um check-in por dia (RN01).',
-  outside: 'o ponto ficou fora da área; a distância é só para orientar e não é guardada.',
-  gps: `precisão acima de ${MAX_GPS_ACCURACY_M} m ou sem permissão: o QR da entrada vale como plano B.`,
-  done: 'limite de 1 check-in por dia; a sequência conta dias com atividade.',
-  closed: 'check-in e QR valem no horário das lojas (RN02).',
-};
 
 export function CheckIn() {
   const { api, profile, today, refresh, celebrate, mode } = useGame();
@@ -194,8 +175,6 @@ export function CheckIn() {
             </>
           )}
         </div>
-
-        <SystemNote className="mt-6 w-full text-left">{NOTE[phase.kind]}</SystemNote>
       </div>
     </Screen>
   );

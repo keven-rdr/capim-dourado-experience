@@ -1,5 +1,5 @@
 import { BASE_SPINS, describeGoldenWindow, GOLDEN_SPIN_FACTOR, type SpinResult } from '@cde/shared';
-import { Button, Card, RouletteWheel, rotationFor, Sheet, SystemNote, Tag } from '@cde/ui';
+import { Button, Card, RouletteWheel, rotationFor, Sheet, Tag } from '@cde/ui';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { friendlyError } from '../data/errors';
@@ -176,11 +176,6 @@ export function Roulette() {
           </p>
         </>
       )}
-
-      <SystemNote className="mt-6">
-        o servidor sorteia (RN09) e cada giro vira um cupom de uso único com validade curta (RN07).
-        Prêmios, pesos e horários são exemplos.
-      </SystemNote>
 
       <Sheet
         open={!!result}

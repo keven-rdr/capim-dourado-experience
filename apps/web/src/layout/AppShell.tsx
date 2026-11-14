@@ -18,6 +18,7 @@ import { useAwayTitle } from '../lib/useEggs';
 import { CapiCompanion } from './CapiCompanion';
 import { ChatShortcut } from './ChatShortcut';
 import { ProjectAside } from './ProjectAside';
+import { SiteFooter } from './ProjectCredits';
 
 const NAV: BottomNavItem[] = [
   { id: 'home', label: 'Início', icon: 'home', href: '/' },
@@ -67,16 +68,19 @@ export function AppShell() {
   if (ready && !profile && !onboarding) return <Navigate to="/bem-vindo" replace />;
 
   return (
-    <PhoneFrame className="isolate" scrollerRef={scroller} aside={<ProjectAside />}>
-      <main id="conteudo" className="flex flex-1 flex-col">
-        {ready ? <Outlet /> : <Loading />}
-      </main>
-      {!onboarding && profile && (
-        <BottomNav items={NAV} activeId={activeNav(location.pathname)} linkAs={RouterLink} />
-      )}
-      {profile && location.pathname === '/' && <ChatShortcut />}
-      <Overlays />
-    </PhoneFrame>
+    <>
+      <PhoneFrame className="isolate" scrollerRef={scroller} aside={<ProjectAside />}>
+        <main id="conteudo" className="flex flex-1 flex-col">
+          {ready ? <Outlet /> : <Loading />}
+        </main>
+        {!onboarding && profile && (
+          <BottomNav items={NAV} activeId={activeNav(location.pathname)} linkAs={RouterLink} />
+        )}
+        {profile && location.pathname === '/' && <ChatShortcut />}
+        <Overlays />
+      </PhoneFrame>
+      <SiteFooter />
+    </>
   );
 }
 

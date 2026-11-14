@@ -1,5 +1,5 @@
 import { CURRENT_SEASON, demoQr } from '@cde/shared';
-import { Button, ScannerFrame, type ScannerState, SystemNote, useSeason } from '@cde/ui';
+import { Button, ScannerFrame, type ScannerState, useSeason } from '@cde/ui';
 import type { Html5Qrcode } from 'html5-qrcode';
 import { type FormEvent, useCallback, useEffect, useId, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
@@ -222,11 +222,6 @@ export function Scanner() {
           </Button>
         </div>
       </form>
-
-      <SystemNote className="mt-6">
-        no protótipo os QR são códigos de demonstração; em produção, a API assina cada código com
-        validade, para foto compartilhada não valer (RN10).
-      </SystemNote>
     </Screen>
   );
 }
