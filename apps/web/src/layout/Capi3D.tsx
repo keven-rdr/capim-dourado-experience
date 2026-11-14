@@ -293,7 +293,7 @@ export function Capi3D({
           )}
         </button>
       )}
-      {line && <SpeechBubble className="mb-6 flex-1">{line}</SpeechBubble>}
+      {line && !raging && <SpeechBubble className="mb-6 flex-1">{line}</SpeechBubble>}
       {raging && <CapiRage from={season} onDone={() => setRaging(false)} />}
     </div>
   );
