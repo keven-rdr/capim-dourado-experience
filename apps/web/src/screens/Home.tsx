@@ -281,6 +281,14 @@ export function Home() {
         />
       </div>
 
+      <Link
+        to="/chat"
+        className="mt-4 flex min-h-14 items-center justify-between rounded-md bg-gold px-4 py-3 font-display font-extrabold text-on-gold chunk shadow-hard focus-ring pressable"
+      >
+        <span>Converse com a Capi sobre lojas e promoções</span>
+        <Icon name="arrowRight" />
+      </Link>
+
       <SystemNote className="mt-6">
         a Home só compõe componentes da @cde/ui; a temporada muda os tokens, a fantasia da Capi e os
         textos.

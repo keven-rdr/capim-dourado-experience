@@ -1,3 +1,4 @@
+export * from './chat.js';
 export * from './contract.js';
 export * from './domain.js';
 export * from './geo.js';

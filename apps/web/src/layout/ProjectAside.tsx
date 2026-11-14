@@ -2,7 +2,6 @@ import { Chip, SEASON_IDS, SEASON_THEME, useSeason } from '@cde/ui';
 import QRCode from 'qrcode';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { openDemoPanel } from '../demo/DemoPanel';
 
 /** Painel ao lado do celular em telas largas: o que é o projeto, em poucas linhas, para projetar. */
 export function ProjectAside() {
@@ -56,13 +55,6 @@ export function ProjectAside() {
         >
           Catálogo de componentes
         </Link>
-        <button
-          type="button"
-          onClick={openDemoPanel}
-          className="inline-flex min-h-12 cursor-pointer items-center rounded-md bg-ink px-4 font-display font-bold text-bg chunk shadow-hard focus-ring pressable"
-        >
-          Painel da demonstração
-        </button>
       </div>
 
       {qr && (

@@ -1,11 +1,14 @@
 import { z } from 'zod';
 import type {
   AlbumState,
+  ChatMessageInput,
+  ChatReply,
   Coupon,
   HuntState,
   MissionWithProgress,
   PointEvent,
   Profile,
+  Promotion,
   Redemption,
   Reward,
   RouletteStatus,
@@ -55,6 +58,31 @@ export type RedeemInput = z.infer<typeof redeemSchema>;
 /** Código impresso no cupom (ex.: CDE-7K3M-4Q), digitado ou lido no caixa da loja. */
 export const markCouponUsedSchema = z.object({ code: z.string().trim().min(3).max(32) });
 export type MarkCouponUsedInput = z.infer<typeof markCouponUsedSchema>;
+export const promotionStatusSchema = z.enum(['draft', 'published', 'paused']);
+export const promotionInputSchema = z
+  .object({
+    storeId: z.string().trim().min(1).max(80),
+    title: z.string().trim().min(1).max(80),
+    description: z.string().trim().min(1).max(300),
+    terms: z.string().trim().max(500),
+    startsAt: z.string().datetime(),
+    endsAt: z.string().datetime(),
+    status: promotionStatusSchema,
+    couponId: z.string().trim().min(1).max(80).optional(),
+    example: z.literal(true),
+  })
+  .refine((promotion) => Date.parse(promotion.endsAt) > Date.parse(promotion.startsAt), {
+    message: 'A data final deve ser posterior à data inicial.',
+    path: ['endsAt'],
+  });
+export type PromotionInput = z.infer<typeof promotionInputSchema>;
+
+export const chatMessageSchema = z.object({
+  text: z.string().trim().max(240).default(''),
+  storeId: z.string().trim().min(1).max(80).optional(),
+  intent: z.enum(['promotions', 'store_location', 'earn_coins', 'redeem_help']).optional(),
+});
+export type ChatRequest = z.infer<typeof chatMessageSchema>;
 
 /** Códigos de erro de regra de negócio. A API responde `{ error: { code, message } }`. */
 export const ERROR_CODES = [
@@ -146,6 +174,8 @@ export interface GameApi {
   getRoulette(): Promise<RouletteStatus>;
   /** Gasta um giro. O prêmio é um cupom de uso único com validade curta. */
   spinRoulette(): Promise<SpinResult>;
+  listPromotions(storeId?: string): Promise<Promotion[]>;
+  sendChatMessage(input: ChatMessageInput): Promise<ChatReply>;
 }
 
 /**
@@ -156,6 +186,14 @@ export interface StorePanelApi {
   getStoreStats(storeId: string): Promise<StoreStats>;
   /** Dá baixa no cupom (uso único). Confere loja, validade e se já foi usado. */
   markCouponUsed(storeId: string, input: MarkCouponUsedInput): Promise<UseCouponResult>;
+}
+
+/** Operações privadas do painel do lojista. A API deve validar o vínculo com a loja. */
+export interface MerchantApi {
+  listManagedStores(): Promise<Store[]>;
+  listManagedPromotions(storeId: string): Promise<Promotion[]>;
+  createPromotion(input: PromotionInput): Promise<Promotion>;
+  updatePromotion(id: string, input: PromotionInput): Promise<Promotion>;
 }
 
 /** Rotas HTTP da API, todas sob `/v1`. Autenticação: `Authorization: Bearer <JWT do Supabase>`. */
@@ -183,6 +221,12 @@ export const ROUTES = {
   // Painel da loja: autenticado pela chave da loja, não pelo login do visitante.
   getStoreStats: { method: 'GET', path: '/v1/panel/stores/:storeId/stats' },
   markCouponUsed: { method: 'POST', path: '/v1/panel/stores/:storeId/coupons/use' },
+  listPromotions: { method: 'GET', path: '/v1/promotions' },
+  sendChatMessage: { method: 'POST', path: '/v1/chat/messages' },
+  listManagedStores: { method: 'GET', path: '/v1/merchant/stores' },
+  listManagedPromotions: { method: 'GET', path: '/v1/merchant/promotions' },
+  createPromotion: { method: 'POST', path: '/v1/merchant/promotions' },
+  updatePromotion: { method: 'PATCH', path: '/v1/merchant/promotions/:id' },
 } as const satisfies Record<string, { method: 'GET' | 'POST' | 'PATCH' | 'DELETE'; path: string }>;
 
 /**
