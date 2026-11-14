@@ -13,7 +13,6 @@ import { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { Link, Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useGame } from '../data/GameProvider';
-import { DemoPanel } from '../demo/DemoPanel';
 import { lookOf } from '../lib/content';
 import { useAwayTitle } from '../lib/useEggs';
 import { CapiCompanion } from './CapiCompanion';
@@ -90,6 +89,7 @@ function Loading() {
 /** Avisos de conquista, revelação do QR e painel da demonstração, dentro da tela do celular. */
 function Overlays() {
   const target = usePortalTarget();
+  const location = useLocation();
   const { toasts, dismiss, reveal, closeReveal, profile } = useGame();
   const navigate = useNavigate();
 
@@ -158,7 +158,7 @@ function Overlays() {
           </div>,
           target,
         )}
-      <CapiCompanion />
+      {location.pathname !== '/chat' && <CapiCompanion />}
       <TreasureReveal
         open={!!reveal}
         title={reveal?.title ?? ''}
@@ -177,7 +177,6 @@ function Overlays() {
         actions={actions}
         onClose={closeReveal}
       />
-      <DemoPanel />
     </>
   );
 }

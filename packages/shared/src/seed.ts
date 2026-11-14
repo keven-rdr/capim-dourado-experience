@@ -1,4 +1,4 @@
-import type { Coupon, Hunt, Mission, SeasonId, Sticker, Store } from './domain.js';
+import type { Coupon, Hunt, Mission, Promotion, SeasonId, Sticker, Store } from './domain.js';
 
 /**
  * Dados iniciais do protótipo.
@@ -384,6 +384,34 @@ export const COUPONS: readonly Coupon[] = [
     cost: 110,
     trail: 'todos',
     validDays: 10,
+    example: true,
+  },
+];
+
+/** Ofertas fictícias para exercitar o catálogo e o chat na demonstração. */
+export const PROMOTIONS: readonly Promotion[] = [
+  {
+    id: 'promo-leitura-demo',
+    storeId: 'leitura',
+    title: 'Oferta de exemplo em livros',
+    description: 'Confira uma condição especial fictícia para a demonstração.',
+    terms: 'Oferta ilustrativa; consulte a loja para condições reais.',
+    startsAt: '2026-01-01T00:00:00.000Z',
+    endsAt: '2027-01-01T00:00:00.000Z',
+    status: 'published',
+    couponId: 'c-livro',
+    example: true,
+  },
+  {
+    id: 'promo-rihappy-demo',
+    storeId: 'rihappy',
+    title: 'Brincadeira de exemplo',
+    description: 'Veja uma promoção fictícia para testar o cadastro de lojista.',
+    terms: 'Oferta ilustrativa; consulte a loja para condições reais.',
+    startsAt: '2026-01-01T00:00:00.000Z',
+    endsAt: '2027-01-01T00:00:00.000Z',
+    status: 'published',
+    couponId: 'c-brinquedo',
     example: true,
   },
 ];

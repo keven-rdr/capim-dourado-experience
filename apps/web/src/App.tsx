@@ -8,10 +8,12 @@ import { GameProvider } from './data/GameProvider';
 import { AppShell } from './layout/AppShell';
 import { Album } from './screens/Album';
 import { Catalog } from './screens/Catalog';
+import { Chat } from './screens/Chat';
 import { CheckIn } from './screens/CheckIn';
 import { Home } from './screens/Home';
 import { Hunt } from './screens/Hunt';
 import { MapScreen } from './screens/MapScreen';
+import { MerchantPromotions } from './screens/MerchantPromotions';
 import { Missions } from './screens/Missions';
 import { NotFound } from './screens/NotFound';
 import { Onboarding } from './screens/Onboarding';
@@ -63,6 +65,8 @@ export function App() {
                 <Route path="scanner" element={<Scanner />} />
                 <Route path="recompensas" element={<Rewards />} />
                 <Route path="roleta" element={<Roulette />} />
+                <Route path="chat" element={<Chat />} />
+                <Route path="lojista" element={<MerchantPromotions />} />
                 <Route path="mapa" element={<MapScreen />} />
                 <Route path="album" element={<Album />} />
                 <Route path="perfil" element={<Profile />} />
