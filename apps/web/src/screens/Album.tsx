@@ -1,23 +1,14 @@
 import { CURRENT_SEASON, SEASON_INFO, type SeasonId } from '@cde/shared';
-import {
-  Capi,
-  FilterChips,
-  SEASON_IDS,
-  SpeechBubble,
-  StickerCard,
-  SystemNote,
-  useSeason,
-} from '@cde/ui';
+import { FilterChips, SEASON_IDS, StickerCard, SystemNote, useSeason } from '@cde/ui';
 import { useState } from 'react';
-import { useGame, useGameQuery } from '../data/GameProvider';
+import { useGameQuery } from '../data/GameProvider';
 import { Capi3D } from '../layout/Capi3D';
 import { Screen } from '../layout/Screen';
-import { lookOf, STICKER_MOTIF, stickerHint } from '../lib/content';
+import { STICKER_MOTIF, stickerHint } from '../lib/content';
 
 const TILTS = [-2.2, 1.4, -0.6, 2, -1.4, 0.8, 1.8, -1.8, 0.4, -2.4, 1.2, -0.8];
 
 export function Album() {
-  const { profile } = useGame();
   const { season: theme } = useSeason();
   const [season, setSeason] = useState<SeasonId>(theme);
   const album = useGameQuery((api) => api.getAlbum(season), [season]);
@@ -25,7 +16,6 @@ export function Album() {
   const owned = stickers.filter((s) => s.owned).length;
   const nextLocked = stickers.find((s) => !s.owned);
   const past = season !== CURRENT_SEASON;
-  const look = lookOf(profile?.character);
   const nextLine = past
     ? 'Essa temporada volta no ano que vem. Guarda o lugar!'
     : nextLocked && `A próxima, "${nextLocked.name}", sai em: ${stickerHint(nextLocked.id)}.`;
@@ -71,15 +61,7 @@ export function Album() {
         ))}
       </div>
 
-      {nextLocked &&
-        (look === 'capi' ? (
-          <Capi3D className="mt-6" size={80} intro="AcenoLeve" say={nextLine} />
-        ) : (
-          <div className="mt-6 flex items-end gap-2">
-            <Capi size={70} look={look} expression="curiosa" />
-            <SpeechBubble className="mb-6 flex-1">{nextLine}</SpeechBubble>
-          </div>
-        ))}
+      {nextLocked && <Capi3D className="mt-6" size={80} intro="AcenoLeve" say={nextLine} />}
       <SystemNote className="mt-4">
         raras têm brilho; trancadas mostram só a silhueta e onde ganhar.
       </SystemNote>

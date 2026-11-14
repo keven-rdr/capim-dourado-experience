@@ -7,7 +7,6 @@ import {
   type IconName,
   MissionCard,
   SeasonBanner,
-  SpeechBubble,
   StreakChip,
   SystemNote,
   Tag,
@@ -222,20 +221,13 @@ export function Home() {
         <div className="h-48 animate-pulse rounded-blob bg-surface-2 chunk" />
       )}
 
-      {look === 'capi' ? (
-        <Capi3D
-          className="mt-6"
-          size={120}
-          intro={new Date().getHours() < 12 ? 'Espreguica' : 'Acenar'}
-          say={hint}
-          idleReactions
-        />
-      ) : (
-        <div className="mt-6 flex items-end gap-2">
-          <Capi size={70} look={look} expression="curiosa" />
-          <SpeechBubble className="mb-6 flex-1">{hint}</SpeechBubble>
-        </div>
-      )}
+      <Capi3D
+        className="mt-6"
+        size={120}
+        intro={new Date().getHours() < 12 ? 'Espreguica' : 'Acenar'}
+        say={hint}
+        idleReactions
+      />
 
       <SeasonBanner
         className="mt-2"

@@ -3,7 +3,6 @@ import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useLocation } from 'react-router-dom';
 import { useGame } from '../data/GameProvider';
-import { lookOf } from '../lib/content';
 import { Capi3D, type CapiClip, type CapiCue } from './Capi3D';
 
 /** Telas que já mostram a Capi 3D grande: lá a companheira some para não ficar repetida. */
@@ -186,7 +185,7 @@ export function CapiCompanion() {
     return () => window.clearTimeout(t);
   }, [tip]);
 
-  const show = profile && lookOf(profile.character) === 'capi' && !OWN_CAPI.includes(pathname);
+  const show = profile && !OWN_CAPI.includes(pathname);
   if (!show || !target) return null;
 
   const updateBall = (next: BallState) => {

@@ -76,7 +76,7 @@ export function Capi({
   const ctx = useSeason();
   const season = seasonProp ?? ctx.season;
   const art = face ? CAPI_ART.face : CAPI_ART.full;
-  if (look === 'capi' && art && !illustrated) {
+  if (art && !illustrated) {
     return (
       <img
         src={art}
