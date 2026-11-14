@@ -285,6 +285,7 @@
   --animate-spin-slow: cde-spin 0.9s linear infinite;
   --animate-foil: cde-foil 3.5s linear infinite;
   --animate-shake: cde-shake 0.4s ease;
+  --animate-coin-fall: cde-coin-fall 2.4s ease-in forwards;
 
   @keyframes cde-pulse-ring {
     0% {
@@ -337,6 +338,20 @@
   @keyframes cde-foil {
     to {
       background-position: 200% 0;
+    }
+  }
+  @keyframes cde-coin-fall {
+    0% {
+      transform: translateY(-12vh) rotate(0deg);
+      opacity: 0;
+    }
+    10%,
+    85% {
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(105vh) rotate(540deg);
+      opacity: 0;
     }
   }
 }

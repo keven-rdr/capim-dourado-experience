@@ -8,6 +8,7 @@ import {
   Capi,
   Card,
   Chip,
+  CoinRain,
   CouponTicket,
   ExampleTag,
   FilterChips,
@@ -89,6 +90,19 @@ function WheelSpecimen() {
       >
         Girar
       </Button>
+    </div>
+  );
+}
+
+/** Exemplar da chuva de moedas: só enfeite, não mexe em saldo nenhum. */
+function RainSpecimen() {
+  const [raining, setRaining] = useState(false);
+  return (
+    <div className="flex w-full flex-col items-start gap-3">
+      <Button icon="coin" variant="gold" onClick={() => setRaining(true)} loading={raining}>
+        Chover moedas
+      </Button>
+      {raining && <CoinRain onDone={() => setRaining(false)} />}
     </div>
   );
 }
@@ -453,6 +467,13 @@ export function Catalog() {
           note="só desenha e gira até a fatia recebida | quem sorteia é o servidor"
         >
           <WheelSpecimen />
+        </Specimen>
+
+        <Specimen
+          name="CoinRain"
+          note="decoração de 3 s | escondida de leitor de tela, sem toque, some com reduzir movimento"
+        >
+          <RainSpecimen />
         </Specimen>
 
         <Specimen name="StickerCard" note="comum · rara (brilho) · trancada (silhueta)">

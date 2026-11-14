@@ -3,6 +3,8 @@ import {
   Button,
   Capi,
   Card,
+  CoinRain,
+  cx,
   Icon,
   type IconName,
   MissionCard,
@@ -14,7 +16,8 @@ import {
   WalletBadge,
   XpBar,
 } from '@cde/ui';
-import { useState } from 'react';
+
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useGame, useGameQuery } from '../data/GameProvider';
 import { Capi3D } from '../layout/Capi3D';
@@ -22,6 +25,8 @@ import { FlashCard } from '../layout/FlashCard';
 import { ProductArt, ProductCard, ProductSheet } from '../layout/Product';
 import { brl, productById, productsFor } from '../lib/catalog';
 import { HUNT_NOUN, levelInfo, lookOf, SEASON_COPY, seasonInfo } from '../lib/content';
+import { createTapCounter, FAKE_LEVEL } from '../lib/eggs';
+import { useCue, useDiscover, useKonami, useLongPress, usePokeEgg } from '../lib/useEggs';
 import { useWishlist, wishStatus } from '../lib/wishlist';
 
 const FLOOR_SHORTCUTS: Array<{ id: Floor; short: string }> = [
@@ -31,7 +36,7 @@ const FLOOR_SHORTCUTS: Array<{ id: Floor; short: string }> = [
 ];
 
 export function Home() {
-  const { profile, today } = useGame();
+  const { profile, today, notify } = useGame();
   const { season } = useSeason();
   const navigate = useNavigate();
   const hunt = useGameQuery(
@@ -40,6 +45,28 @@ export function Home() {
   );
   const [openId, setOpenId] = useState<string | null>(null);
   const { wishes, priceOf } = useWishlist();
+
+  // ovos escondidos (cosméticos): Capi cutucada, Konami, toque longo no nome e barra de XP
+  const { cue, fire } = useCue();
+  const poke = usePokeEgg(fire);
+  const discover = useDiscover();
+  const [rain, setRain] = useState(false);
+  const [fakeLevel, setFakeLevel] = useState(false);
+  const xpTaps = useMemo(() => createTapCounter(), []);
+  const fakeTimer = useRef<number | undefined>(undefined);
+  useEffect(() => () => window.clearTimeout(fakeTimer.current), []);
+  const konami = useCallback(() => {
+    setRain(true);
+    fire('Festa', 3);
+    notify({
+      variant: 'info',
+      title: 'Código aceito',
+      description: 'Vidas extras: 0. Moedas: 0. Mas a intenção contou.',
+    });
+    discover('konami');
+  }, [fire, notify, discover]);
+  useKonami(konami);
+  const greetingPress = useLongPress(konami);
 
   if (!profile) return null;
   const myWishes = Object.entries(wishes).flatMap(([id, w]) => {
@@ -53,6 +80,33 @@ export function Home() {
   const firstVisit = profile.wallet.xp <= 50 && !today?.checkInDone;
   const atRisk = profile.streak.days > 0 && profile.streak.lastActiveDate !== today?.date;
   const huntState = hunt.data;
+  const shown = fakeLevel
+    ? { xp: FAKE_LEVEL.xp, min: 0, next: null, name: FAKE_LEVEL.name, number: FAKE_LEVEL.number }
+    : {
+        xp: profile.wallet.xp,
+        min: level.minXp,
+        next: next?.minXp ?? null,
+        name: level.name,
+        number,
+      };
+
+  /** 7 toques seguidos na barra: ela "sobe" para o nível 99 e, logo depois, admite a brincadeira. */
+  const xpNow = profile.wallet.xp;
+  function tapXp() {
+    if (xpTaps.tap() < 7) return;
+    xpTaps.reset();
+    setFakeLevel(true);
+    discover('nivel99');
+    window.clearTimeout(fakeTimer.current);
+    fakeTimer.current = window.setTimeout(() => {
+      setFakeLevel(false);
+      notify({
+        variant: 'info',
+        title: 'Brincadeira.',
+        description: next ? `Faltam ${next.minXp - xpNow} XP.` : 'Mas você já está no máximo.',
+      });
+    }, 2500);
+  }
   const hint =
     huntState && !huntState.completed
       ? `Psiu: a pista ${huntState.solved + 1} está esperando. Quer ler?`
@@ -65,6 +119,7 @@ export function Home() {
           to="/perfil"
           className="flex min-h-11 items-center gap-2 rounded-md pr-2 focus-ring"
           aria-label="Abrir perfil"
+          {...greetingPress}
         >
           <span className="grid size-12 place-items-end overflow-hidden rounded-blob bg-gold chunk">
             <Capi size={46} look={look} expression="animada" face className="-mb-2" />
@@ -135,13 +190,14 @@ export function Home() {
         onClose={() => setOpenId(null)}
       />
 
-      <Card className="mt-6 p-4" shape="blob">
+      {/* ovo escondido: só um bônus, sem equivalente de teclado (o teclado tem o Konami) */}
+      <Card className={cx('mt-6 p-4', fakeLevel && 'animate-shake')} shape="blob" onClick={tapXp}>
         <XpBar
-          xp={profile.wallet.xp}
-          levelMinXp={level.minXp}
-          nextLevelXp={next?.minXp ?? null}
-          levelName={level.name}
-          levelNumber={number}
+          xp={shown.xp}
+          levelMinXp={shown.min}
+          nextLevelXp={shown.next}
+          levelName={shown.name}
+          levelNumber={shown.number}
           nextLevelName={next?.name}
         />
         <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
@@ -225,8 +281,10 @@ export function Home() {
         className="mt-6"
         size={120}
         intro={new Date().getHours() < 12 ? 'Espreguica' : 'Acenar'}
-        say={hint}
+        cue={cue}
+        say={poke.line ?? hint}
         idleReactions
+        onTap={() => void poke.onTap()}
       />
 
       <SeasonBanner
@@ -280,6 +338,8 @@ export function Home() {
           tone="bg-secondary text-on-secondary"
         />
       </div>
+
+      {rain && <CoinRain onDone={() => setRain(false)} />}
 
       <SystemNote className="mt-6">
         a Home só compõe componentes da @cde/ui; a temporada muda os tokens, a fantasia da Capi e os

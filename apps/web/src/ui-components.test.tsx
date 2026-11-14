@@ -1,5 +1,6 @@
 import {
   Button,
+  CoinRain,
   CouponTicket,
   MissionCard,
   RouletteWheel,
@@ -9,7 +10,7 @@ import {
   sliceCenter,
 } from '@cde/ui';
 import { fireEvent, render, screen } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 describe('componentes da @cde/ui', () => {
   it('Button mostra carregando e bloqueia o clique', () => {
@@ -109,6 +110,22 @@ describe('componentes da @cde/ui', () => {
     expect(wheel?.style.transition).toBe('none');
   });
 
+  it('RouletteWheel: o miolo só é tocável quando há onHubPress e fica fora do teclado', () => {
+    const slices = ['A', 'B', 'C'].map((label) => ({ label }));
+    const { rerender } = render(<RouletteWheel slices={slices} />);
+    expect(screen.queryByRole('button', { name: 'Miolo da roleta' })).toBeNull();
+
+    const onHubPress = vi.fn();
+    rerender(<RouletteWheel slices={slices} onHubPress={onHubPress} />);
+    const hub = screen.getByRole('button', { name: 'Miolo da roleta' });
+    expect(hub).toHaveAttribute('tabindex', '-1');
+    fireEvent.click(hub);
+    fireEvent.click(hub);
+    expect(onHubPress).toHaveBeenCalledTimes(2);
+    // a roda continua descrita como imagem, sem o botão dentro dela
+    expect(screen.getByRole('img', { name: /3 prêmios/ })).not.toContainElement(hub);
+  });
+
   it('rotationFor leva o centro da fatia ao ponteiro, sempre para a frente', () => {
     // 4 fatias de 90°: o centro da fatia 1 fica em 135°; o ponteiro está em 0°.
     expect(sliceCenter(1, 4)).toBe(135);
@@ -130,5 +147,34 @@ describe('componentes da @cde/ui', () => {
     expect(container.querySelector('[data-season="halloween"]')).not.toBeNull();
     expect(screen.getByLabelText(/trancada/)).toBeInTheDocument();
     expect(screen.getByText('Volta em outubro')).toBeInTheDocument();
+  });
+
+  describe('CoinRain', () => {
+    afterEach(() => vi.useRealTimers());
+
+    it('é decoração: escondida de leitor de tela, sem toque, com o número de moedas pedido', () => {
+      const { baseElement } = render(<CoinRain count={7} />);
+      const rain = baseElement.querySelector('[aria-hidden="true"].fixed');
+      expect(rain).not.toBeNull();
+      expect(rain?.className).toContain('pointer-events-none');
+      expect(rain?.querySelectorAll('svg')).toHaveLength(7);
+    });
+
+    it('avisa quando acaba e não avisa se sair da tela antes', () => {
+      vi.useFakeTimers();
+      const onDone = vi.fn();
+      const { unmount } = render(<CoinRain durationMs={3000} onDone={onDone} />);
+      vi.advanceTimersByTime(2999);
+      expect(onDone).not.toHaveBeenCalled();
+      vi.advanceTimersByTime(1);
+      expect(onDone).toHaveBeenCalledTimes(1);
+
+      const early = vi.fn();
+      const second = render(<CoinRain durationMs={3000} onDone={early} />);
+      second.unmount();
+      vi.advanceTimersByTime(5000);
+      expect(early).not.toHaveBeenCalled();
+      unmount();
+    });
   });
 });

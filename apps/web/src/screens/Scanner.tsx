@@ -5,11 +5,14 @@ import { type FormEvent, useCallback, useEffect, useId, useRef, useState } from 
 import { useSearchParams } from 'react-router-dom';
 import { useGame } from '../data/GameProvider';
 import { Screen } from '../layout/Screen';
+import { findWordEgg } from '../lib/eggs';
+import { useDiscover } from '../lib/useEggs';
 
 const READER_ID = 'cde-qr-reader';
 
 export function Scanner() {
   const { api, scan } = useGame();
+  const discover = useDiscover();
   const { season } = useSeason();
   const [params] = useSearchParams();
   const entrance = params.get('modo') === 'entrada';
@@ -136,7 +139,17 @@ export function Scanner() {
 
   function onSubmit(event: FormEvent) {
     event.preventDefault();
-    if (code.trim().length >= 3) void submit(code);
+    const typed = code.trim();
+    // palavra secreta (ovo escondido): a Capi responde e nada vai para a API
+    const reply = findWordEgg(typed);
+    if (reply) {
+      setState('success');
+      setMessage(reply);
+      setCode('');
+      discover('palavra');
+      return;
+    }
+    if (typed.length >= 3) void submit(code);
   }
 
   return (

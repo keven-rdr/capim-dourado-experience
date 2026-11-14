@@ -15,6 +15,11 @@ export interface RouletteWheelProps {
   durationMs?: number;
   /** Diâmetro em px. Padrão: 280. */
   size?: number;
+  /**
+   * Toque no miolo da roda. Fica fora da ordem do teclado e sem destaque: é um bônus escondido
+   * (a roda continua inteira para quem não sabe dele).
+   */
+  onHubPress?: () => void;
   className?: string;
 }
 
@@ -49,83 +54,101 @@ export function RouletteWheel({
   rotation = 0,
   durationMs = 3200,
   size = 280,
+  onHubPress,
   className,
 }: RouletteWheelProps) {
   const count = Math.max(slices.length, 1);
   const step = 360 / count;
 
   return (
-    <div
-      className={cx('relative mx-auto', className)}
-      style={{ width: size, height: size + 18 }}
-      role="img"
-      aria-label={`Roleta com ${slices.length} prêmios: ${slices.map((s) => s.label).join(', ')}`}
-    >
-      <svg
-        viewBox="0 0 28 22"
-        width={28}
-        height={22}
-        aria-hidden="true"
-        className="absolute left-1/2 top-0 z-10 -translate-x-1/2"
-      >
-        <path
-          d="M3 2h22L14 20z"
-          className="fill-ink stroke-line"
-          strokeWidth="2"
-          strokeLinejoin="round"
-        />
-      </svg>
+    <div className={cx('relative mx-auto', className)} style={{ width: size, height: size + 18 }}>
       <div
-        className="absolute inset-x-0 bottom-0 motion-reduce:!transition-none"
-        style={{
-          height: size,
-          transform: `rotate(${rotation}deg)`,
-          transition:
-            durationMs > 0 ? `transform ${durationMs}ms cubic-bezier(.12,.6,.15,1)` : 'none',
-        }}
+        role="img"
+        aria-label={`Roleta com ${slices.length} prêmios: ${slices.map((s) => s.label).join(', ')}`}
+        className="absolute inset-0"
       >
-        <svg viewBox="0 0 220 220" width={size} height={size} aria-hidden="true" focusable="false">
-          <circle cx={CENTER} cy={CENTER} r={RADIUS + 4} className="fill-ink" />
-          {slices.map((slice, index) => {
-            const a = POINT(index * step, RADIUS);
-            const b = POINT((index + 1) * step, RADIUS);
-            const warm = index % 2 === 0;
-            return (
-              <path
-                key={slice.id ?? slice.label}
-                d={`M${CENTER} ${CENTER}L${a.x.toFixed(2)} ${a.y.toFixed(2)}A${RADIUS} ${RADIUS} 0 0 1 ${b.x.toFixed(2)} ${b.y.toFixed(2)}Z`}
-                className={cx(warm ? 'fill-gold' : 'fill-secondary', 'stroke-line')}
-                strokeWidth="2"
-                strokeLinejoin="round"
-              />
-            );
-          })}
-          {slices.map((slice, index) => (
-            <text
-              key={`t-${slice.id ?? slice.label}`}
-              x={CENTER + RADIUS - 10}
-              y={CENTER}
-              textAnchor="end"
-              dominantBaseline="central"
-              transform={`rotate(${sliceCenter(index, count) - 90} ${CENTER} ${CENTER})`}
-              className={cx(
-                'font-display text-[11px] font-extrabold',
-                index % 2 === 0 ? 'fill-on-gold' : 'fill-on-secondary',
-              )}
-            >
-              {slice.label}
-            </text>
-          ))}
-          <circle
-            cx={CENTER}
-            cy={CENTER}
-            r={17}
-            className="fill-surface stroke-line"
-            strokeWidth="3"
+        <svg
+          viewBox="0 0 28 22"
+          width={28}
+          height={22}
+          aria-hidden="true"
+          className="absolute left-1/2 top-0 z-10 -translate-x-1/2"
+        >
+          <path
+            d="M3 2h22L14 20z"
+            className="fill-ink stroke-line"
+            strokeWidth="2"
+            strokeLinejoin="round"
           />
-          <circle cx={CENTER} cy={CENTER} r={5} className="fill-primary" />
         </svg>
+        <div
+          className="absolute inset-x-0 bottom-0 motion-reduce:!transition-none"
+          style={{
+            height: size,
+            transform: `rotate(${rotation}deg)`,
+            transition:
+              durationMs > 0 ? `transform ${durationMs}ms cubic-bezier(.12,.6,.15,1)` : 'none',
+          }}
+        >
+          <svg
+            viewBox="0 0 220 220"
+            width={size}
+            height={size}
+            aria-hidden="true"
+            focusable="false"
+          >
+            <circle cx={CENTER} cy={CENTER} r={RADIUS + 4} className="fill-ink" />
+            {slices.map((slice, index) => {
+              const a = POINT(index * step, RADIUS);
+              const b = POINT((index + 1) * step, RADIUS);
+              const warm = index % 2 === 0;
+              return (
+                <path
+                  key={slice.id ?? slice.label}
+                  d={`M${CENTER} ${CENTER}L${a.x.toFixed(2)} ${a.y.toFixed(2)}A${RADIUS} ${RADIUS} 0 0 1 ${b.x.toFixed(2)} ${b.y.toFixed(2)}Z`}
+                  className={cx(warm ? 'fill-gold' : 'fill-secondary', 'stroke-line')}
+                  strokeWidth="2"
+                  strokeLinejoin="round"
+                />
+              );
+            })}
+            {slices.map((slice, index) => (
+              <text
+                key={`t-${slice.id ?? slice.label}`}
+                x={CENTER + RADIUS - 10}
+                y={CENTER}
+                textAnchor="end"
+                dominantBaseline="central"
+                transform={`rotate(${sliceCenter(index, count) - 90} ${CENTER} ${CENTER})`}
+                className={cx(
+                  'font-display text-[11px] font-extrabold',
+                  index % 2 === 0 ? 'fill-on-gold' : 'fill-on-secondary',
+                )}
+              >
+                {slice.label}
+              </text>
+            ))}
+            <circle
+              cx={CENTER}
+              cy={CENTER}
+              r={17}
+              className="fill-surface stroke-line"
+              strokeWidth="3"
+            />
+            <circle cx={CENTER} cy={CENTER} r={5} className="fill-primary" />
+          </svg>
+        </div>
       </div>
+      {onHubPress && (
+        <button
+          type="button"
+          tabIndex={-1}
+          aria-label="Miolo da roleta"
+          onClick={onHubPress}
+          className="absolute left-1/2 z-20 size-11 -translate-x-1/2 -translate-y-1/2 cursor-default rounded-full"
+          style={{ top: size / 2 + 18 }}
+        />
+      )}
     </div>
   );
 }

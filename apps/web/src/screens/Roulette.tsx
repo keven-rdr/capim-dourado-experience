@@ -1,12 +1,14 @@
 import { BASE_SPINS, describeGoldenWindow, GOLDEN_SPIN_FACTOR, type SpinResult } from '@cde/shared';
 import { Button, Card, RouletteWheel, rotationFor, Sheet, SystemNote, Tag } from '@cde/ui';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { friendlyError } from '../data/errors';
 import { useGame, useGameQuery } from '../data/GameProvider';
 import { demoNow } from '../demo/demoStore';
 import { Screen, SectionTitle } from '../layout/Screen';
+import { createTapCounter } from '../lib/eggs';
 import { deadlineLabel } from '../lib/time';
+import { useDiscover } from '../lib/useEggs';
 
 const SPIN_MS = 3200;
 
@@ -34,6 +36,25 @@ export function Roulette() {
   const timer = useRef<number | undefined>(undefined);
 
   useEffect(() => () => window.clearTimeout(timer.current), []);
+
+  // ovo escondido: 3 toques no miolo giram a roda "no vazio" (não gasta giro nem sorteia nada)
+  const hubTaps = useMemo(() => createTapCounter(), []);
+  const discover = useDiscover();
+  function pokeHub() {
+    if (spinning || (query.data?.slices.length ?? 0) === 0) return;
+    if (hubTaps.tap() < 3) return;
+    hubTaps.reset();
+    const total = query.data?.slices.length ?? 1;
+    const duration = reducedMotion() ? 0 : SPIN_MS;
+    setSpinning(true);
+    setDurationMs(duration);
+    setRotation((current) => rotationFor(current, Math.floor(Math.random() * total), total, 3));
+    timer.current = window.setTimeout(() => {
+      setSpinning(false);
+      notify({ variant: 'info', title: 'Treino', description: 'Pra valer, só com check-in.' });
+      discover('roleta');
+    }, duration + 150);
+  }
 
   const status = query.data;
   const slices = status?.slices ?? [];
@@ -92,6 +113,7 @@ export function Roulette() {
         }
         rotation={rotation}
         durationMs={durationMs}
+        onHubPress={pokeHub}
       />
 
       <div className="mt-5 flex flex-col items-center gap-2 text-center">

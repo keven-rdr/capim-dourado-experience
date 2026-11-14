@@ -15,6 +15,7 @@ import { Link, Navigate, Outlet, useLocation, useNavigate } from 'react-router-d
 import { useGame } from '../data/GameProvider';
 import { DemoPanel } from '../demo/DemoPanel';
 import { lookOf } from '../lib/content';
+import { useAwayTitle } from '../lib/useEggs';
 import { CapiCompanion } from './CapiCompanion';
 import { ProjectAside } from './ProjectAside';
 
@@ -49,6 +50,7 @@ export function AppShell() {
   const location = useLocation();
   const { ready, profile } = useGame();
   const onboarding = location.pathname.startsWith('/bem-vindo');
+  useAwayTitle();
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: volta ao topo a cada troca de rota
   useEffect(() => {
