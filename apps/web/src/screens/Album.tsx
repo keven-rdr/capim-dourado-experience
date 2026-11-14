@@ -1,5 +1,5 @@
 import { CURRENT_SEASON, SEASON_INFO, type SeasonId } from '@cde/shared';
-import { FilterChips, SEASON_IDS, StickerCard, SystemNote, useSeason } from '@cde/ui';
+import { FilterChips, SEASON_IDS, StickerCard, useSeason } from '@cde/ui';
 import { useState } from 'react';
 import { useGameQuery } from '../data/GameProvider';
 import { Capi3D } from '../layout/Capi3D';
@@ -62,9 +62,6 @@ export function Album() {
       </div>
 
       {nextLocked && <Capi3D className="mt-6" size={80} intro="AcenoLeve" say={nextLine} />}
-      <SystemNote className="mt-4">
-        raras têm brilho; trancadas mostram só a silhueta e onde ganhar.
-      </SystemNote>
     </Screen>
   );
 }

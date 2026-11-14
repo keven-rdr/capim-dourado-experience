@@ -10,7 +10,6 @@ import {
   MissionCard,
   SeasonBanner,
   StreakChip,
-  SystemNote,
   Tag,
   useSeason,
   WalletBadge,
@@ -348,11 +347,6 @@ export function Home() {
         <span>Converse com a Capi sobre lojas e promoções</span>
         <Icon name="arrowRight" />
       </Link>
-
-      <SystemNote className="mt-6">
-        a Home só compõe componentes da @cde/ui; a temporada muda os tokens, a fantasia da Capi e os
-        textos.
-      </SystemNote>
     </div>
   );
 }

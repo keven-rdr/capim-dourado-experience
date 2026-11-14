@@ -6,7 +6,6 @@ import {
   FilterChips,
   type FilterOption,
   Sheet,
-  SystemNote,
   WalletBadge,
 } from '@cde/ui';
 import QRCode from 'qrcode';
@@ -227,10 +226,6 @@ export function Rewards() {
           Sorteio ilustrativo no protótipo
         </p>
       </Card>
-
-      <SystemNote className="mt-6">
-        resgatar desconta moedas e gera um código de uso único com prazo (RN07). XP não se gasta.
-      </SystemNote>
 
       <Sheet
         open={!!confirm}

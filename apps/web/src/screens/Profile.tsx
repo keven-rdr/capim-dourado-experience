@@ -1,5 +1,5 @@
 import { LEVELS, TRAIL_LABEL, type Trail } from '@cde/shared';
-import { Button, Card, cx, FilterChips, Sheet, SystemNote, Tag, XpBar } from '@cde/ui';
+import { Button, Card, cx, FilterChips, Sheet, Tag, XpBar } from '@cde/ui';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { friendlyError } from '../data/errors';
@@ -165,9 +165,6 @@ export function Profile() {
           Catálogo de componentes
         </Link>
       </div>
-      <SystemNote className="mt-6">
-        o perfil é anônimo no protótipo; apagar remove tudo deste aparelho.
-      </SystemNote>
 
       <Sheet
         open={confirmDelete}
