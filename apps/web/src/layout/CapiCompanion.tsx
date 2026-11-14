@@ -1,4 +1,11 @@
-import { FloatingCapi, Icon, type ToastVariant, usePortalTarget } from '@cde/ui';
+import {
+  capiArt,
+  FloatingCapi,
+  Icon,
+  type ToastVariant,
+  usePortalTarget,
+  useSeason,
+} from '@cde/ui';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useLocation } from 'react-router-dom';
@@ -71,6 +78,7 @@ export function CapiCompanion() {
   const { profile, toasts, reveal } = useGame();
   const { pathname } = useLocation();
   const target = usePortalTarget();
+  const { season } = useSeason();
   const [ball, setBall] = useState(loadBall);
   const [cue, setCue] = useState<CapiCue | null>(null);
   const [tip, setTip] = useState<string | null>(null);
@@ -131,7 +139,7 @@ export function CapiCompanion() {
     return createPortal(
       <FloatingCapi
         label="Mostrar a Capi; arraste para mover"
-        imageSrc="/capi-rosto.webp"
+        imageSrc={capiArt(season, true)}
         initialPosition={{ x: ball.pos.x ?? (ball.pos.side === 'left' ? 0 : 1), y: ball.pos.top }}
         onMove={({ x, y }) =>
           updateBall({ min: true, pos: { side: x < 0.5 ? 'left' : 'right', top: y, x } })

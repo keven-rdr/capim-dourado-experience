@@ -22,6 +22,7 @@ export {
   type CapiExpression,
   type CapiLook,
   type CapiProps,
+  capiArt,
 } from './Capi';
 export { Card, type CardProps, type CardTilt, type CardTone } from './Card';
 export {

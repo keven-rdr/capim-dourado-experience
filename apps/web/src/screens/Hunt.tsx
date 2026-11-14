@@ -33,8 +33,8 @@ export function Hunt() {
 
   return (
     <Screen kicker={`caça · ${seasonInfo(hunt.seasonId).name}`} title={hunt.title} back="/missoes">
-      <div className="flex items-baseline justify-between">
-        <p className="font-display text-lg font-bold">
+      <div className="flex flex-wrap items-baseline justify-between gap-x-3">
+        <p className="whitespace-nowrap font-display text-lg font-bold">
           {solved} de {hunt.clues.length} {noun.many}
         </p>
         <p className="font-mono text-xs font-bold text-ink-soft">cada pista: +40 XP · +10 moedas</p>

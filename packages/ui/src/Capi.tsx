@@ -53,9 +53,19 @@ export interface CapiProps {
 
 /**
  * Imagem da Capi 3D, configurada pelo app (URLs do próprio app). Vazia: usa o desenho 2D.
- * Só a personagem Capi tem versão 3D; as outras da turma seguem desenhadas.
+ * `bySeason` troca a roupa por tema (ex.: Papai Noel no Natal); sem entrada, usa `full`/`face`.
  */
-export const CAPI_ART = { full: '', face: '' };
+export const CAPI_ART: {
+  full: string;
+  face: string;
+  bySeason: Partial<Record<Season, { full: string; face: string }>>;
+} = { full: '', face: '', bySeason: {} };
+
+/** URL da imagem da Capi para o tema (corpo inteiro ou só o rosto). Vazia se o app não configurou. */
+export function capiArt(season: Season, face = false): string {
+  const set = CAPI_ART.bySeason[season] ?? CAPI_ART;
+  return face ? set.face : set.full;
+}
 
 /**
  * A Capi, mascote original do Capim Dourado Experience: capivara de formas simples,
@@ -75,7 +85,7 @@ export function Capi({
 }: CapiProps) {
   const ctx = useSeason();
   const season = seasonProp ?? ctx.season;
-  const art = face ? CAPI_ART.face : CAPI_ART.full;
+  const art = capiArt(season, face);
   if (art && !illustrated) {
     return (
       <img

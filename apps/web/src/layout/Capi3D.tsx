@@ -1,4 +1,4 @@
-import { Capi, type Season, SpeechBubble, usePortalTarget, useSeason } from '@cde/ui';
+import { Capi, capiArt, type Season, SpeechBubble, usePortalTarget, useSeason } from '@cde/ui';
 import { motion, useReducedMotion } from 'motion/react';
 import type { DetailedHTMLProps, HTMLAttributes } from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -89,6 +89,8 @@ export interface Capi3DProps {
   onTap?: () => void;
   /** Parada na pose de repouso: sem animação, nem ao toque. */
   still?: boolean;
+  /** Mostra o balão de fala. Desligue em espaços pequenos, como o avatar do perfil. */
+  speech?: boolean;
   className?: string;
 }
 
@@ -112,6 +114,7 @@ export function Capi3D({
   idleReactions = false,
   onTap: onTapProp,
   still = false,
+  speech = true,
   className,
 }: Capi3DProps) {
   const reduce = useReducedMotion();
@@ -124,9 +127,14 @@ export function Capi3D({
   const [taps, setTaps] = useState(0);
   const tapTimer = useRef<number | undefined>(undefined);
   const [raging, setRaging] = useState(false);
+  // o modelo aparece por cima da imagem parada só depois de carregar: sem pulo na tela
+  const [shown, setShown] = useState(false);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: zera a contagem a cada troca de tema
-  useEffect(() => setTaps(0), [season]);
+  useEffect(() => {
+    setTaps(0);
+    setShown(false);
+  }, [season]);
 
   useEffect(() => () => window.clearTimeout(tapTimer.current), []);
 
@@ -176,6 +184,7 @@ export function Capi3D({
     if (!libReady || !el) return;
     const onLoad = () => {
       loadedRef.current = true;
+      setShown(true);
       if (still) {
         el.animationName = rest;
         el.pause();
@@ -230,6 +239,31 @@ export function Capi3D({
     };
   }, [libReady, idleReactions, changeMood, once, backToMood]);
 
+  // rolando a tela, a Capi pausa: o celular fica livre para a rolagem não travar
+  useEffect(() => {
+    if (!libReady || still) return;
+    let resume: number | undefined;
+    let paused = false;
+    const onScroll = () => {
+      const el = ref.current;
+      if (!el || !loadedRef.current) return;
+      if (!paused) {
+        el.pause();
+        paused = true;
+      }
+      window.clearTimeout(resume);
+      resume = window.setTimeout(() => {
+        paused = false;
+        backToMood();
+      }, 200);
+    };
+    document.addEventListener('scroll', onScroll, { capture: true, passive: true });
+    return () => {
+      document.removeEventListener('scroll', onScroll, { capture: true });
+      window.clearTimeout(resume);
+    };
+  }, [libReady, still, backToMood]);
+
   const onTap = () => {
     onTapProp?.();
     if (still || moodRef.current !== 'normal') return; // o toque já acorda pelo evento de atividade
@@ -248,7 +282,18 @@ export function Capi3D({
   };
 
   const asleep = mood === 'dormindo' || rest === 'Dormindo';
-  const fallback = <Capi size={size} expression={asleep ? 'dormindo' : 'animada'} />;
+  const art = capiArt(season);
+  // mesma caixa do modelo 3D, para a troca imagem → 3D não mexer no layout
+  const fallback = art ? (
+    <img
+      src={art}
+      alt=""
+      draggable={false}
+      className="pointer-events-none size-full select-none object-contain object-bottom"
+    />
+  ) : (
+    <Capi size={size} expression={asleep ? 'dormindo' : 'animada'} />
+  );
   const line =
     RAGE_LINES[taps] ??
     (mood === 'emburrado'
@@ -260,7 +305,9 @@ export function Capi3D({
   return (
     <div className={`flex items-end gap-2 ${className ?? ''}`}>
       {reduce || !libReady ? (
-        fallback
+        <div className="grid shrink-0 place-items-end" style={{ width: size, height: size * 1.2 }}>
+          {fallback}
+        </div>
       ) : (
         <button
           type="button"
@@ -269,6 +316,13 @@ export function Capi3D({
           className="pointer-events-auto relative shrink-0 rounded-blob focus-ring"
           style={{ width: size, height: size * 1.2, visibility: raging ? 'hidden' : undefined }}
         >
+          <span
+            aria-hidden
+            className="absolute inset-0 grid place-items-end transition-opacity duration-300"
+            style={{ opacity: shown ? 0 : 1 }}
+          >
+            {fallback}
+          </span>
           <model-viewer
             ref={ref}
             src={MODEL_BY_SEASON[season]}
@@ -280,12 +334,15 @@ export function Capi3D({
             interaction-prompt="none"
             shadow-intensity="0.8"
             animation-crossfade-duration="250"
-            style={{ width: '100%', height: '100%', background: 'transparent' }}
-          >
-            <div slot="poster" className="grid size-full place-items-end">
-              {fallback}
-            </div>
-          </model-viewer>
+            style={{
+              width: '100%',
+              height: '100%',
+              background: 'transparent',
+              opacity: shown ? 1 : 0,
+              transition: 'opacity 0.3s',
+              ['--poster-color' as string]: 'transparent',
+            }}
+          />
           {mood === 'dormindo' && (
             <span
               aria-hidden
@@ -296,7 +353,7 @@ export function Capi3D({
           )}
         </button>
       )}
-      {line && !raging && (
+      {speech && line && !raging && (
         <SpeechBubble from={bubbleFrom} className="mb-6 flex-1">
           {line}
         </SpeechBubble>

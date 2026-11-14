@@ -45,7 +45,7 @@ export function Profile() {
     <Screen kicker="sua conta" title={profile.name} back="/">
       <Card shape="blob" className="flex items-center gap-3 p-4">
         <span className="grid size-24 shrink-0 place-items-end overflow-hidden rounded-blob bg-gold chunk">
-          <Capi3D size={80} intro="AcenoLeve" />
+          <Capi3D size={80} intro="AcenoLeve" speech={false} />
         </span>
         <div className="min-w-0 flex-1">
           <p className="font-mono text-xs font-bold uppercase text-ink-soft">
@@ -69,12 +69,12 @@ export function Profile() {
       )}
 
       <SectionTitle>Os níveis</SectionTitle>
-      <ol className="flex gap-1.5">
+      <ol className="grid grid-cols-2 gap-1.5">
         {LEVELS.map((l, i) => (
           <li
             key={l.id}
             className={cx(
-              'flex-1 rounded-sm px-2 py-2 chunk-thin',
+              'min-w-0 rounded-sm px-2 py-2 chunk-thin',
               l.id === level.id
                 ? 'bg-accent text-on-accent'
                 : profile.wallet.xp >= l.minXp

@@ -1,4 +1,4 @@
-import { FloatingCapi, usePortalTarget } from '@cde/ui';
+import { capiArt, FloatingCapi, usePortalTarget, useSeason } from '@cde/ui';
 import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 
@@ -6,11 +6,12 @@ import { useNavigate } from 'react-router-dom';
 export function ChatShortcut() {
   const target = usePortalTarget();
   const navigate = useNavigate();
+  const { season } = useSeason();
   if (!target) return null;
   return createPortal(
     <FloatingCapi
       label="Conversar com a Capi; arraste para mover"
-      imageSrc="/capi-rosto.webp"
+      imageSrc={capiArt(season, true)}
       onActivate={() => navigate('/chat')}
     />,
     target,

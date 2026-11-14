@@ -1,4 +1,5 @@
 import { motion } from 'motion/react';
+import { CountUp } from './CountUp';
 import { cx } from './cx';
 
 export interface XpBarProps {
@@ -37,20 +38,21 @@ export function XpBar({
   const ratio = (value: number) =>
     nextLevelXp === null ? 1 : Math.min(1, Math.max(0, (value - levelMinXp) / span));
   const pct = ratio(xp) * 100;
-  const fromPct = fromXp === undefined ? pct : ratio(fromXp) * 100;
+  // sem `fromXp`, a barra enche desde o começo do nível ao aparecer (não fica parada)
+  const fromPct = fromXp === undefined ? 0 : ratio(fromXp) * 100;
   const missing = nextLevelXp === null ? 0 : nextLevelXp - xp;
 
   return (
     <div className={cx('w-full', className)}>
-      <div className="mb-1.5 flex items-end justify-between gap-2">
+      <div className="mb-1.5 flex flex-wrap items-end justify-between gap-x-2 gap-y-1">
         <p className="flex items-baseline gap-2">
           <span className="rounded-xs bg-ink px-1.5 py-0.5 font-mono text-xs font-bold text-bg">
             NV {levelNumber}
           </span>
           <span className="font-display text-lg font-extrabold leading-none">{levelName}</span>
         </p>
-        <p className="font-mono text-sm font-bold tabular-nums">
-          {xp}
+        <p className="whitespace-nowrap font-mono text-sm font-bold tabular-nums">
+          <CountUp to={xp} from={fromXp ?? levelMinXp} />
           <span className="text-ink-soft">/{nextLevelXp ?? xp} XP</span>
         </p>
       </div>
@@ -67,7 +69,7 @@ export function XpBar({
           initial={{ width: `${fromPct}%` }}
           animate={{ width: `${pct}%` }}
           transition={{
-            duration: fromXp === undefined ? 0 : 1.1,
+            duration: fromXp === undefined ? 0.9 : 1.1,
             ease: [0.22, 1, 0.36, 1],
             delay: 0.2,
           }}
