@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="docs/assets/banner.gif" alt="Capim Dourado Experience: o shopping virou um jogo. O GIF mostra o app em uso: check-in, caça ao tesouro com QR, revelação do presente, roleta de cupons e chat da Capi." width="100%" />
+<img src="docs/assets/banner.png" alt="Capim Dourado Experience: o shopping virou um jogo" width="100%" />
 
 <br />
 
