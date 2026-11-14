@@ -3,13 +3,13 @@ import { cx } from './cx';
 import { Icon } from './Icon';
 import { ExampleTag } from './Tag';
 
-export type CouponState = 'available' | 'redeemed' | 'expired' | 'insufficient';
+export type CouponState = 'available' | 'redeemed' | 'used' | 'expired' | 'insufficient';
 
 export interface CouponTicketProps {
   title: string;
   storeName: string;
-  /** Custo em moedas. */
-  cost: number;
+  /** Custo em moedas. Sem ele (cupom já resgatado, ou ganho de graça na roleta), o canhoto mostra "1 uso". */
+  cost?: number;
   /** Dias de validade depois do resgate. */
   validDays: number;
   /** Estado do cupom. */
@@ -37,6 +37,7 @@ export interface CouponTicketProps {
 
 const STAMP: Partial<Record<CouponState, string>> = {
   redeemed: 'Resgatado',
+  used: 'Usado',
   expired: 'Expirou',
 };
 
@@ -58,7 +59,7 @@ export function CouponTicket({
   loading,
   className,
 }: CouponTicketProps) {
-  const muted = state === 'expired';
+  const muted = state === 'expired' || state === 'used';
   const stamp = STAMP[state];
 
   return (
@@ -99,7 +100,9 @@ export function CouponTicket({
             <p className="text-xs text-ink-soft">
               {state === 'expired'
                 ? 'O prazo deste cupom passou. Tem outros esperando por você.'
-                : `Vale por ${validDays} dias depois do resgate. Uso único.`}
+                : state === 'used'
+                  ? 'A loja já deu baixa neste cupom. Cada cupom vale uma vez só.'
+                  : `Vale por ${validDays} dias depois do resgate. Uso único.`}
             </p>
           )}
 
@@ -117,7 +120,7 @@ export function CouponTicket({
             {state === 'insufficient' && (
               <div className="flex flex-wrap items-center gap-2">
                 <span className="rounded-xs bg-surface-2 px-2 py-1 font-mono text-xs font-bold chunk-thin">
-                  faltam {missingCoins ?? cost} moedas
+                  faltam {missingCoins ?? cost ?? 0} moedas
                 </span>
                 {onEarn && (
                   <Button size="sm" variant="ghost" iconRight="arrowRight" onClick={onEarn}>
@@ -130,16 +133,26 @@ export function CouponTicket({
         </div>
 
         <div className="cde-ticket-stub relative flex shrink-0 flex-col items-center justify-center gap-0.5 px-2 text-center">
-          <Icon name="coin" size={22} className={muted ? '' : 'text-gold-deep'} />
-          <span className="font-mono text-3xl font-extrabold leading-none tabular-nums">
-            {cost}
-          </span>
-          <span className="font-mono text-xs font-bold uppercase">moedas</span>
+          {cost === undefined ? (
+            <>
+              <Icon name="ticket" size={22} className={muted ? '' : 'text-gold-deep'} />
+              <span className="font-mono text-3xl font-extrabold leading-none tabular-nums">1</span>
+              <span className="font-mono text-xs font-bold uppercase">uso</span>
+            </>
+          ) : (
+            <>
+              <Icon name="coin" size={22} className={muted ? '' : 'text-gold-deep'} />
+              <span className="font-mono text-3xl font-extrabold leading-none tabular-nums">
+                {cost}
+              </span>
+              <span className="font-mono text-xs font-bold uppercase">moedas</span>
+            </>
+          )}
           {stamp && (
             <span
               className={cx(
                 'absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 -rotate-[18deg] rounded-xs border-[3px] px-1.5 py-0.5 font-display text-sm font-extrabold uppercase',
-                state === 'redeemed'
+                state === 'redeemed' || state === 'used'
                   ? 'border-success bg-paper text-success'
                   : 'border-danger bg-surface-2 text-danger',
               )}

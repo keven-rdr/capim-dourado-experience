@@ -1,4 +1,13 @@
-import { Button, CouponTicket, MissionCard, SeasonScope, StickerCard } from '@cde/ui';
+import {
+  Button,
+  CouponTicket,
+  MissionCard,
+  RouletteWheel,
+  rotationFor,
+  SeasonScope,
+  StickerCard,
+  sliceCenter,
+} from '@cde/ui';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
@@ -84,6 +93,32 @@ describe('componentes da @cde/ui', () => {
       />,
     );
     expect(screen.getByText('Missão concluída.')).toBeInTheDocument();
+  });
+
+  it('RouletteWheel descreve as fatias, gira para o valor dado e só gira para a frente', () => {
+    const slices = ['Cinemark', 'Centauro', 'Ri Happy', 'Hering'].map((label) => ({ label }));
+    const { container, rerender } = render(<RouletteWheel slices={slices} rotation={0} />);
+    expect(
+      screen.getByRole('img', { name: /4 prêmios: Cinemark, Centauro, Ri Happy, Hering/ }),
+    ).toBeInTheDocument();
+    expect(screen.getAllByText('Centauro')).toHaveLength(1);
+
+    rerender(<RouletteWheel slices={slices} rotation={1080} durationMs={0} />);
+    const wheel = container.querySelector<HTMLElement>('[style*="rotate(1080deg)"]');
+    expect(wheel).not.toBeNull();
+    expect(wheel?.style.transition).toBe('none');
+  });
+
+  it('rotationFor leva o centro da fatia ao ponteiro, sempre para a frente', () => {
+    // 4 fatias de 90°: o centro da fatia 1 fica em 135°; o ponteiro está em 0°.
+    expect(sliceCenter(1, 4)).toBe(135);
+    let rotation = 0;
+    for (const index of [1, 3, 0, 1, 2]) {
+      const next = rotationFor(rotation, index, 4);
+      expect(next).toBeGreaterThan(rotation + 5 * 360 - 1);
+      expect((((next + sliceCenter(index, 4)) % 360) + 360) % 360).toBeCloseTo(0, 6);
+      rotation = next;
+    }
   });
 
   it('a mesma figurinha muda só de tema dentro de um SeasonScope', () => {

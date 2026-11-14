@@ -44,6 +44,13 @@ export {
 } from './MissionCard';
 export { PhoneFrame, type PhoneFrameProps, usePhoneScroller, usePortalTarget } from './PhoneFrame';
 export { PuzzleMap, type PuzzleMapProps } from './PuzzleMap';
+export {
+  RouletteWheel,
+  type RouletteWheelProps,
+  type RouletteWheelSlice,
+  rotationFor,
+  sliceCenter,
+} from './RouletteWheel';
 export { ScannerFrame, type ScannerFrameProps, type ScannerState } from './ScannerFrame';
 export { SeasonBanner, type SeasonBannerProps } from './SeasonBanner';
 export { Sheet, type SheetProps } from './Sheet';

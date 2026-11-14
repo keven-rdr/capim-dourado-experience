@@ -1,6 +1,7 @@
 import {
   type AlbumState,
   addReward,
+  BASE_SPINS,
   type CheckInInput,
   type CheckInResult,
   COMMON_STICKER_POOL,
@@ -9,6 +10,7 @@ import {
   type CreateProfileInput,
   CURRENT_SEASON,
   checkInSchema,
+  couponStoreId,
   createProfileSchema,
   DAILY_LIMITS,
   DEMO_QR_PREFIX,
@@ -17,44 +19,60 @@ import {
   EMPTY_WALLET,
   type Floor,
   type GameApi,
+  GOLDEN_SPIN_FACTOR,
+  GOLDEN_WINDOWS,
   HUNTS,
   type Hunt,
   type HuntState,
   hitStreakMilestone,
+  isGoldenHour,
   isMallOpen,
   levelFor,
   localDate,
   MALL_AREA_APPROX,
   MALL_CENTER,
+  MALL_DESK_ID,
+  MALL_DESK_NAME,
   MAX_GPS_ACCURACY_M,
+  type MarkCouponUsedInput,
   MISSIONS,
   type Mission,
   type MissionWithProgress,
+  markCouponUsedSchema,
   nextStreak,
   POINT_RULES,
   type PointAction,
   type PointEvent,
   type PointsResult,
   type Profile,
+  pickSlice,
   pointInPolygon,
   type QrKind,
   type RedeemInput,
   type RedeemResult,
   type Redemption,
   type Reward,
+  ROULETTE_COUPON_VALID_DAYS,
+  ROULETTE_SLICES,
+  type RouletteStatus,
   redeemSchema,
   type ScanQrInput,
   type ScanResult,
   SECRETS,
   type SeasonId,
+  type SpinResult,
   STICKERS,
   STORES,
   type Store,
+  type StorePanelApi,
+  type StoreStats,
   scanQrSchema,
+  sliceViews,
   TICKET_COST,
   type TodayStatus,
   type Trail,
   type UpdateProfileInput,
+  type UseCouponResult,
   updateProfileSchema,
   type Wallet,
 } from '@cde/shared';
@@ -75,11 +93,16 @@ export interface LocalGameApiOptions {
   ignoreMallHours?: () => boolean;
   storageKey?: string;
   random?: () => number;
+  /** Força a hora dourada (apresentação fora dos horários de baixo movimento). */
+  forceGolden?: () => boolean;
 }
 
 interface DayLog {
   dailyOpen: boolean;
   checkIn: boolean;
+  /** Instante e hora dourada do check-in do dia: definem quantos giros o dia rende. */
+  checkInAt?: string;
+  checkInGolden?: boolean;
   stores: string[];
   xp: number;
 }
@@ -89,6 +112,12 @@ interface ScanLog {
   id: string;
   floor: Floor;
   date: string;
+}
+
+interface SpinLog {
+  date: string;
+  sliceIndex: number;
+  couponId: string;
 }
 
 interface LocalState {
@@ -102,6 +131,7 @@ interface LocalState {
   days: Record<string, DayLog>;
   claimed: string[];
   scans: ScanLog[];
+  spins: SpinLog[];
 }
 
 type Amount = Omit<Reward, 'stickerId'>;
@@ -117,6 +147,7 @@ const EMPTY_STATE = (): LocalState => ({
   days: {},
   claimed: [],
   scans: [],
+  spins: [],
 });
 
 /** Missões cuja recompensa já vem da própria ação (check-in, baú final da caça). */
@@ -168,12 +199,13 @@ export function parseDemoToken(token: string): { kind: QrKind; id: string } | nu
  * cupons com código e validade). É o padrão do protótipo e o motor do modo demonstração.
  * Em produção, quem aplica as regras de verdade é a API (RN09).
  */
-export class LocalGameApi implements GameApi {
+export class LocalGameApi implements GameApi, StorePanelApi {
   private readonly storage: KeyValueStorage;
   private readonly now: () => Date;
   private readonly ignoreHours: () => boolean;
   private readonly key: string;
   private readonly random: () => number;
+  private readonly forceGolden: () => boolean;
 
   constructor(options: LocalGameApiOptions = {}) {
     this.storage =
@@ -182,6 +214,7 @@ export class LocalGameApi implements GameApi {
     this.ignoreHours = options.ignoreMallHours ?? (() => false);
     this.key = options.storageKey ?? 'cde:local:v1';
     this.random = options.random ?? Math.random;
+    this.forceGolden = options.forceGolden ?? (() => false);
   }
 
   // ---------- estado ----------
@@ -221,6 +254,17 @@ export class LocalGameApi implements GameApi {
 
   private mallOpen(): boolean {
     return this.ignoreHours() || isMallOpen(this.now());
+  }
+
+  private goldenNow(): boolean {
+    return this.forceGolden() || isGoldenHour(this.now());
+  }
+
+  /** Registra o check-in do dia e guarda se caiu na hora dourada (define os giros do dia). */
+  private markCheckIn(log: DayLog): void {
+    log.checkIn = true;
+    log.checkInAt = this.now().toISOString();
+    log.checkInGolden = this.goldenNow();
   }
 
   private id(): string {
@@ -466,7 +510,7 @@ export class LocalGameApi implements GameApi {
       throw new GameApiError('outside_area', 'Fora da área do shopping.', { distanceM: distance });
     }
     const xpBefore = profile.wallet.xp;
-    log.checkIn = true;
+    this.markCheckIn(log);
     const amount = this.grantRule(state, 'checkin');
     const stickerId = this.nextCommonSticker(state);
     const { milestone, bonus } = this.touch(state);
@@ -506,7 +550,7 @@ export class LocalGameApi implements GameApi {
           if (log.checkIn)
             throw new GameApiError('already_checked_in', 'Check-in de hoje já feito.');
           this.ensureOpen();
-          log.checkIn = true;
+          this.markCheckIn(log);
           const amount = this.grantRule(state, 'checkin');
           const stickerId = this.nextCommonSticker(state);
           return {
@@ -664,17 +708,7 @@ export class LocalGameApi implements GameApi {
     }
     profile.wallet = { ...profile.wallet, coins: profile.wallet.coins - coupon.cost };
     const now = this.now();
-    const redemption: Redemption = {
-      id: this.id(),
-      couponId: coupon.id,
-      title: coupon.title,
-      storeName: coupon.storeName,
-      code: this.code(),
-      redeemedAt: now.toISOString(),
-      expiresAt: new Date(now.getTime() + coupon.validDays * DAY_MS).toISOString(),
-      usedAt: null,
-    };
-    state.redemptions.push(redemption);
+    const redemption = this.issueRedemption(state, coupon, coupon.validDays);
     state.events.push({
       id: this.id(),
       action: 'redeem',
@@ -686,6 +720,28 @@ export class LocalGameApi implements GameApi {
     });
     this.save(state);
     return { redemption, wallet: { ...profile.wallet } };
+  }
+
+  /** Emite o cupom com código único e validade (RN07). Não cobra moedas. */
+  private issueRedemption(state: LocalState, coupon: Coupon, validDays: number): Redemption {
+    const now = this.now();
+    let code = this.code();
+    // Código único: a loja confere pelo código, então dois cupons nunca podem ter o mesmo.
+    for (let i = 0; i < 10 && state.redemptions.some((item) => item.code === code); i++) {
+      code = this.code();
+    }
+    const redemption: Redemption = {
+      id: this.id(),
+      couponId: coupon.id,
+      title: coupon.title,
+      storeName: coupon.storeName,
+      code,
+      redeemedAt: now.toISOString(),
+      expiresAt: new Date(now.getTime() + validDays * DAY_MS).toISOString(),
+      usedAt: null,
+    };
+    state.redemptions.push(redemption);
+    return redemption;
   }
 
   private code(): string {
@@ -740,6 +796,110 @@ export class LocalGameApi implements GameApi {
 
   async listEvents(): Promise<PointEvent[]> {
     return [...this.load().events].reverse();
+  }
+
+  // ---------- roleta ----------
+
+  private rouletteStatus(state: LocalState): RouletteStatus {
+    const date = this.today();
+    const log = state.days[date];
+    const checkedIn = log?.checkIn ?? false;
+    const goldenCheckIn = checkedIn && (log?.checkInGolden ?? false);
+    const granted = !checkedIn ? 0 : goldenCheckIn ? BASE_SPINS * GOLDEN_SPIN_FACTOR : BASE_SPINS;
+    const used = state.spins.filter((spin) => spin.date === date).length;
+    return {
+      date,
+      checkedIn,
+      goldenNow: this.goldenNow(),
+      goldenCheckIn,
+      goldenWindows: GOLDEN_WINDOWS.map((window) => ({ ...window, days: [...window.days] })),
+      spinsGranted: granted,
+      spinsUsed: used,
+      spinsLeft: Math.max(0, granted - used),
+      couponValidDays: ROULETTE_COUPON_VALID_DAYS,
+      slices: sliceViews(COUPONS),
+    };
+  }
+
+  async getRoulette(): Promise<RouletteStatus> {
+    const state = this.load();
+    this.requireProfile(state);
+    return this.rouletteStatus(state);
+  }
+
+  async spinRoulette(): Promise<SpinResult> {
+    const state = this.load();
+    this.requireProfile(state);
+    const before = this.rouletteStatus(state);
+    if (!before.checkedIn) {
+      throw new GameApiError('no_spins', 'Faça o check-in de hoje para ganhar giros.');
+    }
+    if (before.spinsLeft < 1) {
+      throw new GameApiError('no_spins', 'Seus giros de hoje acabaram. Volte amanhã.');
+    }
+    const sliceIndex = pickSlice(this.random);
+    const couponId = ROULETTE_SLICES[sliceIndex]?.couponId;
+    const coupon = COUPONS.find((item) => item.id === couponId);
+    if (!coupon) throw new GameApiError('not_found', 'Fatia da roleta fora do catálogo.');
+    const redemption = this.issueRedemption(state, coupon, ROULETTE_COUPON_VALID_DAYS);
+    state.spins.push({ date: this.today(), sliceIndex, couponId: coupon.id });
+    this.save(state);
+    return { sliceIndex, redemption, status: this.rouletteStatus(state) };
+  }
+
+  // ---------- painel da loja ----------
+
+  private storeName(storeId: string): string {
+    if (storeId === MALL_DESK_ID) return MALL_DESK_NAME;
+    const store = STORES.find((item) => item.id === storeId);
+    if (!store) throw new GameApiError('not_found', 'Loja não encontrada.');
+    return store.name;
+  }
+
+  private statsFor(state: LocalState, storeId: string): StoreStats {
+    const storeName = this.storeName(storeId);
+    const couponIds = COUPONS.filter((c) => couponStoreId(c) === storeId).map((c) => c.id);
+    return {
+      storeId,
+      storeName,
+      spinsLanded: state.spins.filter((spin) => couponIds.includes(spin.couponId)).length,
+      visits:
+        storeId === MALL_DESK_ID
+          ? null
+          : state.scans.filter((scan) => scan.kind === 'store' && scan.id === storeId).length,
+      couponsUsed: state.redemptions.filter(
+        (redemption) => redemption.usedAt && couponIds.includes(redemption.couponId),
+      ).length,
+    };
+  }
+
+  async getStoreStats(storeId: string): Promise<StoreStats> {
+    return this.statsFor(this.load(), storeId);
+  }
+
+  async markCouponUsed(storeId: string, input: MarkCouponUsedInput): Promise<UseCouponResult> {
+    const parsed = markCouponUsedSchema.safeParse(input);
+    if (!parsed.success) throw new GameApiError('validation', 'Digite o código do cupom.');
+    this.storeName(storeId);
+    const state = this.load();
+    const code = parsed.data.code.toUpperCase();
+    const redemption = state.redemptions.find((item) => item.code === code);
+    if (!redemption) throw new GameApiError('coupon_not_found', 'Código não encontrado.');
+    const coupon = COUPONS.find((item) => item.id === redemption.couponId);
+    if (!coupon) throw new GameApiError('coupon_not_found', 'Cupom fora do catálogo.');
+    if (couponStoreId(coupon) !== storeId) {
+      throw new GameApiError('coupon_wrong_store', `Este cupom vale em: ${coupon.storeName}.`, {
+        storeName: coupon.storeName,
+      });
+    }
+    if (redemption.usedAt) throw new GameApiError('coupon_used', 'Este cupom já foi usado.');
+    const now = this.now();
+    if (Date.parse(redemption.expiresAt) <= now.getTime()) {
+      throw new GameApiError('coupon_expired', 'Este cupom venceu.');
+    }
+    redemption.usedAt = now.toISOString();
+    this.save(state);
+    return { redemption: { ...redemption }, stats: this.statsFor(state, storeId) };
   }
 
   // ---------- extras do modo demonstração (fora do contrato) ----------

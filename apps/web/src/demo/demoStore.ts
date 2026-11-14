@@ -11,6 +11,8 @@ export interface DemoSettings {
   dayOffset: number;
   /** Respeitar o horário do shopping. Na apresentação, desligado. */
   respectHours: boolean;
+  /** Força a hora dourada, para mostrar os giros em dobro fora dos horários de baixo movimento. */
+  goldenHour: boolean;
 }
 
 const KEY = 'cde:demo:v1';
@@ -20,6 +22,7 @@ const DEFAULTS: DemoSettings = {
   location: 'inside',
   dayOffset: 0,
   respectHours: false,
+  goldenHour: false,
 };
 
 function read(): DemoSettings {

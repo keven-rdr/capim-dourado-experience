@@ -11,6 +11,7 @@ import {
   MemoryPointsRepository,
   MemoryQrRepository,
   MemoryRewardsRepository,
+  MemoryRouletteRepository,
   MemoryStoresRepository,
   MemoryUsersRepository,
 } from './memory/repositories.js';
@@ -23,6 +24,7 @@ import {
   SupabaseStoresRepository,
 } from './supabase/catalog.js';
 import { SupabasePointsRepository } from './supabase/points.js';
+import { SupabaseRouletteRepository } from './supabase/roulette.js';
 import { SupabaseUsersRepository } from './supabase/users.js';
 
 /** Repositórios em memória, com os catálogos do seed do `@cde/shared`. */
@@ -37,6 +39,7 @@ export function createMemoryRepositories(ids: IdGenerator, db = new MemoryDb()):
     missions: new MemoryMissionsRepository(db),
     rewards: new MemoryRewardsRepository(db),
     album: new MemoryAlbumRepository(db),
+    roulette: new MemoryRouletteRepository(db),
   };
 }
 
@@ -52,5 +55,6 @@ export function createSupabaseRepositories(client: SupabaseClient, logger: Logge
     missions: new SupabaseMissionsRepository(client),
     rewards: new SupabaseRewardsRepository(client),
     album: new SupabaseAlbumRepository(client),
+    roulette: new SupabaseRouletteRepository(client),
   };
 }

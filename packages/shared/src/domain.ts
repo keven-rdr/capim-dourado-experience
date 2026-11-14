@@ -172,3 +172,65 @@ export interface PointEvent {
   tickets: number;
   at: string;
 }
+
+/**
+ * Janela da hora dourada: dias da semana (0 = domingo) e faixa de horário de Palmas.
+ * `from` e `to` no formato HH:MM; vale de `from` (inclusive) até `to` (exclusive).
+ */
+export interface GoldenWindow {
+  days: number[];
+  from: string;
+  to: string;
+}
+
+/** Uma fatia da roleta, na ordem em que aparece no desenho. */
+export interface RouletteSliceView {
+  index: number;
+  /** Texto curto para caber na fatia (nome da loja). */
+  label: string;
+  storeName: string;
+  /** Título do cupom que a fatia dá. */
+  title: string;
+}
+
+export interface RouletteStatus {
+  date: string;
+  /** Giros só existem depois do check-in do dia. */
+  checkedIn: boolean;
+  /** Agora é hora dourada? Quem fizer check-in agora ganha giros em dobro. */
+  goldenNow: boolean;
+  /** O check-in de hoje caiu em hora dourada. */
+  goldenCheckIn: boolean;
+  goldenWindows: GoldenWindow[];
+  spinsGranted: number;
+  spinsUsed: number;
+  spinsLeft: number;
+  /** Validade, em dias, dos cupons que saem da roleta. */
+  couponValidDays: number;
+  slices: RouletteSliceView[];
+}
+
+export interface SpinResult {
+  /** Fatia sorteada (posição em `status.slices`). */
+  sliceIndex: number;
+  /** Cupom ganho, com código de uso único e validade curta. */
+  redemption: Redemption;
+  status: RouletteStatus;
+}
+
+/** Números que a loja vê no painel. */
+export interface StoreStats {
+  storeId: string;
+  storeName: string;
+  /** Giros da roleta que caíram em cupons desta loja. */
+  spinsLanded: number;
+  /** Visitas lidas por QR na loja. `null` para o balcão do shopping, que não tem QR de loja. */
+  visits: number | null;
+  /** Cupons desta loja que o caixa já deu baixa. */
+  couponsUsed: number;
+}
+
+export interface UseCouponResult {
+  redemption: Redemption;
+  stats: StoreStats;
+}

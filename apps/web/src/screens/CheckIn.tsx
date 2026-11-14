@@ -12,7 +12,7 @@ import {
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { friendlyError, isGameApiError } from '../data/errors';
-import { useGame } from '../data/GameProvider';
+import { useGame, useGameQuery } from '../data/GameProvider';
 import { demoNow } from '../demo/demoStore';
 import { Screen } from '../layout/Screen';
 import { levelInfo, lookOf, stickerName } from '../lib/content';
@@ -207,6 +207,7 @@ export function CheckIn() {
 
 function Success({ phase }: { phase: Extract<Phase, { kind: 'success' }> }) {
   const navigate = useNavigate();
+  const roulette = useGameQuery((api) => api.getRoulette());
   const { result, xpBefore } = phase;
   const { level, next, number } = levelInfo(result.wallet.xp);
   const sticker = stickerName(result.reward.stickerId);
@@ -234,6 +235,26 @@ function Success({ phase }: { phase: Extract<Phase, { kind: 'success' }> }) {
         />
         <StreakChip days={result.streakDays} className="mt-3" />
       </div>
+      {roulette.data && roulette.data.spinsLeft > 0 && (
+        <div className="mt-5 rounded-lg bg-gold p-4 text-left text-on-gold chunk shadow-hard">
+          <p className="font-mono text-xs font-bold uppercase">
+            {roulette.data.goldenCheckIn ? 'hora dourada: giros em dobro' : 'check-in vale giro'}
+          </p>
+          <p className="font-display text-xl font-extrabold leading-tight">
+            Você ganhou {roulette.data.spinsLeft} {roulette.data.spinsLeft === 1 ? 'giro' : 'giros'}{' '}
+            na roleta
+          </p>
+          <Button
+            block
+            variant="secondary"
+            icon="gift"
+            className="mt-3"
+            onClick={() => navigate('/roleta')}
+          >
+            Girar a roleta
+          </Button>
+        </div>
+      )}
       <div className="mt-5 grid grid-cols-2 gap-3">
         <Button variant="secondary" onClick={() => navigate('/missoes')}>
           Missões

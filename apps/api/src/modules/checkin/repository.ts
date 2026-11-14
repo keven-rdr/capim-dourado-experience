@@ -13,6 +13,8 @@ export interface CheckinRecord {
 
 export interface CheckinRepository {
   hasCheckedIn(userId: string, localDate: string): Promise<boolean>;
+  /** Instante (ISO) do check-in válido do dia, ou `null`. Define se o dia valeu hora dourada. */
+  getCheckinAt(userId: string, localDate: string): Promise<string | null>;
   /**
    * Grava o resultado. Para `inside: true`, devolve `false` se já existe
    * check-in válido no dia (um por usuário por dia).

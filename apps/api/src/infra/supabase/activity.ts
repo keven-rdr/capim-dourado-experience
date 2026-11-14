@@ -33,6 +33,19 @@ export class SupabaseCheckinRepository implements CheckinRepository {
     return (count ?? 0) > 0;
   }
 
+  async getCheckinAt(userId: string, localDate: string): Promise<string | null> {
+    const { data, error } = await this.db
+      .from('checkins')
+      .select('created_at')
+      .eq('user_id', userId)
+      .eq('local_date', localDate)
+      .eq('inside', true)
+      .limit(1)
+      .maybeSingle();
+    if (error) fail('ler horário do check-in', error);
+    return (data as { created_at: string } | null)?.created_at ?? null;
+  }
+
   async record(entry: CheckinRecord): Promise<boolean> {
     const { error } = await this.db.from('checkins').insert({
       user_id: entry.userId,
@@ -130,6 +143,16 @@ export class SupabaseQrRepository implements QrRepository {
       .eq('user_id', userId)
       .eq('kind', kind);
     if (error) fail('contar leituras', error);
+    return count ?? 0;
+  }
+
+  async countByRef(kind: QrKind, refId: string): Promise<number> {
+    const { count, error } = await this.db
+      .from('qr_scans')
+      .select('id', { count: 'exact', head: true })
+      .eq('kind', kind)
+      .eq('ref_id', refId);
+    if (error) fail('contar leituras do alvo', error);
     return count ?? 0;
   }
 

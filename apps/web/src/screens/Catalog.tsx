@@ -1,4 +1,4 @@
-import { COUPONS, FLOOR_LABEL, type Floor, MISSIONS } from '@cde/shared';
+import { COUPONS, FLOOR_LABEL, type Floor, MISSIONS, ROULETTE_SLICES } from '@cde/shared';
 import {
   AchievementToast,
   BottomNav,
@@ -18,6 +18,8 @@ import {
   MissionCard,
   type NavLinkLikeProps,
   PuzzleMap,
+  RouletteWheel,
+  rotationFor,
   ScannerFrame,
   SEASON_IDS,
   SEASON_THEME,
@@ -61,6 +63,35 @@ const FLOORS: Array<{ id: Floor; label: string; short: string }> = [
 
 const missionDemo = MISSIONS.find((m) => m.id === 'm-natal') ?? MISSIONS[0];
 const couponDemo = COUPONS[0];
+
+const WHEEL_SLICES = ROULETTE_SLICES.map((slice) => ({
+  id: slice.couponId,
+  label: slice.label,
+}));
+
+/** Exemplar da roda: o botão escolhe uma fatia ao acaso só para mostrar a animação. */
+function WheelSpecimen() {
+  const [rotation, setRotation] = useState(0);
+  return (
+    <div className="flex w-full flex-col items-center gap-3">
+      <RouletteWheel slices={WHEEL_SLICES} rotation={rotation} />
+      <Button
+        icon="gift"
+        onClick={() =>
+          setRotation((current) =>
+            rotationFor(
+              current,
+              Math.floor(Math.random() * WHEEL_SLICES.length),
+              WHEEL_SLICES.length,
+            ),
+          )
+        }
+      >
+        Girar
+      </Button>
+    </div>
+  );
+}
 
 function FakeLink({ href, children, ...rest }: NavLinkLikeProps) {
   return (
@@ -362,7 +393,7 @@ export function Catalog() {
 
         <Specimen
           name="CouponTicket"
-          note="disponível · resgatado · expirado · sem saldo | todo cupom traz a marca exemplo"
+          note="disponível · resgatado · usado · expirado · sem saldo | todo cupom traz a marca exemplo"
         >
           <div className="grid w-full gap-5 md:grid-cols-2">
             <CouponTicket
@@ -399,6 +430,13 @@ export function Catalog() {
               state="expired"
             />
             <CouponTicket
+              title="10% em tênis"
+              storeName="Centauro"
+              cost={160}
+              validDays={2}
+              state="used"
+            />
+            <CouponTicket
               title="15 minutos extras"
               storeName="Wow Park"
               cost={180}
@@ -408,6 +446,13 @@ export function Catalog() {
               onEarn={() => {}}
             />
           </div>
+        </Specimen>
+
+        <Specimen
+          name="RouletteWheel"
+          note="só desenha e gira até a fatia recebida | quem sorteia é o servidor"
+        >
+          <WheelSpecimen />
         </Specimen>
 
         <Specimen name="StickerCard" note="comum · rara (brilho) · trancada (silhueta)">

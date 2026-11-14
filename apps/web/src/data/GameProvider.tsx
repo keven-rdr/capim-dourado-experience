@@ -49,6 +49,8 @@ interface GameContextValue {
   /** Extras da demonstração. Só existe no modo local. */
   local: LocalGameApi | null;
   mode: ApiSetup['mode'];
+  /** API do lado da loja (painel). Com API real, pede a chave da loja. */
+  panel: ApiSetup['panel'];
   ready: boolean;
   profile: Profile | null;
   today: TodayStatus | null;
@@ -73,7 +75,7 @@ interface GameContextValue {
 const GameContext = createContext<GameContextValue | null>(null);
 
 export function GameProvider({ setup, children }: { setup: ApiSetup; children: ReactNode }) {
-  const { api, local, mode } = setup;
+  const { api, local, mode, panel } = setup;
   const { season } = useSeason();
   const [ready, setReady] = useState(false);
   const [profile, setProfile] = useState<Profile | null>(null);
@@ -228,6 +230,7 @@ export function GameProvider({ setup, children }: { setup: ApiSetup; children: R
       api,
       local,
       mode,
+      panel,
       ready,
       profile,
       today,
@@ -247,6 +250,7 @@ export function GameProvider({ setup, children }: { setup: ApiSetup; children: R
       api,
       local,
       mode,
+      panel,
       ready,
       profile,
       today,

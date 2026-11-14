@@ -26,6 +26,8 @@ export interface QrRepository {
   hasScan(userId: string, kind: QrKind, refId: string, scopeKey: string): Promise<boolean>;
   countScans(userId: string, kind: QrKind, localDate: string): Promise<number>;
   countAllScans(userId: string, kind: QrKind): Promise<number>;
+  /** Leituras de um mesmo alvo (ex.: uma loja) por todos os visitantes. */
+  countByRef(kind: QrKind, refId: string): Promise<number>;
   /** Leituras a partir de `sinceDate` (inclusive). */
   listScansSince(userId: string, sinceDate: string): Promise<ScanRecord[]>;
   findSecret(id: string): Promise<Secret | null>;

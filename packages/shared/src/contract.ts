@@ -8,9 +8,13 @@ import type {
   Profile,
   Redemption,
   Reward,
+  RouletteStatus,
   SeasonId,
+  SpinResult,
   Store,
+  StoreStats,
   Trail,
+  UseCouponResult,
   Wallet,
 } from './domain.js';
 
@@ -48,6 +52,10 @@ export type ScanQrInput = z.infer<typeof scanQrSchema>;
 export const redeemSchema = z.object({ couponId: z.string().min(1) });
 export type RedeemInput = z.infer<typeof redeemSchema>;
 
+/** Código impresso no cupom (ex.: CDE-7K3M-4Q), digitado ou lido no caixa da loja. */
+export const markCouponUsedSchema = z.object({ code: z.string().trim().min(3).max(32) });
+export type MarkCouponUsedInput = z.infer<typeof markCouponUsedSchema>;
+
 /** Códigos de erro de regra de negócio. A API responde `{ error: { code, message } }`. */
 export const ERROR_CODES = [
   'unauthorized',
@@ -64,6 +72,11 @@ export const ERROR_CODES = [
   'clue_out_of_order',
   'insufficient_coins',
   'coupon_not_found',
+  'no_spins',
+  'coupon_used',
+  'coupon_expired',
+  'coupon_wrong_store',
+  'forbidden',
   'not_found',
 ] as const;
 export type ErrorCode = (typeof ERROR_CODES)[number];
@@ -129,6 +142,20 @@ export interface GameApi {
   buyTicket(): Promise<Wallet>;
   getAlbum(seasonId: SeasonId): Promise<AlbumState>;
   listEvents(): Promise<PointEvent[]>;
+  /** Giros do dia, hora dourada e fatias da roleta. */
+  getRoulette(): Promise<RouletteStatus>;
+  /** Gasta um giro. O prêmio é um cupom de uso único com validade curta. */
+  spinRoulette(): Promise<SpinResult>;
+}
+
+/**
+ * Lado da loja (painel mínimo). Não usa o login do visitante: quem confere o cupom no caixa
+ * usa a chave da loja (cabeçalho `x-store-key`), definida pelo shopping.
+ */
+export interface StorePanelApi {
+  getStoreStats(storeId: string): Promise<StoreStats>;
+  /** Dá baixa no cupom (uso único). Confere loja, validade e se já foi usado. */
+  markCouponUsed(storeId: string, input: MarkCouponUsedInput): Promise<UseCouponResult>;
 }
 
 /** Rotas HTTP da API, todas sob `/v1`. Autenticação: `Authorization: Bearer <JWT do Supabase>`. */
@@ -151,6 +178,11 @@ export const ROUTES = {
   listRedemptions: { method: 'GET', path: '/v1/rewards/redemptions' },
   buyTicket: { method: 'POST', path: '/v1/raffles/tickets' },
   getAlbum: { method: 'GET', path: '/v1/album/:seasonId' },
+  getRoulette: { method: 'GET', path: '/v1/roulette' },
+  spinRoulette: { method: 'POST', path: '/v1/roulette/spin' },
+  // Painel da loja: autenticado pela chave da loja, não pelo login do visitante.
+  getStoreStats: { method: 'GET', path: '/v1/panel/stores/:storeId/stats' },
+  markCouponUsed: { method: 'POST', path: '/v1/panel/stores/:storeId/coupons/use' },
 } as const satisfies Record<string, { method: 'GET' | 'POST' | 'PATCH' | 'DELETE'; path: string }>;
 
 /**

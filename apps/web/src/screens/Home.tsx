@@ -10,6 +10,7 @@ import {
   SpeechBubble,
   StreakChip,
   SystemNote,
+  Tag,
   useSeason,
   WalletBadge,
   XpBar,
@@ -113,6 +114,8 @@ export function Home() {
         </div>
       )}
 
+      <RouletteTeaser />
+
       <h2 className="mb-3 mt-7 font-display text-xl font-extrabold">Missão do dia</h2>
       {firstVisit && (
         <MissionCard
@@ -214,6 +217,46 @@ export function Home() {
         textos.
       </SystemNote>
     </div>
+  );
+}
+
+/** Convite da roleta: mostra os giros do dia e avisa quando é hora dourada. */
+function RouletteTeaser() {
+  const navigate = useNavigate();
+  const { data } = useGameQuery((api) => api.getRoulette());
+  if (!data) return null;
+
+  const golden = data.goldenNow;
+  const left = data.spinsLeft;
+  let title: string;
+  let hint: string;
+  if (!data.checkedIn) {
+    title = golden ? 'Hora dourada: giros em dobro' : 'Check-in vale giro na roleta';
+    hint = golden
+      ? 'Faça o check-in agora e ganhe 2 giros.'
+      : 'Faça o check-in e gire por um cupom de loja.';
+  } else if (left > 0) {
+    title = `Você tem ${left} ${left === 1 ? 'giro' : 'giros'}`;
+    hint = golden ? 'Hora dourada ligada.' : 'Gire por um cupom de loja.';
+  } else {
+    title = 'Giros de hoje usados';
+    hint = 'Seus cupons estão em Prêmios. Amanhã tem mais.';
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={() => navigate(data.checkedIn && left < 1 ? '/recompensas' : '/roleta')}
+      className="mt-4 flex min-h-16 w-full items-center gap-3 rounded-lg bg-gold px-4 py-3 text-left text-on-gold chunk shadow-hard focus-ring pressable"
+    >
+      <Icon name="gift" size={28} />
+      <span className="flex-1 leading-tight">
+        <span className="block font-display text-lg font-extrabold">{title}</span>
+        <span className="block text-xs font-semibold">{hint}</span>
+      </span>
+      {golden && <Tag tone="ink">dourada</Tag>}
+      <Icon name="arrowRight" size={20} />
+    </button>
   );
 }
 

@@ -23,6 +23,11 @@ const STATUS: Record<ApiErrorCode, HttpErrorStatus> = {
   clue_out_of_order: 409,
   insufficient_coins: 422,
   coupon_not_found: 404,
+  no_spins: 409,
+  coupon_used: 409,
+  coupon_expired: 410,
+  coupon_wrong_store: 422,
+  forbidden: 403,
   not_found: 404,
   internal: 500,
 };
@@ -42,6 +47,11 @@ const DEFAULT_MESSAGE: Record<ApiErrorCode, string> = {
   clue_out_of_order: 'Esta pista ainda não é a próxima. Resolva as anteriores primeiro.',
   insufficient_coins: 'Moedas insuficientes.',
   coupon_not_found: 'Cupom não encontrado.',
+  no_spins: 'Você não tem giros disponíveis.',
+  coupon_used: 'Este cupom já foi usado.',
+  coupon_expired: 'Este cupom venceu.',
+  coupon_wrong_store: 'Este cupom vale em outra loja.',
+  forbidden: 'Chave da loja inválida.',
   not_found: 'Recurso não encontrado.',
   internal: 'Erro interno. Tente de novo em instantes.',
 };

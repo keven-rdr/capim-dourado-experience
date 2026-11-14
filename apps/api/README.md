@@ -56,6 +56,8 @@ src/
     stores/         catálogo de lojas
     rewards/        cupons e resgates
     raffles/        bilhetes de sorteio (simulado)
+    roulette/       roleta de cupons: giros do check-in (em dobro na hora dourada) e sorteio no servidor
+    panel/          painel mínimo da loja: três números e baixa do cupom, com chave da loja
     album/          figurinhas por temporada
   infra/
     memory/         repositórios em memória (padrão sem Supabase)
@@ -87,6 +89,9 @@ Os services conversam só por interfaces. O `Rewarder` (módulo `points`) recebe
 | `leveledUp` quando a ação cruza um nível | `points` |
 | Cupons por trilha (sempre com os de `todos`), resgate com débito, código legível (`CDE-XXXX-XXXX`) e validade por `validDays` | `rewards` |
 | Bilhete custa `TICKET_COST` moedas | `raffles` |
+| Roleta: o check-in do dia dá 1 giro, ou `BASE_SPINS * GOLDEN_SPIN_FACTOR` se o check-in caiu na hora dourada; a hora conta no instante do check-in, não do giro | `roulette` |
+| Roleta: o servidor sorteia a fatia por peso; cada giro vira um cupom (sem cobrar moedas) com código único e validade `ROULETTE_COUPON_VALID_DAYS`; dois giros ao mesmo tempo gastam um só (vaga única por usuário, dia e nº do giro) | `roulette`, `rewards` |
+| Painel da loja: giros que caíram nos cupons da loja, visitas por QR e cupons usados; baixa confere loja, validade e uso único (`coupon_wrong_store`, `coupon_expired`, `coupon_used`); cupom sem loja (estacionamento) é do balcão `shopping` | `panel` |
 | Apagar conta remove perfil e dados (no Supabase, também o usuário do Auth) | `users` |
 
 Decisões que o contrato não fixa:
@@ -131,9 +136,10 @@ Toda falha responde `{ "error": { "code", "message", "details"? } }`, no formato
 | `validation`, `qr_invalid` | 400 |
 | `unauthorized` | 401 |
 | `profile_not_found`, `coupon_not_found`, `not_found` | 404 |
-| `already_checked_in`, `qr_already_used`, `clue_out_of_order` | 409 |
-| `qr_expired` | 410 |
-| `outside_area`, `low_accuracy`, `mall_closed`, `insufficient_coins` | 422 |
+| `forbidden` (chave da loja errada) | 403 |
+| `already_checked_in`, `qr_already_used`, `clue_out_of_order`, `no_spins`, `coupon_used` | 409 |
+| `qr_expired`, `coupon_expired` | 410 |
+| `outside_area`, `low_accuracy`, `mall_closed`, `insufficient_coins`, `coupon_wrong_store` | 422 |
 | `daily_limit` | 429 |
 | `internal` (falha inesperada; não está em `ERROR_CODES`) | 500 |
 
@@ -152,12 +158,15 @@ Referência completa e comentada em `.env.example`.
 | `ALLOW_DEMO_QR` | `false` | Aceita `cde:<tipo>:<id>`. `false` em produção |
 | `SKIP_OPENING_HOURS` | `false` | Ignora o horário do shopping. **Só para demonstração** |
 | `MALL_AREA_JSON` | vazio | Polígono da área de check-in; tem prioridade sobre a tabela `mall_area` e sobre `MALL_AREA_APPROX` |
+| `GOLDEN_HOURS_JSON` | janelas de exemplo do `@cde/shared` | Hora dourada sem mexer no código: `[{"days":[1,2,3,4],"from":"14:00","to":"17:00"}]` (dias 0 a 6, domingo = 0; horário de Palmas) |
+| `STORE_KEYS_JSON` | vazio | Chave de cada loja para o painel: `{"centauro":"chave-longa-1","shopping":"chave-longa-2"}` (8+ caracteres). Sem ela, em produção o painel fica desligado |
 
 Proteções:
 
 - Com `NODE_ENV=production` e sem Supabase, a API não sobe, a menos que `AUTH_MODE=dev` esteja explícito.
 - Em produção, `QR_SECRET` e `CORS_ORIGIN` são obrigatórios.
 - `SUPABASE_URL` e `SUPABASE_SERVICE_ROLE_KEY` precisam vir juntas.
+- Painel da loja: autentica pelo cabeçalho `x-store-key`, separado do login do visitante. A chave de uma loja só abre o painel dela. Só em `AUTH_MODE=dev` e sem `STORE_KEYS_JSON`, qualquer loja aceita a chave `demo` (a API avisa na subida). Com chaves configuradas, `demo` deixa de valer.
 - `AUTH_MODE=dev` com o Supabase como banco exige que `x-demo-user` seja o UUID de um usuário existente no Supabase Auth (a tabela `profiles` referencia `auth.users`).
 
 ## Publicar na Vercel
