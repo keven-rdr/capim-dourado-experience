@@ -31,6 +31,7 @@ export {
   type FilterChipsProps,
   type FilterOption,
 } from './Chip';
+export { CoinRain, type CoinRainProps } from './CoinRain';
 export { CountUp, type CountUpProps } from './CountUp';
 export { type CouponState, CouponTicket, type CouponTicketProps } from './CouponTicket';
 export { cx } from './cx';

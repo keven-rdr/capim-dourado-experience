@@ -1,8 +1,9 @@
 import { Icon, type ToastVariant, usePortalTarget } from '@cde/ui';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useLocation } from 'react-router-dom';
 import { useGame } from '../data/GameProvider';
+import { usePokeEgg } from '../lib/useEggs';
 import { Capi3D, type CapiClip, type CapiCue } from './Capi3D';
 
 /** Telas que já mostram a Capi 3D grande: lá a companheira some para não ficar repetida. */
@@ -149,6 +150,11 @@ export function CapiCompanion() {
   const [tip, setTip] = useState<string | null>(null);
   const lastToast = useRef(0);
   const cueId = useRef(0);
+  const fire = useCallback((clip: CapiClip, times = 1) => {
+    cueId.current += 1;
+    setCue({ clip, times, id: cueId.current });
+  }, []);
+  const poke = usePokeEgg(fire);
 
   // reage a cada aviso novo do jogo (conquista, baú, figurinha, erro)
   useEffect(() => {
@@ -185,7 +191,9 @@ export function CapiCompanion() {
     return () => window.clearTimeout(t);
   }, [tip]);
 
-  const show = profile && !OWN_CAPI.includes(pathname);
+  // só nas telas conhecidas que não têm Capi própria (numa rota desconhecida, a 404 já tem a dela)
+  const knownScreen = pathname in TIPS || pathname === '/roleta';
+  const show = profile && knownScreen && !OWN_CAPI.includes(pathname);
   if (!show || !target) return null;
 
   const updateBall = (next: BallState) => {
@@ -212,9 +220,12 @@ export function CapiCompanion() {
         size={76}
         intro="AcenoLeve"
         cue={cue}
-        say={tip ?? undefined}
+        say={poke.line ?? tip ?? undefined}
         idleReactions
-        onTap={() => setTip(TIPS[pathname] ?? 'Tô por aqui se precisar.')}
+        onTap={() => {
+          // 3, 6 e 10 toques seguidos rendem uma fala do ovo; senão, a dica de sempre
+          setTip(poke.onTap() ? null : (TIPS[pathname] ?? 'Tô por aqui se precisar.'));
+        }}
         className="pointer-events-none flex-1 flex-row-reverse"
       />
       <button

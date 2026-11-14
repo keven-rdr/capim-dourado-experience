@@ -2,7 +2,7 @@ import { CURRENT_SEASON } from '@cde/shared';
 import { SEASON_IDS, type Season, SeasonProvider } from '@cde/ui';
 import { MotionConfig } from 'motion/react';
 import { useMemo, useState } from 'react';
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { createApi } from './data/createApi';
 import { GameProvider } from './data/GameProvider';
 import { AppShell } from './layout/AppShell';
@@ -15,6 +15,7 @@ import { Hunt } from './screens/Hunt';
 import { MapScreen } from './screens/MapScreen';
 import { MerchantPromotions } from './screens/MerchantPromotions';
 import { Missions } from './screens/Missions';
+import { NotFound } from './screens/NotFound';
 import { Onboarding } from './screens/Onboarding';
 import { Profile } from './screens/Profile';
 import { Rewards } from './screens/Rewards';
@@ -69,7 +70,7 @@ export function App() {
                 <Route path="mapa" element={<MapScreen />} />
                 <Route path="album" element={<Album />} />
                 <Route path="perfil" element={<Profile />} />
-                <Route path="*" element={<Navigate to="/" replace />} />
+                <Route path="*" element={<NotFound />} />
               </Route>
             </Routes>
           </GameProvider>
