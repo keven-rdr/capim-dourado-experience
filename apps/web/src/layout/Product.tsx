@@ -271,7 +271,12 @@ export function ProductSheet({
         </div>
       )}
 
-      <Button block icon="map" className="mt-4" onClick={() => navigate('/mapa')}>
+      <Button
+        block
+        icon="map"
+        className="mt-4"
+        onClick={() => navigate(`/mapa?loja=${product.storeId}`)}
+      >
         Como chegar na {store.name}
       </Button>
     </Sheet>

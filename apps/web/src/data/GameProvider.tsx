@@ -6,6 +6,7 @@ import type {
   SeasonId,
   TodayStatus,
 } from '@cde/shared';
+import { localDate } from '@cde/shared';
 import { type ToastVariant, useSeason } from '@cde/ui';
 import {
   createContext,
@@ -18,8 +19,9 @@ import {
   useRef,
   useState,
 } from 'react';
-import { getDemo, setDemo } from '../demo/demoStore';
+import { demoNow, getDemo, setDemo } from '../demo/demoStore';
 import { HUNT_NOUN, levelInfo, rewardLine, stickerName } from '../lib/content';
+import { markStoreVisit } from '../lib/mapVotes';
 import type { ApiSetup } from './createApi';
 import { type AppErrorCode, friendlyError } from './errors';
 import type { LocalGameApi } from './LocalGameApi';
@@ -165,6 +167,10 @@ export function GameProvider({ setup, children }: { setup: ApiSetup; children: R
     async (token: string): Promise<ScanOutcome> => {
       try {
         const result = await api.scanQr({ token });
+        // leu o QR da vitrine: esteve na loja e pode ajudar a mapear onde ela fica
+        if (result.kind === 'store' && result.store) {
+          markStoreVisit(result.store.id, localDate(demoNow()));
+        }
         const noun = HUNT_NOUN[seasonRef.current];
         let data: RevealData;
         if (result.kind === 'clue' && result.hunt) {
