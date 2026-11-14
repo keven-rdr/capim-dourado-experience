@@ -56,6 +56,12 @@ export function AppShell() {
     window.scrollTo({ top: 0 });
   }, [location.pathname]);
 
+  // trilhas adultas ganham o tom sóbrio; Kids e o cadastro ficam com o tom de jogo
+  const tone = profile && profile.trail !== 'kids' ? 'sobrio' : 'jogo';
+  useEffect(() => {
+    document.documentElement.dataset.tone = tone;
+  }, [tone]);
+
   if (ready && !profile && !onboarding) return <Navigate to="/bem-vindo" replace />;
 
   return (

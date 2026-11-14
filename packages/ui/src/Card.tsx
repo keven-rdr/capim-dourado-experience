@@ -30,8 +30,8 @@ const TONE: Record<CardTone, string> = {
 
 const TILT: Record<CardTilt, string> = {
   none: '',
-  left: '-rotate-[1.6deg]',
-  right: 'rotate-[1.2deg]',
+  left: 'rotate-[calc(-1.6deg*var(--cde-tilt,1))]',
+  right: 'rotate-[calc(1.2deg*var(--cde-tilt,1))]',
 };
 
 const SHAPE = { rounded: 'rounded-lg', blob: 'rounded-blob', square: 'rounded-xs' } as const;

@@ -78,6 +78,9 @@
   --cde-space-6: 32px;
   --cde-space-7: 48px;
 
+  /* inclinação dos cartões de destaque (0 = retos) */
+  --cde-tilt: 1;
+
   /* movimento */
   --cde-ease-pop: cubic-bezier(0.34, 1.56, 0.64, 1);
   --cde-duration-fast: 120ms;
@@ -195,6 +198,29 @@
   --cde-shadow-pressed: 1px 1px 0 0 var(--cde-shadow-color);
   background-color: var(--cde-bg);
   color: var(--cde-ink);
+}
+
+/*
+ * ---------- Tom sóbrio (trilhas adultas): muda forma e tipografia, não cor ----------
+ * Independente da temporada: Natal sóbrio continua vermelho e verde, só mais discreto.
+ * Seletor duplo porque o PhoneFrame repete [data-season] num div interno.
+ */
+[data-tone="sobrio"][data-season],
+[data-tone="sobrio"] [data-season] {
+  --cde-border-thin: 1px;
+  --cde-border: 1.5px;
+  --cde-border-thick: 2px;
+  --cde-radius-blob: 18px;
+  --cde-font-display: var(--cde-font-body);
+  --cde-tilt: 0;
+  --cde-shadow-sm: 0 1px 3px rgb(20 20 20 / 0.12);
+  --cde-shadow-md: 0 2px 10px rgb(20 20 20 / 0.12);
+  --cde-shadow-lg: 0 6px 20px rgb(20 20 20 / 0.14);
+  --cde-shadow-pressed: 0 1px 2px rgb(20 20 20 / 0.12);
+}
+[data-tone="sobrio"] .uppercase {
+  text-transform: none;
+  letter-spacing: 0.01em;
 }
 
 /* ---------- Ponte para o Tailwind v4 ---------- */
