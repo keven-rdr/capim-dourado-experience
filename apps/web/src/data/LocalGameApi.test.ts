@@ -170,6 +170,151 @@ describe('LocalGameApi', () => {
   });
 });
 
+describe('LocalGameApi: roleta e painel da loja', () => {
+  /** Quinta, 12/11/2026, 12h em Palmas: aberto e fora da hora dourada. */
+  const NORMAL = '2026-11-12T15:00:00Z';
+  /** Terça, 17/11/2026, 15h em Palmas: hora dourada. */
+  const GOLDEN = '2026-11-17T18:00:00Z';
+
+  /**
+   * Monta a API com relógio e sorteio controlados. `pick(x)` enfileira o próximo número do
+   * sorteio da fatia; sem fila, o sorteio é aleatório (os códigos dos cupons usam o mesmo sorteio).
+   */
+  async function make(start: string, options: { golden?: boolean } = {}) {
+    let now = new Date(start);
+    const queue: number[] = [];
+    const api = new LocalGameApi({
+      storage: memory(),
+      now: () => now,
+      random: () => queue.shift() ?? Math.random(),
+      forceGolden: () => options.golden ?? false,
+    });
+    await api.createProfile({
+      name: 'Ana',
+      trail: 'todos',
+      character: 'capi',
+      locationConsent: true,
+    });
+    return {
+      api,
+      pick: (value: number) => void queue.push(value),
+      set: (iso: string) => {
+        now = new Date(iso);
+      },
+    };
+  }
+
+  it('sem check-in não há giro', async () => {
+    const { api } = await make(NORMAL);
+    expect(await api.getRoulette()).toMatchObject({ checkedIn: false, spinsLeft: 0 });
+    expect(await codeOf(api.spinRoulette())).toBe('no_spins');
+  });
+
+  it('1 giro fora da hora dourada e 2 dentro dela', async () => {
+    const normal = await make(NORMAL);
+    await normal.api.checkIn(INSIDE);
+    expect(await normal.api.getRoulette()).toMatchObject({ spinsGranted: 1, goldenCheckIn: false });
+
+    const golden = await make(GOLDEN);
+    await golden.api.checkIn(INSIDE);
+    expect(await golden.api.getRoulette()).toMatchObject({
+      goldenNow: true,
+      goldenCheckIn: true,
+      spinsGranted: 2,
+    });
+  });
+
+  it('a hora dourada forçada na demonstração vale como a real', async () => {
+    const { api } = await make(NORMAL, { golden: true });
+    await api.checkIn(INSIDE);
+    expect(await api.getRoulette()).toMatchObject({ goldenNow: true, spinsGranted: 2 });
+  });
+
+  it('o check-in por QR da entrada também dá giros', async () => {
+    const { api } = await make(GOLDEN);
+    await api.scanQr({ token: demoQr('checkin', 'entrada') });
+    expect((await api.getRoulette()).spinsGranted).toBe(2);
+  });
+
+  it('gira, entrega um cupom de 2 dias, e para quando os giros acabam', async () => {
+    const { api, pick } = await make(NORMAL);
+    await api.checkIn(INSIDE);
+    pick(0);
+    const result = await api.spinRoulette();
+    expect(result.sliceIndex).toBe(0);
+    expect(result.redemption).toMatchObject({ couponId: 'c-pipoca', usedAt: null });
+    const days =
+      (Date.parse(result.redemption.expiresAt) - Date.parse(result.redemption.redeemedAt)) / DAY;
+    expect(days).toBe(2);
+    expect(result.status).toMatchObject({ spinsUsed: 1, spinsLeft: 0 });
+    expect(await api.listRedemptions()).toHaveLength(1);
+    expect(await codeOf(api.spinRoulette())).toBe('no_spins');
+  });
+
+  it('o giro volta no dia seguinte, com novo check-in', async () => {
+    const { api, set } = await make(NORMAL);
+    await api.checkIn(INSIDE);
+    await api.spinRoulette();
+    set('2026-11-13T15:00:00Z');
+    expect(await codeOf(api.spinRoulette())).toBe('no_spins');
+    await api.checkIn(INSIDE);
+    expect(await codeOf(api.spinRoulette())).toBe('ok');
+  });
+
+  it('o painel dá baixa uma vez, só na loja certa e dentro da validade', async () => {
+    // fatia 1 = Centauro (peso 6 depois dos 14 da fatia 0, de um total de 100)
+    const { api, set, pick } = await make(NORMAL);
+    await api.checkIn(INSIDE);
+    pick(0.17);
+    const { redemption } = await api.spinRoulette();
+    expect(redemption.storeName).toBe('Centauro');
+
+    expect(await api.getStoreStats('centauro')).toMatchObject({ spinsLanded: 1, couponsUsed: 0 });
+    expect(await codeOf(api.markCouponUsed('cinemark', { code: redemption.code }))).toBe(
+      'coupon_wrong_store',
+    );
+    expect(await codeOf(api.markCouponUsed('centauro', { code: 'CDE-NADA-NADA' }))).toBe(
+      'coupon_not_found',
+    );
+    expect(await codeOf(api.markCouponUsed('centauro', { code: '' }))).toBe('validation');
+
+    const used = await api.markCouponUsed('centauro', {
+      code: ` ${redemption.code.toLowerCase()} `,
+    });
+    expect(used.redemption.usedAt).not.toBeNull();
+    expect(used.stats.couponsUsed).toBe(1);
+    expect((await api.listRedemptions())[0]?.usedAt).toBe(used.redemption.usedAt);
+    expect(await codeOf(api.markCouponUsed('centauro', { code: redemption.code }))).toBe(
+      'coupon_used',
+    );
+
+    // outro cupom, só que vencido
+    set('2026-11-13T15:00:00Z');
+    await api.checkIn(INSIDE);
+    pick(0.17);
+    const second = await api.spinRoulette();
+    set('2026-11-16T15:00:00Z');
+    expect(await codeOf(api.markCouponUsed('centauro', { code: second.redemption.code }))).toBe(
+      'coupon_expired',
+    );
+  });
+
+  it('o estacionamento é conferido no balcão do shopping', async () => {
+    const { api, pick } = await make(NORMAL);
+    await api.checkIn(INSIDE);
+    pick(0.999);
+    const { redemption } = await api.spinRoulette();
+    expect(redemption.couponId).toBe('c-estac');
+    expect(await api.getStoreStats('shopping')).toMatchObject({ spinsLanded: 1, visits: null });
+    await api.markCouponUsed('shopping', { code: redemption.code });
+  });
+
+  it('recusa loja que não existe', async () => {
+    const { api } = await make(NORMAL);
+    expect(await codeOf(api.getStoreStats('loja-fantasma'))).toBe('not_found');
+  });
+});
+
 describe('helpers', () => {
   it('lê códigos de demonstração', () => {
     expect(parseDemoToken('cde:clue:natal-2026:3')).toEqual({ kind: 'clue', id: 'natal-2026:3' });

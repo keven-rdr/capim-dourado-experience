@@ -287,31 +287,72 @@ export class SupabaseRewardsRepository implements RewardsRepository {
   async listRedemptions(userId: string): Promise<Redemption[]> {
     const { data, error } = await this.db
       .from('redemptions')
-      .select('id, coupon_id, title, store_name, code, redeemed_at, expires_at, used_at')
+      .select(REDEMPTION_COLUMNS)
       .eq('user_id', userId)
       .order('redeemed_at', { ascending: false });
     if (error) fail('listar resgates', error);
-    type Row = {
-      id: string;
-      coupon_id: string;
-      title: string;
-      store_name: string;
-      code: string;
-      redeemed_at: string;
-      expires_at: string;
-      used_at: string | null;
-    };
-    return ((data ?? []) as Row[]).map((row) => ({
-      id: row.id,
-      couponId: row.coupon_id,
-      title: row.title,
-      storeName: row.store_name,
-      code: row.code,
-      redeemedAt: row.redeemed_at,
-      expiresAt: row.expires_at,
-      usedAt: row.used_at,
-    }));
+    return ((data ?? []) as RedemptionRow[]).map(toRedemption);
   }
+
+  async findRedemptionByCode(code: string): Promise<Redemption | null> {
+    const { data, error } = await this.db
+      .from('redemptions')
+      .select(REDEMPTION_COLUMNS)
+      .eq('code', code)
+      .maybeSingle();
+    if (error) fail('buscar resgate pelo código', error);
+    return data ? toRedemption(data as RedemptionRow) : null;
+  }
+
+  async markRedemptionUsed(id: string, at: string): Promise<boolean> {
+    // Só atualiza se ainda não foi usado: duas baixas ao mesmo tempo, só uma vence.
+    const { data, error } = await this.db
+      .from('redemptions')
+      .update({ used_at: at })
+      .eq('id', id)
+      .is('used_at', null)
+      .select('id');
+    if (error) fail('dar baixa no resgate', error);
+    return (data ?? []).length === 1;
+  }
+
+  async countUsedRedemptions(couponIds: readonly string[]): Promise<number> {
+    if (couponIds.length === 0) return 0;
+    const { count, error } = await this.db
+      .from('redemptions')
+      .select('id', { count: 'exact', head: true })
+      .in('coupon_id', [...couponIds])
+      .not('used_at', 'is', null);
+    if (error) fail('contar cupons usados', error);
+    return count ?? 0;
+  }
+}
+
+const REDEMPTION_COLUMNS =
+  'id, coupon_id, title, store_name, code, redeemed_at, expires_at, used_at';
+
+interface RedemptionRow {
+  id: string;
+  coupon_id: string;
+  title: string;
+  store_name: string;
+  code: string;
+  redeemed_at: string;
+  expires_at: string;
+  used_at: string | null;
+}
+
+function toRedemption(row: RedemptionRow): Redemption {
+  return {
+    id: row.id,
+    couponId: row.coupon_id,
+    title: row.title,
+    storeName: row.store_name,
+    code: row.code,
+    redeemedAt: row.redeemed_at,
+    expiresAt: row.expires_at,
+    usedAt: row.used_at,
+  };
 }
 
 export class SupabaseAlbumRepository implements AlbumRepository {

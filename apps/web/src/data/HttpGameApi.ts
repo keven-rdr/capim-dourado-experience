@@ -6,6 +6,7 @@ import {
   type CreateProfileInput,
   type GameApi,
   type HuntState,
+  type MarkCouponUsedInput,
   type MissionWithProgress,
   type PointEvent,
   type PointsResult,
@@ -14,13 +15,18 @@ import {
   type RedeemResult,
   type Redemption,
   ROUTES,
+  type RouletteStatus,
   type ScanQrInput,
   type ScanResult,
   type SeasonId,
+  type SpinResult,
   type Store,
+  type StorePanelApi,
+  type StoreStats,
   type TodayStatus,
   type Trail,
   type UpdateProfileInput,
+  type UseCouponResult,
   type Wallet,
 } from '@cde/shared';
 import { GameApiError, isApiErrorBody } from './errors';
@@ -32,6 +38,8 @@ export interface HttpGameApiOptions {
   baseUrl: string;
   /** Devolve o JWT do Supabase, se houver. Vai em `Authorization: Bearer`. */
   getToken?: () => Promise<string | null>;
+  /** Chave da loja, para o painel (cabeçalho `x-store-key`). Não é o login do visitante. */
+  getStoreKey?: () => string | null;
   fetch?: typeof fetch;
 }
 
@@ -41,15 +49,17 @@ interface RequestOptions {
   body?: unknown;
 }
 
-/** `GameApi` que fala com a API pelas rotas de `ROUTES` (ver `@cde/shared`). */
-export class HttpGameApi implements GameApi {
+/** `GameApi` e `StorePanelApi` que falam com a API pelas rotas de `ROUTES` (ver `@cde/shared`). */
+export class HttpGameApi implements GameApi, StorePanelApi {
   private readonly baseUrl: string;
   private readonly getToken: () => Promise<string | null>;
+  private readonly getStoreKey: () => string | null;
   private readonly fetcher: typeof fetch;
 
   constructor(options: HttpGameApiOptions) {
     this.baseUrl = options.baseUrl.replace(/\/+$/, '');
     this.getToken = options.getToken ?? (async () => null);
+    this.getStoreKey = options.getStoreKey ?? (() => null);
     this.fetcher = options.fetch ?? ((...args) => fetch(...args));
   }
 
@@ -68,6 +78,8 @@ export class HttpGameApi implements GameApi {
     if (options.body !== undefined) headers['Content-Type'] = 'application/json';
     const token = await this.getToken();
     if (token) headers.Authorization = `Bearer ${token}`;
+    const storeKey = this.getStoreKey();
+    if (storeKey) headers['x-store-key'] = storeKey;
 
     let response: Response;
     try {
@@ -158,5 +170,17 @@ export class HttpGameApi implements GameApi {
   }
   listEvents() {
     return this.request<PointEvent[]>('listEvents');
+  }
+  getRoulette() {
+    return this.request<RouletteStatus>('getRoulette');
+  }
+  spinRoulette() {
+    return this.request<SpinResult>('spinRoulette');
+  }
+  getStoreStats(storeId: string) {
+    return this.request<StoreStats>('getStoreStats', { params: { storeId } });
+  }
+  markCouponUsed(storeId: string, input: MarkCouponUsedInput) {
+    return this.request<UseCouponResult>('markCouponUsed', { params: { storeId }, body: input });
   }
 }

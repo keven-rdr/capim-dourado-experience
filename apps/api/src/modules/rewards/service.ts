@@ -29,9 +29,17 @@ export class RewardsService {
     const wallet = await this.points.spend(userId, 'coupon_redeem', `Cupom: ${coupon.title}`, {
       coins: coupon.cost,
     });
+    const redemption = await this.issue(userId, coupon, coupon.validDays);
+    return { redemption, wallet };
+  }
 
+  /**
+   * Emite o cupom: código único, validade e uso único (RN07). Não cobra moedas; quem chama
+   * decide o custo (a loja de recompensas cobra, a roleta não).
+   */
+  async issue(userId: string, coupon: Coupon, validDays: number): Promise<Redemption> {
     const now = this.clock.now();
-    const expiresAt = new Date(now.getTime() + coupon.validDays * 86_400_000);
+    const expiresAt = new Date(now.getTime() + validDays * 86_400_000);
     for (let attempt = 0; attempt < MAX_CODE_ATTEMPTS; attempt++) {
       const redemption: Redemption = {
         id: this.ids.id(),
@@ -43,7 +51,7 @@ export class RewardsService {
         expiresAt: expiresAt.toISOString(),
         usedAt: null,
       };
-      if (await this.rewards.insertRedemption(userId, redemption)) return { redemption, wallet };
+      if (await this.rewards.insertRedemption(userId, redemption)) return redemption;
     }
     throw new Error('Não foi possível gerar um código de resgate único.');
   }

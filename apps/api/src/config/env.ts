@@ -1,4 +1,10 @@
-import { type LatLng, MALL_AREA_APPROX } from '@cde/shared';
+import {
+  GOLDEN_WINDOWS,
+  type GoldenWindow,
+  type LatLng,
+  MALL_AREA_APPROX,
+  parseClock,
+} from '@cde/shared';
 import { z } from 'zod';
 
 /**
@@ -23,9 +29,21 @@ export interface AppConfig {
   skipOpeningHours: boolean;
   /** Polígono da área de check-in vindo de `MALL_AREA_JSON`, ou `null` para usar o padrão. */
   mallAreaOverride: LatLng[] | null;
+  /** Janelas da hora dourada (`GOLDEN_HOURS_JSON`) ou as de exemplo do `@cde/shared`. */
+  goldenWindows: GoldenWindow[];
+  /** Chave de cada loja para o painel (`STORE_KEYS_JSON`): `{ "<idDaLoja>": "<chave>" }`. */
+  storeKeys: Record<string, string>;
+  /**
+   * Só em demonstração (`AUTH_MODE=dev` sem `STORE_KEYS_JSON`): qualquer loja aceita a chave
+   * `demo`. Nunca fica ligado quando há chaves configuradas.
+   */
+  demoStoreKey: boolean;
   /** Avisos de configuração para registrar na subida. */
   warnings: string[];
 }
+
+/** Chave que o painel aceita para qualquer loja no modo demonstração. */
+export const DEMO_STORE_KEY = 'demo';
 
 export class ConfigError extends Error {
   override name = 'ConfigError';
@@ -51,12 +69,40 @@ const rawEnvSchema = z.object({
   ALLOW_DEMO_QR: booleanFlag,
   SKIP_OPENING_HOURS: booleanFlag,
   MALL_AREA_JSON: optionalText,
+  GOLDEN_HOURS_JSON: optionalText,
+  STORE_KEYS_JSON: optionalText,
   AUTH_MODE: optionalText.pipe(z.enum(['dev', 'supabase']).optional()),
 });
 
 const polygonSchema = z
   .array(z.object({ lat: z.number().min(-90).max(90), lng: z.number().min(-180).max(180) }))
   .min(3);
+
+const clockText = z.string().refine((text) => parseClock(text) !== null, 'use HH:MM');
+const goldenWindowsSchema = z
+  .array(
+    z
+      .object({
+        days: z.array(z.number().int().min(0).max(6)).min(1),
+        from: clockText,
+        to: clockText,
+      })
+      .refine(
+        (w) => (parseClock(w.from) ?? 0) < (parseClock(w.to) ?? 0),
+        'from deve ser antes de to',
+      ),
+  )
+  .max(14);
+
+const storeKeysSchema = z.record(z.string().min(1), z.string().min(8));
+
+function parseJson(name: string, text: string): unknown {
+  try {
+    return JSON.parse(text);
+  } catch {
+    throw new ConfigError(`${name} não é um JSON válido.`);
+  }
+}
 
 /** Lê e valida as variáveis de ambiente. Lança `ConfigError` com mensagem em português. */
 export function loadConfig(env: Record<string, string | undefined> = process.env): AppConfig {
@@ -143,6 +189,41 @@ export function loadConfig(env: Record<string, string | undefined> = process.env
     mallAreaOverride = polygon.data;
   }
 
+  let goldenWindows: GoldenWindow[] = GOLDEN_WINDOWS.map((window) => ({
+    ...window,
+    days: [...window.days],
+  }));
+  if (raw.GOLDEN_HOURS_JSON) {
+    const parsedWindows = goldenWindowsSchema.safeParse(
+      parseJson('GOLDEN_HOURS_JSON', raw.GOLDEN_HOURS_JSON),
+    );
+    if (!parsedWindows.success) {
+      throw new ConfigError(
+        'GOLDEN_HOURS_JSON deve ser uma lista de { "days": [0 a 6], "from": "HH:MM", "to": "HH:MM" }, com from antes de to.',
+      );
+    }
+    goldenWindows = parsedWindows.data;
+  }
+
+  let storeKeys: Record<string, string> = {};
+  if (raw.STORE_KEYS_JSON) {
+    const parsedKeys = storeKeysSchema.safeParse(parseJson('STORE_KEYS_JSON', raw.STORE_KEYS_JSON));
+    if (!parsedKeys.success) {
+      throw new ConfigError(
+        'STORE_KEYS_JSON deve ser um objeto { "<idDaLoja>": "<chave com 8 ou mais caracteres>" }.',
+      );
+    }
+    storeKeys = parsedKeys.data;
+  }
+  const demoStoreKey = authMode === 'dev' && Object.keys(storeKeys).length === 0;
+  if (demoStoreKey) {
+    warnings.push(
+      `Painel da loja em demonstração: qualquer loja aceita a chave "${DEMO_STORE_KEY}". Defina STORE_KEYS_JSON para valer de verdade.`,
+    );
+  } else if (Object.keys(storeKeys).length === 0) {
+    warnings.push('STORE_KEYS_JSON ausente: o painel da loja fica desligado.');
+  }
+
   if (raw.SKIP_OPENING_HOURS) {
     warnings.push('SKIP_OPENING_HOURS=true: horário do shopping ignorado. Só para demonstração.');
   }
@@ -161,6 +242,9 @@ export function loadConfig(env: Record<string, string | undefined> = process.env
     allowDemoQr: raw.ALLOW_DEMO_QR,
     skipOpeningHours: raw.SKIP_OPENING_HOURS,
     mallAreaOverride,
+    goldenWindows,
+    storeKeys,
+    demoStoreKey,
     warnings,
   };
 }

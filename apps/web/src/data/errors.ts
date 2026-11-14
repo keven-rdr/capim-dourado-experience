@@ -81,6 +81,14 @@ const FRIENDLY: Record<AppErrorCode, { title: string; message: string }> = {
     message: 'Uma missão rápida resolve.',
   },
   coupon_not_found: { title: 'Cupom saiu do catálogo', message: 'Tem outros esperando por você.' },
+  no_spins: {
+    title: 'Sem giros por agora',
+    message: 'O check-in do dia libera os giros. Volte amanhã para mais.',
+  },
+  coupon_used: { title: 'Cupom já usado', message: 'Cada cupom vale uma vez só.' },
+  coupon_expired: { title: 'Cupom vencido', message: 'O prazo acabou. A roleta tem outros.' },
+  coupon_wrong_store: { title: 'Cupom de outra loja', message: 'Esse cupom vale em outra loja.' },
+  forbidden: { title: 'Chave da loja não confere', message: 'Confira a chave com o shopping.' },
   not_found: { title: 'Não achamos isso', message: 'Pode ter mudado de lugar. Tenta de novo.' },
   network: {
     title: 'Sem conexão com o servidor',

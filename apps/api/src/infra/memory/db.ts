@@ -2,6 +2,7 @@ import type { PointEvent, Profile, Redemption } from '@cde/shared';
 import type { CheckinRecord } from '../../modules/checkin/repository.js';
 import type { HuntProgress } from '../../modules/hunts/repository.js';
 import type { ScanRecord } from '../../modules/qr/repository.js';
+import type { SpinRecord } from '../../modules/roulette/repository.js';
 
 export interface StoredEvent extends PointEvent {
   localDate: string;
@@ -17,6 +18,7 @@ export class MemoryDb {
   readonly events = new Map<string, StoredEvent[]>();
   readonly checkins: CheckinRecord[] = [];
   readonly scans: ScanRecord[] = [];
+  readonly spins: SpinRecord[] = [];
   readonly huntProgress = new Map<string, HuntProgress>();
   readonly missionCompletions = new Set<string>();
   readonly redemptions = new Map<string, Array<Redemption & { userId: string }>>();
@@ -30,6 +32,7 @@ export class MemoryDb {
     this.userStickers.delete(userId);
     removeWhere(this.checkins, (row) => row.userId === userId);
     removeWhere(this.scans, (row) => row.userId === userId);
+    removeWhere(this.spins, (row) => row.userId === userId);
     for (const key of [...this.huntProgress.keys()]) {
       if (key.startsWith(`${userId}|`)) this.huntProgress.delete(key);
     }

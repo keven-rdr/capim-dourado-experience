@@ -7,6 +7,7 @@
 | Arquivo | O que é |
 |---|---|
 | `migrations/0001_init.sql` | Tabelas, chaves, índices, restrições de unicidade, função `apply_points`, RLS e políticas |
+| `migrations/0002_roulette.sql` | Roleta de cupons: tabela `roulette_spins` (um giro por linha, vaga única por usuário, dia e nº do giro), RLS e índices do painel da loja |
 | `seed.sql` | Dados iniciais (temporadas, figurinhas, lojas, cupons, missões, caça, segredos e área do shopping). **Gerado** a partir de `packages/shared/src/seed.ts` |
 
 Não editem o `seed.sql` à mão. Depois de mudar o seed do shared:
@@ -25,8 +26,9 @@ Nomes de lojas são reais; **descontos, prêmios, parcerias e locais de QR são 
 
 1. **SQL Editor → New query**.
 2. Colem o conteúdo de `migrations/0001_init.sql` e executem.
-3. Colem o conteúdo de `seed.sql` e executem.
-4. Em **Table Editor**, confiram se as tabelas apareceram e se todas mostram **RLS enabled**.
+3. Colem o conteúdo de `migrations/0002_roulette.sql` e executem.
+4. Colem o conteúdo de `seed.sql` e executem.
+5. Em **Table Editor**, confiram se as tabelas apareceram e se todas mostram **RLS enabled**.
 
 ### Pela Supabase CLI
 

@@ -115,6 +115,17 @@ export function Rewards() {
         </section>
       )}
 
+      <Button
+        block
+        variant="gold"
+        icon="gift"
+        iconRight="arrowRight"
+        className="mt-4"
+        onClick={() => navigate('/roleta')}
+      >
+        Roleta de cupons
+      </Button>
+
       <SectionTitle aside="ofertas de exemplo">Troque suas moedas</SectionTitle>
       <FilterChips
         label="Filtrar por trilha"
@@ -165,16 +176,14 @@ export function Rewards() {
         <div className="flex flex-col gap-5">
           {mine.map((r) => {
             const expired = Date.parse(r.expiresAt) <= now.getTime();
-            const cost = all.find((c) => c.id === r.couponId)?.cost ?? 0;
             const validDays = all.find((c) => c.id === r.couponId)?.validDays ?? 0;
             return (
               <CouponTicket
                 key={r.id}
                 title={r.title}
                 storeName={r.storeName}
-                cost={cost}
                 validDays={validDays}
-                state={expired ? 'expired' : 'redeemed'}
+                state={r.usedAt ? 'used' : expired ? 'expired' : 'redeemed'}
                 code={r.code}
                 deadlineLabel={deadlineLabel(r.expiresAt, now)}
                 onShow={() => setShowing(r)}

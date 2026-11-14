@@ -6,9 +6,11 @@ import { albumController } from './modules/album/controller.js';
 import { checkinController } from './modules/checkin/controller.js';
 import { huntsController } from './modules/hunts/controller.js';
 import { missionsController } from './modules/missions/controller.js';
+import { panelController } from './modules/panel/controller.js';
 import { qrController } from './modules/qr/controller.js';
 import { rafflesController } from './modules/raffles/controller.js';
 import { rewardsController } from './modules/rewards/controller.js';
+import { rouletteController } from './modules/roulette/controller.js';
 import { storesController } from './modules/stores/controller.js';
 import { usersController } from './modules/users/controller.js';
 import { authMiddleware } from './shared/auth.js';
@@ -26,7 +28,7 @@ export function createApp(deps: AppDeps): Hono<AppEnv> {
     cors({
       origin: config.corsOrigins,
       allowMethods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
-      allowHeaders: ['Authorization', 'Content-Type', 'x-demo-user', 'x-request-id'],
+      allowHeaders: ['Authorization', 'Content-Type', 'x-demo-user', 'x-store-key', 'x-request-id'],
       exposeHeaders: ['x-request-id'],
       maxAge: 600,
     }),
@@ -45,6 +47,10 @@ export function createApp(deps: AppDeps): Hono<AppEnv> {
     }),
   );
 
+  // O painel da loja tem autenticação própria (chave da loja). Monta antes do login do visitante:
+  // a resposta dele encerra a requisição, então o `authMiddleware` abaixo não roda nessas rotas.
+  app.route('/', panelController(services.panel, config));
+
   app.use('/v1/*', authMiddleware(auth));
   app.route('/', usersController(services.users));
   app.route('/', checkinController(services.checkin));
@@ -54,6 +60,7 @@ export function createApp(deps: AppDeps): Hono<AppEnv> {
   app.route('/', storesController(services.stores));
   app.route('/', rewardsController(services.rewards));
   app.route('/', rafflesController(services.raffles));
+  app.route('/', rouletteController(services.roulette));
   app.route('/', albumController(services.album));
 
   return app;

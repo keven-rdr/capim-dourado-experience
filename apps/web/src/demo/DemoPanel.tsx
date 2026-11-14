@@ -251,6 +251,15 @@ export function DemoPanel() {
             />
             Respeitar o horário do shopping
           </label>
+          <label className="flex min-h-11 cursor-pointer items-center gap-3 text-sm font-semibold">
+            <input
+              type="checkbox"
+              className="size-5 accent-[var(--cde-primary)]"
+              checked={demo.goldenHour}
+              onChange={(e) => setDemo({ goldenHour: e.target.checked })}
+            />
+            Forçar a hora dourada (giros em dobro)
+          </label>
         </section>
 
         <section className="flex flex-col gap-2.5">

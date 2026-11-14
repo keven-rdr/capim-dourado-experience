@@ -31,6 +31,7 @@ import type {
 } from '../../modules/points/repository.js';
 import type { QrRepository, ScanRecord, Secret } from '../../modules/qr/repository.js';
 import type { RewardsRepository } from '../../modules/rewards/repository.js';
+import type { RouletteRepository, SpinRecord } from '../../modules/roulette/repository.js';
 import type { StoresRepository } from '../../modules/stores/repository.js';
 import type { UsersRepository } from '../../modules/users/repository.js';
 import { AppError } from '../../shared/errors.js';
@@ -139,6 +140,13 @@ export class MemoryCheckinRepository implements CheckinRepository {
     );
   }
 
+  async getCheckinAt(userId: string, localDate: string): Promise<string | null> {
+    const row = this.db.checkins.find(
+      (item) => item.userId === userId && item.localDate === localDate && item.inside,
+    );
+    return row?.at ?? null;
+  }
+
   async record(entry: CheckinRecord): Promise<boolean> {
     if (entry.inside && (await this.hasCheckedIn(entry.userId, entry.localDate))) return false;
     this.db.checkins.push({ ...entry });
@@ -177,6 +185,10 @@ export class MemoryQrRepository implements QrRepository {
 
   async countAllScans(userId: string, kind: QrKind): Promise<number> {
     return this.db.scans.filter((row) => row.userId === userId && row.kind === kind).length;
+  }
+
+  async countByRef(kind: QrKind, refId: string): Promise<number> {
+    return this.db.scans.filter((row) => row.kind === kind && row.refId === refId).length;
   }
 
   async listScansSince(userId: string, sinceDate: string): Promise<ScanRecord[]> {
@@ -280,6 +292,61 @@ export class MemoryRewardsRepository implements RewardsRepository {
     return [...(this.db.redemptions.get(userId) ?? [])]
       .reverse()
       .map(({ userId: _owner, ...redemption }) => redemption);
+  }
+
+  async findRedemptionByCode(code: string): Promise<Redemption | null> {
+    for (const rows of this.db.redemptions.values()) {
+      const row = rows.find((item) => item.code === code);
+      if (row) {
+        const { userId: _owner, ...redemption } = row;
+        return { ...redemption };
+      }
+    }
+    return null;
+  }
+
+  async markRedemptionUsed(id: string, at: string): Promise<boolean> {
+    for (const rows of this.db.redemptions.values()) {
+      const row = rows.find((item) => item.id === id);
+      if (!row) continue;
+      if (row.usedAt !== null) return false;
+      row.usedAt = at;
+      return true;
+    }
+    return false;
+  }
+
+  async countUsedRedemptions(couponIds: readonly string[]): Promise<number> {
+    let total = 0;
+    for (const rows of this.db.redemptions.values()) {
+      total += rows.filter((row) => row.usedAt !== null && couponIds.includes(row.couponId)).length;
+    }
+    return total;
+  }
+}
+
+export class MemoryRouletteRepository implements RouletteRepository {
+  constructor(private readonly db: MemoryDb) {}
+
+  async countSpins(userId: string, localDate: string): Promise<number> {
+    return this.db.spins.filter((row) => row.userId === userId && row.localDate === localDate)
+      .length;
+  }
+
+  async recordSpin(spin: SpinRecord): Promise<boolean> {
+    const taken = this.db.spins.some(
+      (row) =>
+        row.userId === spin.userId &&
+        row.localDate === spin.localDate &&
+        row.spinNo === spin.spinNo,
+    );
+    if (taken) return false;
+    this.db.spins.push({ ...spin });
+    return true;
+  }
+
+  async countSpinsByCoupons(couponIds: readonly string[]): Promise<number> {
+    return this.db.spins.filter((row) => couponIds.includes(row.couponId)).length;
   }
 }
 

@@ -30,7 +30,7 @@ function activeNav(path: string): string | undefined {
   if (path.startsWith('/missoes') || path.startsWith('/caca')) return 'missoes';
   if (path.startsWith('/scanner')) return 'scanner';
   if (path.startsWith('/mapa')) return 'mapa';
-  if (path.startsWith('/recompensas')) return 'recompensas';
+  if (path.startsWith('/recompensas') || path.startsWith('/roleta')) return 'recompensas';
   return undefined;
 }
 

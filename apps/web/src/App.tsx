@@ -16,7 +16,9 @@ import { Missions } from './screens/Missions';
 import { Onboarding } from './screens/Onboarding';
 import { Profile } from './screens/Profile';
 import { Rewards } from './screens/Rewards';
+import { Roulette } from './screens/Roulette';
 import { Scanner } from './screens/Scanner';
+import { StorePanel } from './screens/StorePanel';
 
 const SEASON_KEY = 'cde:season';
 
@@ -50,6 +52,7 @@ export function App() {
           <GameProvider setup={setup}>
             <Routes>
               <Route path="/catalogo" element={<Catalog />} />
+              <Route path="/loja" element={<StorePanel />} />
               <Route element={<AppShell />}>
                 <Route index element={<Home />} />
                 <Route path="bem-vindo" element={<Onboarding />} />
@@ -58,6 +61,7 @@ export function App() {
                 <Route path="caca" element={<Hunt />} />
                 <Route path="scanner" element={<Scanner />} />
                 <Route path="recompensas" element={<Rewards />} />
+                <Route path="roleta" element={<Roulette />} />
                 <Route path="mapa" element={<MapScreen />} />
                 <Route path="album" element={<Album />} />
                 <Route path="perfil" element={<Profile />} />

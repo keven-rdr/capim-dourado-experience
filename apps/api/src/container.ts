@@ -1,3 +1,4 @@
+import { randomInt } from 'node:crypto';
 import type { AppConfig } from './config/env.js';
 import { createMemoryRepositories, createSupabaseRepositories } from './infra/index.js';
 import { supabaseAuthVerifier } from './infra/supabase/auth.js';
@@ -10,6 +11,7 @@ import type { HuntsRepository } from './modules/hunts/repository.js';
 import { HuntsService } from './modules/hunts/service.js';
 import type { MissionsRepository } from './modules/missions/repository.js';
 import { MissionsService } from './modules/missions/service.js';
+import { StorePanelService } from './modules/panel/service.js';
 import type { PointsRepository } from './modules/points/repository.js';
 import { Rewarder } from './modules/points/rewarder.js';
 import { PointsService } from './modules/points/service.js';
@@ -18,6 +20,8 @@ import { QrService } from './modules/qr/service.js';
 import { RafflesService } from './modules/raffles/service.js';
 import type { RewardsRepository } from './modules/rewards/repository.js';
 import { RewardsService } from './modules/rewards/service.js';
+import type { RouletteRepository } from './modules/roulette/repository.js';
+import { RouletteService } from './modules/roulette/service.js';
 import type { StoresRepository } from './modules/stores/repository.js';
 import { StoresService } from './modules/stores/service.js';
 import type { UsersRepository } from './modules/users/repository.js';
@@ -38,6 +42,7 @@ export interface Repositories {
   missions: MissionsRepository;
   rewards: RewardsRepository;
   album: AlbumRepository;
+  roulette: RouletteRepository;
 }
 
 export interface Services {
@@ -51,6 +56,8 @@ export interface Services {
   rewards: RewardsService;
   raffles: RafflesService;
   album: AlbumService;
+  roulette: RouletteService;
+  panel: StorePanelService;
 }
 
 export interface AppDeps {
@@ -63,11 +70,16 @@ export interface AppDeps {
 export interface Runtime {
   clock: Clock;
   ids: IdGenerator;
+  /** Número em [0, 1) para sortear a roleta. Troca-se nos testes por um valor fixo. */
+  random: () => number;
 }
+
+/** Sorteio imprevisível (crypto), para ninguém adivinhar a próxima fatia. */
+export const cryptoRandom = (): number => randomInt(0, 2 ** 32) / 2 ** 32;
 
 /** Monta os services sobre qualquer conjunto de repositórios (memória ou Supabase). */
 export function createServices(repos: Repositories, config: AppConfig, runtime: Runtime): Services {
-  const { clock, ids } = runtime;
+  const { clock, ids, random } = runtime;
   const hours = createOpeningHours(config.skipOpeningHours);
 
   const points = new PointsService(repos.points, clock);
@@ -119,13 +131,43 @@ export function createServices(repos: Repositories, config: AppConfig, runtime: 
   });
   const rewards = new RewardsService(repos.rewards, points, ids, clock);
   const raffles = new RafflesService(points);
+  const roulette = new RouletteService({
+    roulette: repos.roulette,
+    checkins: repos.checkins,
+    users: repos.users,
+    rewards,
+    clock,
+    random,
+    goldenWindows: config.goldenWindows,
+  });
+  const panel = new StorePanelService({
+    stores: repos.stores,
+    rewards: repos.rewards,
+    roulette: repos.roulette,
+    qr: repos.qr,
+    clock,
+  });
 
-  return { users, points, checkin, qr, missions, hunts, stores, rewards, raffles, album };
+  return {
+    users,
+    points,
+    checkin,
+    qr,
+    missions,
+    hunts,
+    stores,
+    rewards,
+    raffles,
+    album,
+    roulette,
+    panel,
+  };
 }
 
 export interface BuildOptions {
   clock?: Clock;
   ids?: IdGenerator;
+  random?: () => number;
   logger?: Logger;
   /** Substitui os repositórios (usado nos testes). */
   repositories?: Repositories;
@@ -133,7 +175,11 @@ export interface BuildOptions {
 
 /** Raiz de composição: escolhe memória ou Supabase e o modo de autenticação pela configuração. */
 export function buildDeps(config: AppConfig, options: BuildOptions = {}): AppDeps {
-  const runtime: Runtime = { clock: options.clock ?? systemClock, ids: options.ids ?? cryptoIds };
+  const runtime: Runtime = {
+    clock: options.clock ?? systemClock,
+    ids: options.ids ?? cryptoIds,
+    random: options.random ?? cryptoRandom,
+  };
   const logger = options.logger ?? consoleLogger;
   const client = config.supabase
     ? createSupabaseAdmin(config.supabase.url, config.supabase.serviceRoleKey)
