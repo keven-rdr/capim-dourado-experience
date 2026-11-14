@@ -13,17 +13,21 @@
 ![TypeScript](https://img.shields.io/badge/TypeScript-estrito-3178c6?style=for-the-badge&logo=typescript&logoColor=white)
 ![Vite](https://img.shields.io/badge/Vite-8-646cff?style=for-the-badge&logo=vite&logoColor=white)
 ![Tailwind](https://img.shields.io/badge/Tailwind-4-06b6d4?style=for-the-badge&logo=tailwindcss&logoColor=white)
+![Three.js](https://img.shields.io/badge/Three.js-Capi_3D-000000?style=for-the-badge&logo=threedotjs&logoColor=white)
 ![Hono](https://img.shields.io/badge/Hono-API-e36002?style=for-the-badge&logo=hono&logoColor=white)
 ![Supabase](https://img.shields.io/badge/Supabase-Postgres-3ecf8e?style=for-the-badge&logo=supabase&logoColor=white)
 ![Turborepo](https://img.shields.io/badge/Turborepo-monorepo-ef4444?style=for-the-badge&logo=turborepo&logoColor=white)
+![Vercel](https://img.shields.io/badge/Vercel-no_ar-000000?style=for-the-badge&logo=vercel&logoColor=white)
 
 [**Vídeo**](#-vídeo-de-apresentação) ·
+[**Documentação**](#-documentação) ·
+[**App online**](https://capim-dourado-experience.vercel.app/) ·
 [**O problema**](#-o-desafio) ·
 [**Como funciona**](#-como-funciona) ·
 [**Componentização**](#-componentização-a-tecnologia-do-desafio) ·
 [**Testar em 1 minuto**](#-testar-em-1-minuto) ·
 [**Arquitetura**](#-arquitetura) ·
-[**Documentos**](#-documentos)
+[**Equipe**](#-equipe)
 
 </div>
 
@@ -35,29 +39,37 @@
 
 ## 🎬 Vídeo de apresentação
 
-<a href="docs/assets/video-apresentacao.mp4">
-  <img src="docs/assets/video-capa.jpg" alt="Vídeo de apresentação do Capim Dourado Experience (1:34). Clique para assistir." width="100%" />
-</a>
+[![Assistir ao vídeo de apresentação no Loom (1:36)](https://img.shields.io/badge/%E2%96%B6_Assistir_ao_v%C3%ADdeo-1%3A36_%C2%B7_Loom-625DF5?style=for-the-badge&logo=loom&logoColor=white)](https://www.loom.com/share/0a9c97fa3a8c4f5c8b72695631d0392f)
 
-<br />
+Vídeo de **1:36**, gravado e narrado pelo próprio time, com o app em uso. Ele apresenta o desafio 05 (engajar e fidelizar o visitante) e a solução de gamificação do shopping.
 
-Explicador em 3D de **1:34**, com narração e legendas. Ele mostra as dinâmicas na ordem em que o visitante as vive:
+Link direto: <https://www.loom.com/share/0a9c97fa3a8c4f5c8b72695631d0392f>
 
-| | Cena | O que mostra |
-|---|---|---|
-| 1 | **Veio. Gostou. Não voltou.** | O problema do desafio 05 em uma frase. |
-| 2 | **O mapa** | O shopping se abre em três andares, e cada andar é uma fase. A Capi guia o caminho. |
-| 3 | **Cheguei!** | Check-in por localização, uma vez por dia, que rende XP e capicoins. |
-| 4 | **Caça ao tesouro** | Cinco QRs da *Fábrica de Presentes*, peças do mapa e o baú com a figurinha rara. |
-| 5 | **Hora Dourada** | Giro em dobro na roleta nos horários de baixo movimento, com cupom que vence em 2 dias. |
-| 6 | **Prêmios** | Cupons em formato de ingresso, álbum de figurinhas e sequência de 7 dias. |
-| 7 | **O mecanismo** | Visita → missão → moedas → cupom → volta, e os três indicadores que o shopping passa a medir. |
-| 8 | **Temporadas** | Natal, Halloween e Páscoa com a mesma biblioteca de componentes. |
+## 📚 Documentação
 
-As telas que aparecem no celular são do próprio app, em modo demonstração. Preços, cupons e horários são **exemplos** e aparecem com o selo "exemplo".
+Para quem vai avaliar, **comece pelo Resumo do Projeto**: ele reúne o problema, o público, a solução, o MVP, as tecnologias, o diferencial e a viabilidade no shopping.
+
+| Resumo do Projeto | |
+|---|---|
+| 📄 **PDF** (abre direto no GitHub) | [Resumo do Projeto - Capim Dourado Experience.pdf](entrega/Resumo%20do%20Projeto%20-%20Capim%20Dourado%20Experience.pdf) |
+| 📝 **Word** (baixa o arquivo) | [Resumo do Projeto - Capim Dourado Experience.docx](entrega/Resumo%20do%20Projeto%20-%20Capim%20Dourado%20Experience.docx) |
+
+Os demais documentos do projeto:
+
+| Documento | Para quê |
+|---|---|
+| [Roteiro da apresentação](docs/pesquisa/apresentacao.md) | Abertura, roteiro de 5 minutos, demonstração com plano B e perguntas dos jurados |
+| [Pesquisa](docs/pesquisa/README.md) | Casos de gamificação, dados de mercado com fonte, fatos do shopping e regras legais |
+| [Planejamento técnico](docs/planejamento-tecnico-inicial.md) | Telas, requisitos, arquitetura e tecnologias |
+| [Guia da Caça no Shopping](docs/guia/guia-gamificacao-shopping.html) | Mecânica explicada do zero e prompts de cada tela |
+| [Guia de Vercel e Supabase](docs/guia-vercel-supabase.md) | Passo a passo de publicação e configuração |
+| [Proposta do chat e das promoções](docs/proposta-chat-promocoes.md) | Como o chat da Capi e as promoções dos lojistas funcionam e o que falta no backend |
+| [Revisão de componentização](docs/revisao-componentizacao.md) | Oportunidades de reuso de componentes em aberto |
+| [Orquestração de agentes](docs/agentes.md) | Como o trabalho é dividido entre agentes e pessoas |
+| [AGENTS.md](AGENTS.md) | Regras para quem (ou o que) escreve código aqui |
 
 > [!TIP]
-> Clique na capa para abrir o vídeo ([`docs/assets/video-apresentacao.mp4`](docs/assets/video-apresentacao.mp4)).
+> Quer ver o app sem instalar nada? Abra [capim-dourado-experience.vercel.app](https://capim-dourado-experience.vercel.app/) no celular. Ele roda em **modo demonstração**, com dados locais: sem API, sem banco, sem GPS e sem câmera. O [catálogo de componentes](https://capim-dourado-experience.vercel.app/catalogo) mostra a componentização, a tecnologia sorteada, com troca de temporada ao vivo.
 
 ## 🎯 O desafio
 
@@ -85,8 +97,10 @@ E o visitante entra **lendo um QR, sem baixar nada**.
 | 🎰 | **Roleta de cupons** | Um giro por check-in, em dobro na **hora dourada** (horários de baixo movimento). Cada giro vira um cupom de loja. |
 | 🎟️ | **Prêmios** | Moedas viram cupons em formato de ingresso, com código e validade, de uso único. |
 | 🗺️ | **Mapa e álbum** | Mapa dos pavimentos com os pontos da caça e álbum de figurinhas por temporada. |
-| 🛍️ | **Vitrine e Hora do Capi** | Vitrine por trilha (Kids, Ela, Ele, Para todos) e ofertas relâmpago com contagem regressiva. |
-| 🏪 | **Painel da loja** | A loja confere o código do cupom, dá baixa e vê seus números. |
+| 🛍️ | **Vitrine e Hora do Capi** | Vitrine por trilha (Kids, Ela, Ele, Para todos), com lista de desejos, e ofertas relâmpago com contagem regressiva. |
+| 💬 | **Chat da Capi** | O visitante conversa com a Capi para ver promoções, achar uma loja, entender como ganhar moedas e como resgatar. As respostas vêm de regras e dos dados do catálogo, **sem IA externa**, e nunca inventam desconto. |
+| 🏪 | **Painel da loja** | A loja confere o código do cupom, dá baixa e vê seus números. Também cadastra promoções de exemplo (`/lojista`). |
+| 🥚 | **Segredos escondidos** | O app tem surpresas escondidas para quem explora. Fica a dica: vale mexer em tudo. |
 
 ### Três moedas, três papéis
 
@@ -96,7 +110,7 @@ E o visitante entra **lendo um QR, sem baixar nada**.
 | **Capicoins** | Trocar por cupons nas lojas |
 | **Bilhetes** | Participar de sorteio (simulado no MVP) |
 
-Quem guia tudo é a **Capi**, uma capivara em 3D, e a turma: Jalapa, Buriti e Sussa.
+Quem guia tudo é a **Capi**, uma capivara em **3D** (Three.js) que veste a roupa de cada temporada, e a turma: Jalapa, Buriti e Sussa. Ela acompanha o visitante em todas as telas e pode ser minimizada em uma bolinha flutuante.
 
 <table>
   <tr>
@@ -120,10 +134,11 @@ Quem guia tudo é a **Capi**, uma capivara em 3D, e a turma: Jalapa, Buriti e Su
 Um shopping vive de calendário: Natal, Páscoa, Dia das Crianças, Halloween. Em vez de reescrever telas a cada data, **todas as telas são montadas com uma única biblioteca de componentes** ([`packages/ui`](packages/ui)), e **cada temporada troca só os tokens de design**: cores, raios, fonte e a fantasia da Capi.
 
 ```html
-<html data-season="halloween">   <!-- redefine as variáveis --cde-*; o Tailwind lê via @theme inline -->
+<html data-season="pascoa">   <!-- redefine as variáveis --cde-*; o Tailwind lê via @theme inline -->
 ```
 
 - **Nenhuma tela é reescrita** para mudar de temporada. A estrutura nunca muda.
+- **Os temas de hoje são Natal, Páscoa e Black Friday.** O tema Black Friday (preto, amarelo e vermelho) usa o id técnico `halloween` no `@cde/shared`.
 - **A mesma biblioteca serve o app do visitante e o painel da loja.**
 - **O catálogo é uma tela do próprio app**: abra [`/catalogo`](#-testar-em-1-minuto), veja todos os componentes e troque a temporada ao vivo.
 - **A API segue a mesma ideia**: um módulo independente por funcionalidade, cada um com `controller`, `service` e `repository`.
@@ -133,7 +148,7 @@ Um shopping vive de calendário: Natal, Páscoa, Dia das Crianças, Halloween. E
 
 <br />
 
-`Button` · `Card` · `Chip` · `Tag` · `Sheet` · `Spinner` · `Icon` · `CountUp` · `BottomNav` · `FloorTabs` · `MissionCard` · `XpBar` · `StatusRing` · `StreakChip` · `WalletBadge` · `CouponTicket` · `StickerCard` · `StickerArt` · `MapPin` · `PuzzleMap` · `RouletteWheel` · `ScannerFrame` · `TreasureReveal` · `AchievementToast` · `SeasonBanner` · `Capi` · `SpeechBubble` · `SystemNote` · `PhoneFrame`
+`Button` · `Card` · `Chip` · `FilterChips` · `Tag` · `Sheet` · `Spinner` · `Icon` · `CountUp` · `BottomNav` · `FloorTabs` · `MissionCard` · `XpBar` · `StatusRing` · `StreakChip` · `WalletBadge` · `CouponTicket` · `StickerCard` · `StickerArt` · `MapPin` · `PuzzleMap` · `RouletteWheel` · `ScannerFrame` · `TreasureReveal` · `AchievementToast` · `CoinRain` · `SeasonBanner` · `Capi` · `FloatingCapi` · `SpeechBubble` · `SystemNote` · `PhoneFrame`
 
 </details>
 
@@ -141,7 +156,7 @@ Um shopping vive de calendário: Natal, Páscoa, Dia das Crianças, Halloween. E
 
 ## 🚀 Testar em 1 minuto
 
-Requisitos: **Node 24** (veja [`.nvmrc`](.nvmrc)) e npm.
+Sem instalar nada: abra o app em [capim-dourado-experience.vercel.app](https://capim-dourado-experience.vercel.app/). Para rodar localmente, os requisitos são **Node 24** (veja [`.nvmrc`](.nvmrc)) e npm.
 
 ```bash
 npm install
@@ -155,6 +170,8 @@ O app abre em **modo demonstração**, com dados locais: **sem API, sem banco, s
 | `/` | O jogo, começando pelo onboarding |
 | `/catalogo` | Catálogo de componentes com troca de temporada ao vivo |
 | `/loja` | Painel da loja (dar baixa em cupom) |
+| `/lojista` | Promoções de exemplo cadastradas pelo lojista |
+| `/chat` | Chat da Capi |
 | `/?demo=1` | Força o modo demonstração e abre o painel de extras (reiniciar, adiantar dias, hora dourada) |
 
 ```bash
@@ -170,7 +187,7 @@ flowchart LR
   L(["🏪 Loja"]) --> WEB
 
   subgraph apps
-    WEB["<b>apps/web</b><br/>PWA · React, Vite, Tailwind"]
+    WEB["<b>apps/web</b><br/>PWA · React, Vite, Tailwind, Three.js"]
     API["<b>apps/api</b><br/>Hono · um módulo por função"]
   end
 
@@ -198,7 +215,8 @@ packages/
   ui/         biblioteca de componentes e temas por temporada
   shared/     tipos, regras de pontos, dados iniciais e contrato da API (GameApi)
 supabase/     migrações SQL, políticas de acesso e seed
-docs/         entrega, guias, pesquisa e material da apresentação
+docs/         guias, pesquisa, propostas e material da apresentação
+entrega/      resumo do projeto para os avaliadores (PDF e Word)
 .github/      pipelines, modelos de issue e de pull request
 ```
 
@@ -207,6 +225,7 @@ docs/         entrega, guias, pesquisa e material da apresentação
 - **O contrato manda.** App e API se entendem só por `GameApi`, `ROUTES` e os tipos de `@cde/shared`. É isso que deixa o app rodar contra a API real **ou** contra o `LocalGameApi` do navegador, sem mudar uma tela.
 - **Pontos calculados só no servidor.** Com a API, o app nunca decide quanto vale uma ação. As regras ficam em `packages/shared`, com limites diários.
 - **QR assinado.** O token é um HMAC-SHA256 com expiração opcional, para reduzir foto compartilhada.
+- **Chat sem IA externa.** A Capi reconhece a intenção por regras e responde com dados do catálogo (`packages/shared/src/chat.ts`). Se não há oferta, ela diz isso; se não entende a pergunta, mostra as opções.
 
 ### Pensado para dar certo no mundo real
 
@@ -229,22 +248,24 @@ Hoje o shopping não tem estes três números. O jogo os produz. Ainda **não h�
 
 ## 🧭 Próximos passos
 
+O que falta está nas [issues do repositório](https://github.com/keven-rdr/capim-dourado-experience/issues), agrupado em [milestones](https://github.com/keven-rdr/capim-dourado-experience/milestones).
+
+- [x] **App publicado na Vercel**: [capim-dourado-experience.vercel.app](https://capim-dourado-experience.vercel.app/)
+- [ ] **Supabase real e API publicada**, para sair do modo demonstração (hoje o app usa dados locais)
+- [ ] **Chat e promoções no backend**: hoje rodam só no modo demonstração
+- [ ] **QR codes reais** gerados e instalados nas áreas públicas
 - [ ] **Piloto no Natal**, combinando metas e operação com o shopping
 - [ ] Conferir em campo o **polígono do check-in** (a proposta vem do OpenStreetMap)
 - [ ] Alinhar com o jurídico a autorização do **sorteio real** e de brindes por missão
 - [ ] Avaliar a **integração com o app oficial** do shopping (um botão "Jogar")
 
-## 📚 Documentos
+## 👥 Equipe
 
-| Documento | Para quê |
-|---|---|
-| [Roteiro da apresentação](docs/pesquisa/apresentacao.md) | Abertura, roteiro de 5 minutos, demonstração com plano B e perguntas dos jurados |
-| [Pesquisa](docs/pesquisa/README.md) | Casos de gamificação, dados de mercado com fonte, fatos do shopping e regras legais |
-| [Planejamento técnico inicial](docs/planejamento-tecnico-inicial.md) | Primeira entrega: telas, requisitos, arquitetura e tecnologias |
-| [Guia da Caça no Shopping](docs/guia/guia-gamificacao-shopping.html) | Mecânica explicada do zero e prompts de cada tela |
-| [Guia de Vercel e Supabase](docs/guia-vercel-supabase.md) | Passo a passo de publicação e configuração |
-| [Orquestração de agentes](docs/agentes.md) | Como o trabalho é dividido entre agentes e pessoas |
-| [AGENTS.md](AGENTS.md) | Regras para quem (ou o que) escreve código aqui |
+| Pessoa | GitHub | Principais entregas |
+|---|---|---|
+| **Keven Rodrigues** | [@keven-rdr](https://github.com/keven-rdr) | Base do monorepo, CI, contrato `@cde/shared`, API e Supabase, biblioteca de componentes, roleta e painel da loja, easter eggs, chat no design system, pesquisa, README e vídeo |
+| **Guilherme** | [@DevGuilherme-cpu](https://github.com/DevGuilherme-cpu) | Planejamento técnico, Capi 3D, vitrine com lista de desejos, temas Natal e Black Friday, roupa da Capi por tema |
+| **Eduardo Campos** | [@EduardoCampos123](https://github.com/EduardoCampos123) | Chat da Capi, promoções do lojista, Capi flutuante e proposta do chat |
 
 ## 🤝 Contribuindo
 
@@ -253,7 +274,7 @@ Hoje o shopping não tem estes três números. O jogo os produz. Ainda **não h�
 
 <br />
 
-1. Cada tarefa vira uma issue.
+1. Cada tarefa vira uma [issue](https://github.com/keven-rdr/capim-dourado-experience/issues), a partir dos modelos de bug, história e tarefa. Use as labels `historia`, `tarefa` ou `bug`, a label de área (`area:web`, `area:ui`, `area:api`, `area:supabase`, `area:docs`, `area:ci`, `area:deploy`), um responsável e um milestone.
 2. Crie uma branch a partir da `main` (`feat/checkin`, `fix/cupom-expirado`).
 3. Abra um pull request com título no padrão [Conventional Commits](https://www.conventionalcommits.org/pt-br) (`feat(web): adiciona a tela de check-in`).
 4. O CI roda lint, tipos, testes e build. A Vercel publica uma prévia do pull request.
