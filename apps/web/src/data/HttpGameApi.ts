@@ -1,5 +1,7 @@
 import {
   type AlbumState,
+  type ChatMessageInput,
+  type ChatReply,
   type CheckInInput,
   type CheckInResult,
   type Coupon,
@@ -7,10 +9,13 @@ import {
   type GameApi,
   type HuntState,
   type MarkCouponUsedInput,
+  type MerchantApi,
   type MissionWithProgress,
   type PointEvent,
   type PointsResult,
   type Profile,
+  type Promotion,
+  type PromotionInput,
   type RedeemInput,
   type RedeemResult,
   type Redemption,
@@ -49,8 +54,8 @@ interface RequestOptions {
   body?: unknown;
 }
 
-/** `GameApi` e `StorePanelApi` que falam com a API pelas rotas de `ROUTES` (ver `@cde/shared`). */
-export class HttpGameApi implements GameApi, StorePanelApi {
+/** Adaptador HTTP para app, painel de loja e lojista. */
+export class HttpGameApi implements GameApi, StorePanelApi, MerchantApi {
   private readonly baseUrl: string;
   private readonly getToken: () => Promise<string | null>;
   private readonly getStoreKey: () => string | null;
@@ -182,5 +187,23 @@ export class HttpGameApi implements GameApi, StorePanelApi {
   }
   markCouponUsed(storeId: string, input: MarkCouponUsedInput) {
     return this.request<UseCouponResult>('markCouponUsed', { params: { storeId }, body: input });
+  }
+  listPromotions(storeId?: string) {
+    return this.request<Promotion[]>('listPromotions', { query: { storeId } });
+  }
+  sendChatMessage(input: ChatMessageInput) {
+    return this.request<ChatReply>('sendChatMessage', { body: input });
+  }
+  listManagedStores() {
+    return this.request<Store[]>('listManagedStores');
+  }
+  listManagedPromotions(storeId: string) {
+    return this.request<Promotion[]>('listManagedPromotions', { query: { storeId } });
+  }
+  createPromotion(input: PromotionInput) {
+    return this.request<Promotion>('createPromotion', { body: input });
+  }
+  updatePromotion(id: string, input: PromotionInput) {
+    return this.request<Promotion>('updatePromotion', { params: { id }, body: input });
   }
 }

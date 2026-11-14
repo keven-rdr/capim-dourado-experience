@@ -138,6 +138,43 @@ export interface Coupon {
   example: true;
 }
 
+/** Oferta divulgada pelo lojista. Promoções de exemplo nunca representam parceria real. */
+export interface Promotion {
+  id: string;
+  storeId: string;
+  title: string;
+  description: string;
+  terms: string;
+  startsAt: string;
+  endsAt: string;
+  status: 'draft' | 'published' | 'paused';
+  couponId?: string;
+  example: true;
+}
+
+export type ChatIntent =
+  | 'promotions'
+  | 'store_location'
+  | 'earn_coins'
+  | 'redeem_help'
+  | 'fallback';
+
+export interface ChatMessageInput {
+  text: string;
+  storeId?: string;
+  intent?: Exclude<ChatIntent, 'fallback'>;
+  /** Data ISO injetável para resultados reproduzíveis e testes. */
+  now?: string;
+}
+
+export interface ChatReply {
+  intent: ChatIntent;
+  text: string;
+  promotions: Promotion[];
+  store?: Store;
+  suggestions: string[];
+}
+
 export interface Redemption {
   id: string;
   couponId: string;

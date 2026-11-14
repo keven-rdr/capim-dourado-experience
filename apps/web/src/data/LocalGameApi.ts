@@ -1,7 +1,10 @@
 import {
   type AlbumState,
   addReward,
+  answerChat,
   BASE_SPINS,
+  type ChatMessageInput,
+  type ChatReply,
   type CheckInInput,
   type CheckInResult,
   COMMON_STICKER_POOL,
@@ -35,6 +38,7 @@ import {
   MALL_DESK_NAME,
   MAX_GPS_ACCURACY_M,
   type MarkCouponUsedInput,
+  type MerchantApi,
   MISSIONS,
   type Mission,
   type MissionWithProgress,
@@ -44,9 +48,13 @@ import {
   type PointAction,
   type PointEvent,
   type PointsResult,
+  PROMOTIONS,
   type Profile,
+  type Promotion,
+  type PromotionInput,
   pickSlice,
   pointInPolygon,
+  promotionInputSchema,
   type QrKind,
   type RedeemInput,
   type RedeemResult,
@@ -132,6 +140,7 @@ interface LocalState {
   claimed: string[];
   scans: ScanLog[];
   spins: SpinLog[];
+  promotions: Promotion[];
 }
 
 type Amount = Omit<Reward, 'stickerId'>;
@@ -148,6 +157,7 @@ const EMPTY_STATE = (): LocalState => ({
   claimed: [],
   scans: [],
   spins: [],
+  promotions: [...PROMOTIONS],
 });
 
 /** Missões cuja recompensa já vem da própria ação (check-in, baú final da caça). */
@@ -199,7 +209,7 @@ export function parseDemoToken(token: string): { kind: QrKind; id: string } | nu
  * cupons com código e validade). É o padrão do protótipo e o motor do modo demonstração.
  * Em produção, quem aplica as regras de verdade é a API (RN09).
  */
-export class LocalGameApi implements GameApi, StorePanelApi {
+export class LocalGameApi implements GameApi, StorePanelApi, MerchantApi {
   private readonly storage: KeyValueStorage;
   private readonly now: () => Date;
   private readonly ignoreHours: () => boolean;
@@ -688,6 +698,79 @@ export class LocalGameApi implements GameApi, StorePanelApi {
 
   async listStores(): Promise<Store[]> {
     return [...STORES];
+  }
+
+  async listPromotions(storeId?: string): Promise<Promotion[]> {
+    const now = this.now().getTime();
+    return this.load().promotions.filter(
+      (promotion) =>
+        promotion.status === 'published' &&
+        Date.parse(promotion.startsAt) <= now &&
+        Date.parse(promotion.endsAt) >= now &&
+        (!storeId || promotion.storeId === storeId),
+    );
+  }
+
+  async sendChatMessage(input: ChatMessageInput): Promise<ChatReply> {
+    const state = this.load();
+    return answerChat(
+      { ...input, now: input.now ?? this.now().toISOString() },
+      STORES,
+      state.promotions,
+    );
+  }
+
+  async listManagedStores(): Promise<Store[]> {
+    // Protótipo: o lojista de demonstração pode selecionar qualquer loja fictícia.
+    return [...STORES];
+  }
+
+  async listManagedPromotions(storeId: string): Promise<Promotion[]> {
+    return this.load().promotions.filter((promotion) => promotion.storeId === storeId);
+  }
+
+  async createPromotion(input: PromotionInput): Promise<Promotion> {
+    const parsed = promotionInputSchema.safeParse(input);
+    if (!parsed.success) throw new GameApiError('validation', 'Confira os dados da promoção.');
+    if (!STORES.some((store) => store.id === parsed.data.storeId)) {
+      throw new GameApiError('not_found', 'Loja não encontrada.');
+    }
+    if (
+      parsed.data.couponId &&
+      !COUPONS.some(
+        (coupon) => coupon.id === parsed.data.couponId && coupon.storeId === parsed.data.storeId,
+      )
+    ) {
+      throw new GameApiError('validation', 'O cupom precisa pertencer à mesma loja.');
+    }
+    const state = this.load();
+    const promotion: Promotion = { id: this.id(), ...parsed.data };
+    state.promotions.push(promotion);
+    this.save(state);
+    return promotion;
+  }
+
+  async updatePromotion(id: string, input: PromotionInput): Promise<Promotion> {
+    const parsed = promotionInputSchema.safeParse(input);
+    if (!parsed.success) throw new GameApiError('validation', 'Confira os dados da promoção.');
+    const state = this.load();
+    const index = state.promotions.findIndex((promotion) => promotion.id === id);
+    if (index < 0) throw new GameApiError('not_found', 'Promoção não encontrada.');
+    if (!STORES.some((store) => store.id === parsed.data.storeId)) {
+      throw new GameApiError('not_found', 'Loja não encontrada.');
+    }
+    if (
+      parsed.data.couponId &&
+      !COUPONS.some(
+        (coupon) => coupon.id === parsed.data.couponId && coupon.storeId === parsed.data.storeId,
+      )
+    ) {
+      throw new GameApiError('validation', 'O cupom precisa pertencer à mesma loja.');
+    }
+    const promotion: Promotion = { id, ...parsed.data };
+    state.promotions[index] = promotion;
+    this.save(state);
+    return promotion;
   }
 
   async listCoupons(trail?: Trail): Promise<Coupon[]> {
