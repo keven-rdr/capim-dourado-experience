@@ -5,6 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { friendlyError } from '../data/errors';
 import { useGame, useGameQuery } from '../data/GameProvider';
 import { Capi3D } from '../layout/Capi3D';
+import { AboutProject } from '../layout/ProjectCredits';
 import { Screen, SectionTitle } from '../layout/Screen';
 import { CAPI_NAME, levelInfo, lookOf } from '../lib/content';
 import { EGG_COUNT, foundEggs } from '../lib/eggs';
@@ -150,6 +151,9 @@ export function Profile() {
           Apagar meus dados
         </Button>
       </Card>
+
+      <SectionTitle>Sobre o projeto</SectionTitle>
+      <AboutProject />
 
       <div className="mt-6 flex flex-wrap gap-3">
         <Link
