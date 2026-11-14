@@ -397,6 +397,15 @@
     margin: 0;
     background-color: var(--cde-bg);
   }
+  /* Nenhuma barra de rolagem visível, em nenhuma tela. A rolagem continua igual (roda, toque,
+     teclado e arrastar). Regra única, aqui: não repita `scrollbar-width` em componentes, porque
+     o que for declarado fora da camada base vence esta regra. */
+  * {
+    scrollbar-width: none;
+  }
+  *::-webkit-scrollbar {
+    display: none;
+  }
   :focus-visible {
     outline: 3px solid var(--cde-focus);
     outline-offset: 2px;
@@ -516,7 +525,6 @@
     min-height: 0;
     overflow-y: auto;
     padding-top: 30px;
-    scrollbar-width: thin;
   }
 }
 

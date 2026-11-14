@@ -156,7 +156,7 @@ export function Chat() {
           ref={conversationRef}
           aria-label="Conversa com a Capi"
           aria-live="polite"
-          className="flex min-h-48 flex-1 flex-col gap-3 overflow-y-auto pb-1 pr-1 [scrollbar-width:thin]"
+          className="flex min-h-48 flex-1 flex-col gap-3 overflow-y-auto pb-1 pr-1"
         >
           {messages.map((message) => {
             const mine = message.from === 'visitor';
@@ -191,7 +191,7 @@ export function Chat() {
                     </Link>
                   )}
                   {!!message.reply?.promotions.length && (
-                    <div className="-mx-1 mt-2.5 flex snap-x snap-mandatory gap-2 overflow-x-auto px-1 pb-1.5 [scrollbar-width:none]">
+                    <div className="-mx-1 mt-2.5 flex snap-x snap-mandatory gap-2 overflow-x-auto px-1 pb-1.5">
                       {message.reply.promotions.map((promotion, index) => (
                         <Link
                           to={promotion.couponId ? '/recompensas' : '/mapa'}

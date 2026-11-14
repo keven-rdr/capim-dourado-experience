@@ -89,7 +89,7 @@ export function ProductGallery({ product, className }: { product: Product; class
         onScroll={(e) =>
           setShown(Math.round(e.currentTarget.scrollLeft / e.currentTarget.clientWidth))
         }
-        className="flex size-full snap-x snap-mandatory overflow-x-auto [scrollbar-width:none]"
+        className="flex size-full snap-x snap-mandatory overflow-x-auto"
       >
         <ProductArt product={product} className="size-full shrink-0 snap-center" />
         {hasSecond && (
