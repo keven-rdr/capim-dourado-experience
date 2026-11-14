@@ -1,4 +1,5 @@
 import type { ChatIntent, ChatMessageInput, ChatReply, Promotion, Store } from './domain.js';
+import { FLOOR_LABEL } from './domain.js';
 
 const SUGGESTIONS = ['Ver promoções', 'Encontrar loja', 'Como ganhar moedas', 'Como resgatar'];
 
@@ -16,6 +17,8 @@ function recognize(text: string): ChatIntent {
   if (/\b(moeda|moedas|capicoin|capicoins|ganhar ponto|ganhar pontos)\b/.test(normalized)) {
     return 'earn_coins';
   }
+  if (/\b(ponto|pontos|saldo|xp)\b/.test(normalized)) return 'points_help';
+  if (/\b(evento|eventos|programacao)\b/.test(normalized)) return 'events';
   if (/\b(resgatar|resgate|usar cupom|cupom|recompensa)\b/.test(normalized)) return 'redeem_help';
   if (/\b(onde fica|localizacao|local|endereco|mapa|fica)\b/.test(normalized)) {
     return 'store_location';
@@ -33,11 +36,10 @@ function recognize(text: string): ChatIntent {
 function findStore(text: string, stores: readonly Store[], storeId?: string): Store | undefined {
   if (storeId) return stores.find((store) => store.id === storeId);
   const normalized = normalize(text);
-  return stores.find((store) =>
-    normalize(store.name)
-      .split(' ')
-      .some((word) => word.length > 2 && normalized.includes(word)),
-  );
+  return stores.find((store) => {
+    const name = normalize(store.name);
+    return name.length > 2 && ` ${normalized} `.includes(` ${name} `);
+  });
 }
 
 function isCurrent(promotion: Promotion, now: number): boolean {
@@ -87,7 +89,7 @@ export function answerChat(
     return store
       ? {
           intent,
-          text: `${store.name} fica no ${store.floor}. Veja no mapa do shopping.`,
+          text: `${store.name} fica no ${FLOOR_LABEL[store.floor]}. Veja no mapa do shopping.`,
           promotions: [],
           store,
           suggestions,
@@ -111,6 +113,22 @@ export function answerChat(
     return {
       intent,
       text: 'Abra Recompensas, escolha um cupom de exemplo e toque em Resgatar. O código fica na sua carteira.',
+      promotions: [],
+      suggestions,
+    };
+  }
+  if (intent === 'points_help') {
+    return {
+      intent,
+      text: 'Você pode consultar seu XP e saldo de capicoins no seu perfil.',
+      promotions: [],
+      suggestions,
+    };
+  }
+  if (intent === 'events') {
+    return {
+      intent,
+      text: 'Ainda não tenho a programação de eventos. Consulte os canais do shopping para saber o que está acontecendo.',
       promotions: [],
       suggestions,
     };

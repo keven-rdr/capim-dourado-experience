@@ -156,6 +156,8 @@ export type ChatIntent =
   | 'promotions'
   | 'store_location'
   | 'earn_coins'
+  | 'points_help'
+  | 'events'
   | 'redeem_help'
   | 'fallback';
 

@@ -1,11 +1,17 @@
-import type { ChatMessageInput, ChatReply } from '@cde/shared';
+import type { ChatMessageInput, ChatReply, Store } from '@cde/shared';
 import { Icon, type IconName } from '@cde/ui';
 import { type FormEvent, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useGame } from '../data/GameProvider';
 import './Chat.css';
 
-type Message = { id: number; from: 'capi' | 'visitor'; text: string; reply?: ChatReply };
+type Message = {
+  id: number;
+  from: 'capi' | 'visitor';
+  text: string;
+  reply?: ChatReply;
+  stores?: Store[];
+};
 const OPTIONS: Array<{
   label: string;
   intent?: ChatMessageInput['intent'];
@@ -14,9 +20,9 @@ const OPTIONS: Array<{
 }> = [
   { label: 'Ver promoções', intent: 'promotions', icon: 'ticket' },
   { label: 'Encontrar loja', intent: 'store_location', icon: 'home' },
-  { label: 'Meus pontos', icon: 'star', href: '/perfil' },
+  { label: 'Meus pontos', intent: 'points_help', icon: 'star' },
   { label: 'Como ganhar moedas', intent: 'earn_coins', icon: 'coin' },
-  { label: 'Eventos', icon: 'calendar', href: '/missoes' },
+  { label: 'Eventos', intent: 'events', icon: 'calendar' },
   { label: 'Escanear QR', icon: 'qr', href: '/scanner' },
 ];
 
@@ -25,6 +31,7 @@ export function Chat() {
   const [draft, setDraft] = useState('');
   const [busy, setBusy] = useState(false);
   const [typing, setTyping] = useState(false);
+  const [waitingForStore, setWaitingForStore] = useState(false);
   const conversationRef = useRef<HTMLElement>(null);
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -43,7 +50,7 @@ export function Chat() {
     });
   }, [messages, typing]);
 
-  async function send(text: string, intent?: ChatMessageInput['intent']) {
+  async function send(text: string, intent?: ChatMessageInput['intent'], storeId?: string) {
     if (busy) return;
     setBusy(true);
     const id = Date.now();
@@ -59,12 +66,34 @@ export function Chat() {
     ]);
     setTyping(true);
     try {
-      const reply = await api.sendChatMessage({ text, ...(intent ? { intent } : {}) });
+      const otherQuestion =
+        /promo[cç][aã]o|oferta|desconto|moedas?|pontos?|resgat|cupom|recompensa|evento|programa[cç][aã]o/i.test(
+          text,
+        );
+      const resolvedIntent =
+        intent ?? (waitingForStore && !otherQuestion ? 'store_location' : undefined);
+      const reply = await api.sendChatMessage({
+        text,
+        ...(resolvedIntent ? { intent: resolvedIntent } : {}),
+        ...(storeId ? { storeId } : {}),
+      });
+      const needsStore = resolvedIntent === 'store_location' && !reply.store;
+      const stores = needsStore ? await api.listStores().catch(() => []) : undefined;
+      setWaitingForStore(needsStore);
       await new Promise((resolve) =>
         window.setTimeout(resolve, 850 + Math.min(reply.text.length * 8, 700)),
       );
       setTyping(false);
-      setMessages((current) => [...current, { id: id + 1, from: 'capi', text: reply.text, reply }]);
+      setMessages((current) => [
+        ...current,
+        {
+          id: id + 1,
+          from: 'capi',
+          text: reply.text,
+          reply,
+          ...(stores?.length ? { stores } : {}),
+        },
+      ]);
     } catch {
       await new Promise((resolve) => window.setTimeout(resolve, 700));
       setTyping(false);
@@ -152,6 +181,11 @@ export function Chat() {
               ) : (
                 <p>{message.text}</p>
               )}
+              {message.reply?.intent === 'points_help' && (
+                <Link className="chat-profile-link focus-ring" to="/perfil">
+                  Ver meu perfil
+                </Link>
+              )}
               {!!message.reply?.promotions.length && (
                 <div className="chat-offers">
                   {message.reply.promotions.map((promotion, index) => (
@@ -172,6 +206,26 @@ export function Chat() {
                   ))}
                 </div>
               )}
+              {!!message.stores?.length && message.id === messages[messages.length - 1]?.id && (
+                <label className="chat-store-picker">
+                  <span>Escolha uma loja</span>
+                  <select
+                    value=""
+                    disabled={busy}
+                    onChange={(event) => {
+                      const store = message.stores?.find((item) => item.id === event.target.value);
+                      if (store) void send(store.name, 'store_location', store.id);
+                    }}
+                  >
+                    <option value="">Selecione uma loja</option>
+                    {message.stores.map((store) => (
+                      <option key={store.id} value={store.id}>
+                        {store.name}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              )}
               <span className="chat-time">
                 {new Date(message.id || Date.now()).toLocaleTimeString('pt-BR', {
                   hour: '2-digit',
@@ -182,54 +236,6 @@ export function Chat() {
             </div>
           </div>
         ))}
-        {messages.length === 1 && !typing && (
-          <>
-            <div className="chat-row visitor">
-              <div className="chat-bubble">
-                <p>Quais promoções tem hoje?</p>
-                <span className="chat-time">Exemplo ✓✓</span>
-              </div>
-            </div>
-            <div className="chat-row capi">
-              <span className="chat-avatar">
-                <img src="/chat/capi-avatar.webp" alt="" />
-              </span>
-              <div className="chat-bubble has-offers">
-                <p className="promo-title">
-                  Aqui estão as promoções de hoje! <Icon name="gift" size={15} />
-                </p>
-                <div className="chat-offers sample-offers">
-                  {[
-                    { name: 'Moda', text: 'Até 40% OFF', icon: 'ticket' },
-                    { name: 'Cinema', text: 'Combo com 20% OFF', icon: 'gift' },
-                    { name: 'Alimentação', text: '2 por 1 em lanches', icon: 'star' },
-                  ].map((item, index) => (
-                    <button
-                      type="button"
-                      key={item.name}
-                      className={`chat-offer offer-${index}`}
-                      onClick={() => void send('', 'promotions')}
-                    >
-                      <span className="offer-category">
-                        <Icon name={item.icon as IconName} size={13} />
-                        {item.name}
-                      </span>
-                      <span className="offer-line" />
-                      <strong>{item.text}</strong>
-                      <img
-                        src={`/chat/${['moda', 'cinema', 'alimentacao'][index]}.svg`}
-                        className="offer-art"
-                        alt=""
-                      />
-                      <small>Exemplo</small>
-                    </button>
-                  ))}
-                </div>
-                <span className="chat-time">Ofertas ilustrativas</span>
-              </div>
-            </div>
-          </>
-        )}
         {typing && (
           <div className="chat-row capi">
             <span className="chat-avatar">

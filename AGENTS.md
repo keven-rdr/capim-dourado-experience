@@ -33,6 +33,8 @@ Leia antes de começar:
 4. **Rode só as verificações do seu pacote**, direto no workspace e sem Turborepo (o `packages/shared` já está compilado em `dist`): `npm run typecheck -w <pacote>`, `npm run test -w <pacote>`, `npm run build -w <pacote>` e `npx biome ci <sua pasta>`. Para formatar, `npx biome check --write <sua pasta>`, nunca fora dela.
 5. **O contrato manda.** App e API se entendem por `GameApi`, `ROUTES` e os tipos de `@cde/shared`. Não invente formato paralelo.
 6. **Relatório final**: o que foi entregue, o que foi verificado (com o resultado dos comandos), o que ficou de fora e as lacunas no contrato.
+7. **Componentização obrigatória para todos os agentes.** Antes de criar ou alterar uma interface, procure em `packages/ui` e nos componentes existentes uma peça que já resolva a mesma necessidade. Reutilize-a; se o comportamento ou visual for compartilhado e a peça não existir, extraia um componente reutilizável em `packages/ui` ou proponha essa mudança ao responsável quando estiver fora da sua pasta. Não duplique implementações para telas diferentes. Variações de aparência devem usar tokens de tema e propriedades explícitas.
+8. **Revise a componentização em toda entrega de interface.** Confira telas relacionadas para identificar componentes duplicados, diferenças de comportamento e estilos fora dos tokens. Corrija o que estiver no escopo e relate as demais oportunidades com arquivos e motivos no relatório final, sem transformar toda diferença visual em componente obrigatório.
 
 ## Convenções
 

@@ -1,4 +1,4 @@
-import { Icon, type ToastVariant, usePortalTarget } from '@cde/ui';
+import { FloatingCapi, Icon, type ToastVariant, usePortalTarget } from '@cde/ui';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useLocation } from 'react-router-dom';
@@ -24,9 +24,8 @@ const REACTION: Record<ToastVariant, [CapiClip, number]> = {
   warning: ['Triste', 1],
 };
 
-const BALL_SIZE = 56;
 const BALL_KEY = 'cde-capi-bola';
-type BallPos = { side: 'left' | 'right'; top: number };
+type BallPos = { side: 'left' | 'right'; top: number; x?: number };
 interface BallState {
   min: boolean;
   pos: BallPos;
@@ -38,7 +37,17 @@ export function loadBall(): BallState {
     const side = v?.pos?.side;
     const top = v?.pos?.top;
     if ((side === 'left' || side === 'right') && typeof top === 'number') {
-      return { min: !!v?.min, pos: { side, top: Math.min(1, Math.max(0, top)) } };
+      const x = v?.pos?.x;
+      return {
+        min: !!v?.min,
+        pos: {
+          side,
+          top: Math.min(1, Math.max(0, top)),
+          ...(typeof x === 'number' && Number.isFinite(x)
+            ? { x: Math.min(1, Math.max(0, x)) }
+            : {}),
+        },
+      };
     }
   } catch {
     // dado inválido ou armazenamento bloqueado: posição padrão
@@ -52,89 +61,6 @@ function saveBall(state: BallState) {
   } catch {
     // sem armazenamento: vale só nesta sessão
   }
-}
-
-/**
- * Capi minimizada, como o toque assistivo do iPhone: bolinha semitransparente que se arrasta
- * e gruda na borda mais próxima. Um toque traz a Capi de volta.
- */
-function CapiBall({
-  pos,
-  onMove,
-  onOpen,
-}: {
-  pos: BallPos;
-  onMove: (pos: BallPos) => void;
-  onOpen: () => void;
-}) {
-  const [drag, setDrag] = useState<{ x: number; y: number } | null>(null);
-  const start = useRef<{ x: number; y: number } | null>(null);
-  const moved = useRef(false);
-  // posição mais recente do arraste: o estado pode estar um quadro atrasado ao soltar
-  const last = useRef<{ x: number; y: number } | null>(null);
-
-  const area = (el: HTMLElement) => (el.parentElement as HTMLElement).getBoundingClientRect();
-  const clamp = (v: number, max: number) => Math.min(max, Math.max(0, v));
-  const finish = (el: HTMLElement) => {
-    start.current = null;
-    const p = last.current;
-    last.current = null;
-    setDrag(null);
-    if (!moved.current || !p) return;
-    const r = area(el);
-    onMove({
-      side: p.x + BALL_SIZE / 2 < r.width / 2 ? 'left' : 'right',
-      top: r.height > BALL_SIZE ? p.y / (r.height - BALL_SIZE) : 0,
-    });
-  };
-
-  return (
-    <button
-      type="button"
-      aria-label="Mostrar a Capi"
-      onPointerDown={(e) => {
-        e.currentTarget.setPointerCapture(e.pointerId);
-        start.current = { x: e.clientX, y: e.clientY };
-        moved.current = false;
-      }}
-      onPointerMove={(e) => {
-        const s = start.current;
-        if (!s) return;
-        if (!moved.current && Math.hypot(e.clientX - s.x, e.clientY - s.y) < 6) return;
-        moved.current = true;
-        const r = area(e.currentTarget);
-        last.current = {
-          x: clamp(e.clientX - r.left - BALL_SIZE / 2, r.width - BALL_SIZE),
-          y: clamp(e.clientY - r.top - BALL_SIZE / 2, r.height - BALL_SIZE),
-        };
-        setDrag(last.current);
-      }}
-      onPointerUp={(e) => finish(e.currentTarget)}
-      onPointerCancel={(e) => finish(e.currentTarget)}
-      onClick={() => {
-        if (moved.current) {
-          moved.current = false; // terminou um arraste: não abre
-          return;
-        }
-        onOpen();
-      }}
-      style={
-        drag
-          ? { left: drag.x, top: drag.y }
-          : { top: `calc((100% - ${BALL_SIZE}px) * ${pos.top})`, [pos.side]: 8 }
-      }
-      className={`pointer-events-auto absolute grid size-14 touch-none place-items-center rounded-full bg-surface/70 shadow-hard-sm backdrop-blur-sm chunk-thin focus-ring transition-opacity hover:opacity-100 focus-visible:opacity-100 ${
-        drag ? 'opacity-100' : 'opacity-60'
-      }`}
-    >
-      <img
-        src="/capi-rosto.webp"
-        alt=""
-        className="size-11 rounded-full object-cover"
-        draggable={false}
-      />
-    </button>
-  );
 }
 
 /**
@@ -203,13 +129,15 @@ export function CapiCompanion() {
 
   if (ball.min) {
     return createPortal(
-      <div className="pointer-events-none fixed inset-x-0 top-[calc(env(safe-area-inset-top)+4rem)] bottom-[calc(env(safe-area-inset-bottom)+5.5rem)] z-[60]">
-        <CapiBall
-          pos={ball.pos}
-          onMove={(pos) => updateBall({ min: true, pos })}
-          onOpen={() => updateBall({ ...ball, min: false })}
-        />
-      </div>,
+      <FloatingCapi
+        label="Mostrar a Capi; arraste para mover"
+        imageSrc="/capi-rosto.webp"
+        initialPosition={{ x: ball.pos.x ?? (ball.pos.side === 'left' ? 0 : 1), y: ball.pos.top }}
+        onMove={({ x, y }) =>
+          updateBall({ min: true, pos: { side: x < 0.5 ? 'left' : 'right', top: y, x } })
+        }
+        onActivate={() => updateBall({ ...ball, min: false })}
+      />,
       target,
     );
   }
