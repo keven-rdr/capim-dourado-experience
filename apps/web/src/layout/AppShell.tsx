@@ -15,6 +15,7 @@ import { Link, Navigate, Outlet, useLocation, useNavigate } from 'react-router-d
 import { useGame } from '../data/GameProvider';
 import { lookOf } from '../lib/content';
 import { CapiCompanion } from './CapiCompanion';
+import { ChatShortcut } from './ChatShortcut';
 import { ProjectAside } from './ProjectAside';
 
 const NAV: BottomNavItem[] = [
@@ -71,6 +72,7 @@ export function AppShell() {
       {!onboarding && profile && (
         <BottomNav items={NAV} activeId={activeNav(location.pathname)} linkAs={RouterLink} />
       )}
+      {profile && location.pathname === '/' && <ChatShortcut />}
       <Overlays />
     </PhoneFrame>
   );

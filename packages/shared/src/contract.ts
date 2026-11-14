@@ -80,7 +80,9 @@ export type PromotionInput = z.infer<typeof promotionInputSchema>;
 export const chatMessageSchema = z.object({
   text: z.string().trim().max(240).default(''),
   storeId: z.string().trim().min(1).max(80).optional(),
-  intent: z.enum(['promotions', 'store_location', 'earn_coins', 'redeem_help']).optional(),
+  intent: z
+    .enum(['promotions', 'store_location', 'earn_coins', 'redeem_help', 'points_help', 'events'])
+    .optional(),
 });
 export type ChatRequest = z.infer<typeof chatMessageSchema>;
 

@@ -34,6 +34,7 @@ export {
 export { CountUp, type CountUpProps } from './CountUp';
 export { type CouponState, CouponTicket, type CouponTicketProps } from './CouponTicket';
 export { cx } from './cx';
+export { FloatingCapi, type FloatingCapiPosition, type FloatingCapiProps } from './FloatingCapi';
 export { type FloorTab, FloorTabs, type FloorTabsProps } from './FloorTabs';
 export { ICON_NAMES, Icon, type IconName, type IconProps } from './Icon';
 export { MapPin, type MapPinKind, type MapPinProps } from './MapPin';
