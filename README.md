@@ -17,6 +17,7 @@
 ![Supabase](https://img.shields.io/badge/Supabase-Postgres-3ecf8e?style=for-the-badge&logo=supabase&logoColor=white)
 ![Turborepo](https://img.shields.io/badge/Turborepo-monorepo-ef4444?style=for-the-badge&logo=turborepo&logoColor=white)
 
+[**Vídeo**](#-vídeo-de-apresentação) ·
 [**O problema**](#-o-desafio) ·
 [**Como funciona**](#-como-funciona) ·
 [**Componentização**](#-componentização-a-tecnologia-do-desafio) ·
@@ -31,6 +32,32 @@
 > Nomes de lojas e pavimentos são reais. **Descontos, prêmios, parcerias e números que aparecem no app são exemplos do protótipo** e vêm marcados como tal na tela.
 
 ---
+
+## 🎬 Vídeo de apresentação
+
+<a href="docs/assets/video-apresentacao.mp4">
+  <img src="docs/assets/video-capa.jpg" alt="Vídeo de apresentação do Capim Dourado Experience (1:34). Clique para assistir." width="100%" />
+</a>
+
+<br />
+
+Explicador em 3D de **1:34**, com narração e legendas. Ele mostra as dinâmicas na ordem em que o visitante as vive:
+
+| | Cena | O que mostra |
+|---|---|---|
+| 1 | **Veio. Gostou. Não voltou.** | O problema do desafio 05 em uma frase. |
+| 2 | **O mapa** | O shopping se abre em três andares, e cada andar é uma fase. A Capi guia o caminho. |
+| 3 | **Cheguei!** | Check-in por localização, uma vez por dia, que rende XP e capicoins. |
+| 4 | **Caça ao tesouro** | Cinco QRs da *Fábrica de Presentes*, peças do mapa e o baú com a figurinha rara. |
+| 5 | **Hora Dourada** | Giro em dobro na roleta nos horários de baixo movimento, com cupom que vence em 2 dias. |
+| 6 | **Prêmios** | Cupons em formato de ingresso, álbum de figurinhas e sequência de 7 dias. |
+| 7 | **O mecanismo** | Visita → missão → moedas → cupom → volta, e os três indicadores que o shopping passa a medir. |
+| 8 | **Temporadas** | Natal, Halloween e Páscoa com a mesma biblioteca de componentes. |
+
+As telas que aparecem no celular são do próprio app, em modo demonstração. Preços, cupons e horários são **exemplos** e aparecem com o selo "exemplo".
+
+> [!TIP]
+> Clique na capa para abrir o vídeo ([`docs/assets/video-apresentacao.mp4`](docs/assets/video-apresentacao.mp4)).
 
 ## 🎯 O desafio
 
