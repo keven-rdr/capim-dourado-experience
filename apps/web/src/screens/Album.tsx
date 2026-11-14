@@ -1,10 +1,10 @@
-import { CURRENT_SEASON, SEASON_INFO, type SeasonId } from '@cde/shared';
+import { CURRENT_SEASON, type SeasonId } from '@cde/shared';
 import { FilterChips, SEASON_IDS, StickerCard, useSeason } from '@cde/ui';
 import { useState } from 'react';
 import { useGameQuery } from '../data/GameProvider';
 import { Capi3D } from '../layout/Capi3D';
 import { Screen } from '../layout/Screen';
-import { STICKER_MOTIF, stickerHint } from '../lib/content';
+import { STICKER_MOTIF, seasonInfo, stickerHint } from '../lib/content';
 
 const TILTS = [-2.2, 1.4, -0.6, 2, -1.4, 0.8, 1.8, -1.8, 0.4, -2.4, 1.2, -0.8];
 
@@ -28,12 +28,12 @@ export function Album() {
         onChange={setSeason}
         options={SEASON_IDS.map((id) => ({
           value: id,
-          label: SEASON_INFO[id].name,
+          label: seasonInfo(id).name,
         }))}
       />
       <div className="mt-2 flex items-end justify-between">
         <div>
-          <p className="font-display text-lg font-bold">{SEASON_INFO[season].theme}</p>
+          <p className="font-display text-lg font-bold">{seasonInfo(season).theme}</p>
           {past && (
             <p className="font-mono text-xs font-bold text-ink-soft">
               temporada fora do calendário atual

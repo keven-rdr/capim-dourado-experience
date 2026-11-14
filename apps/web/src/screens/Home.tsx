@@ -141,7 +141,7 @@ export function Home() {
             Vitrine para você · {TRAIL_LABEL[profile.trail]}
           </h2>
         </div>
-        <div className="-mx-4 flex snap-x gap-3 overflow-x-auto px-4 pb-2">
+        <div className="-mx-4 flex snap-x scroll-px-4 gap-3 overflow-x-auto px-4 pb-2 [scrollbar-color:var(--cde-ink-soft)_transparent] [scrollbar-width:thin]">
           {productsFor(profile.trail).map((p) => (
             <ProductCard key={p.id} product={p} onOpen={() => setOpenId(p.id)} />
           ))}

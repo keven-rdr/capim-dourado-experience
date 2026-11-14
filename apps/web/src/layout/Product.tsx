@@ -149,7 +149,7 @@ export function ProductCard({ product, onOpen }: { product: Product; onOpen: () 
         <span className="block p-3">
           <span className="line-clamp-2 block font-semibold leading-tight">{product.name}</span>
           <span className="block text-xs text-ink-soft">{storeOf(product).name}</span>
-          <span className="mt-1 flex items-baseline gap-1.5">
+          <span className="mt-1 flex flex-wrap items-baseline gap-x-1.5">
             <span className="font-display text-lg font-extrabold">{brl(price)}</span>
             {product.oldPrice && product.oldPrice > price && (
               <s className="text-xs text-ink-soft">{brl(product.oldPrice)}</s>

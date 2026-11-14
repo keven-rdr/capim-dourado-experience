@@ -89,9 +89,10 @@
 
 /* ---------- Natal: tema branco (vermelho-cereja, verde-pinheiro, dourado) ---------- */
 [data-season="natal"] {
-  --cde-bg: #ffffff;
-  --cde-surface: #ffffff;
-  --cde-surface-2: #f6efe4;
+  /* fundo bege quente: o branco puro cansava a vista no celular */
+  --cde-bg: #e9e0d0;
+  --cde-surface: #fbf7f0;
+  --cde-surface-2: #ddd1bd;
   --cde-ink: #1b1210;
   --cde-ink-soft: #4a3a33;
   --cde-line: #1b1210;
