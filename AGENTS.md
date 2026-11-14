@@ -46,6 +46,7 @@ Leia antes de começar:
 - A planta do shopping é material interno: nunca entra no repositório. Mapas mostram só áreas públicas, redesenhados.
 - Privacidade: a localização só serve para validar presença; guardar apenas o resultado da verificação. Trilha Kids sem ranking.
 - Acessibilidade: contraste AA, alvo de toque de 44 px, foco visível, respeito a `prefers-reduced-motion`.
+- Animação: o GSAP (`gsap` + `@gsap/react`) está instalado para animações da página de apresentação (fora do celular). Use sempre `useGSAP` com `scope`, só `transform`/`opacity`, e envolva loops em `gsap.matchMedia()` com `(prefers-reduced-motion: no-preference)`. As skills oficiais estão em `.claude/skills/gsap-*` (origem: `greensock/gsap-skills`). Animações já existentes continuam em `motion`/CSS.
 
 ## Comandos
 

@@ -67,7 +67,7 @@ export function AppShell() {
   if (ready && !profile && !onboarding) return <Navigate to="/bem-vindo" replace />;
 
   return (
-    <PhoneFrame scrollerRef={scroller} aside={<ProjectAside />}>
+    <PhoneFrame className="isolate" scrollerRef={scroller} aside={<ProjectAside />}>
       <main id="conteudo" className="flex flex-1 flex-col">
         {ready ? <Outlet /> : <Loading />}
       </main>
