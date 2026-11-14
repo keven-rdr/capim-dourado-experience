@@ -14,6 +14,7 @@ import { createPortal } from 'react-dom';
 import { Link, Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useGame } from '../data/GameProvider';
 import { lookOf } from '../lib/content';
+import { useAwayTitle } from '../lib/useEggs';
 import { CapiCompanion } from './CapiCompanion';
 import { ChatShortcut } from './ChatShortcut';
 import { ProjectAside } from './ProjectAside';
@@ -49,6 +50,7 @@ export function AppShell() {
   const location = useLocation();
   const { ready, profile } = useGame();
   const onboarding = location.pathname.startsWith('/bem-vindo');
+  useAwayTitle();
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: volta ao topo a cada troca de rota
   useEffect(() => {

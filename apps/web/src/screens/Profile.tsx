@@ -1,5 +1,5 @@
 import { LEVELS, TRAIL_LABEL, type Trail } from '@cde/shared';
-import { Button, Card, cx, FilterChips, Sheet, SystemNote, XpBar } from '@cde/ui';
+import { Button, Card, cx, FilterChips, Sheet, SystemNote, Tag, XpBar } from '@cde/ui';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { friendlyError } from '../data/errors';
@@ -7,6 +7,7 @@ import { useGame, useGameQuery } from '../data/GameProvider';
 import { Capi3D } from '../layout/Capi3D';
 import { Screen, SectionTitle } from '../layout/Screen';
 import { CAPI_NAME, levelInfo, lookOf } from '../lib/content';
+import { EGG_COUNT, foundEggs } from '../lib/eggs';
 import { formatDateTime } from '../lib/time';
 
 export function Profile() {
@@ -19,6 +20,7 @@ export function Profile() {
   if (!profile) return null;
   const { level, next, number } = levelInfo(profile.wallet.xp);
   const look = lookOf(profile.character);
+  const eggs = foundEggs();
 
   async function update(patch: { trail?: Trail; locationConsent?: boolean }) {
     try {
@@ -58,6 +60,12 @@ export function Profile() {
           />
         </div>
       </Card>
+
+      {eggs.length > 0 && (
+        <Tag tone="gold" icon="sparkle" className="mt-3 self-start">
+          Fuçador · {eggs.length} de {EGG_COUNT}
+        </Tag>
+      )}
 
       <SectionTitle>Os níveis</SectionTitle>
       <ol className="flex gap-1.5">
