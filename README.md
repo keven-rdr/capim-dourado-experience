@@ -19,17 +19,15 @@
 ![Turborepo](https://img.shields.io/badge/Turborepo-monorepo-ef4444?style=for-the-badge&logo=turborepo&logoColor=white)
 ![Vercel](https://img.shields.io/badge/Vercel-no_ar-000000?style=for-the-badge&logo=vercel&logoColor=white)
 
-[**Para os avaliadores**](#-para-os-avaliadores) ·
 [**Vídeo**](#-vídeo-de-apresentação) ·
-[**Resumo**](#-para-os-avaliadores) ·
+[**Documentação**](#-documentação) ·
 [**App online**](https://capim-dourado-experience.vercel.app/) ·
 [**O problema**](#-o-desafio) ·
 [**Como funciona**](#-como-funciona) ·
 [**Componentização**](#-componentização-a-tecnologia-do-desafio) ·
 [**Testar em 1 minuto**](#-testar-em-1-minuto) ·
 [**Arquitetura**](#-arquitetura) ·
-[**Equipe**](#-equipe) ·
-[**Documentos**](#-documentos)
+[**Equipe**](#-equipe)
 
 </div>
 
@@ -39,23 +37,6 @@
 
 ---
 
-## 🧑‍⚖️ Para os avaliadores
-
-Tudo o que precisa para avaliar o projeto está nesta tabela. Cada item abre em um clique.
-
-| | O que é | Abrir |
-|---|---|---|
-| 🎬 | **Vídeo de apresentação** (1:36): o desafio, a solução de gamificação e o app em uso | [Assistir no Loom](https://www.loom.com/share/0a9c97fa3a8c4f5c8b72695631d0392f) |
-| 📄 | **Resumo do projeto**: problema, público, solução, MVP, tecnologias, diferencial e viabilidade | [PDF](entrega/Resumo%20do%20Projeto%20-%20Capim%20Dourado%20Experience.pdf) · [Word](entrega/Resumo%20do%20Projeto%20-%20Capim%20Dourado%20Experience.docx) |
-| 📱 | **App no ar**: abra no celular e jogue o fluxo inteiro (modo demonstração) | [capim-dourado-experience.vercel.app](https://capim-dourado-experience.vercel.app/) |
-| 🧩 | **Componentização**, a tecnologia sorteada: catálogo de componentes com troca de temporada ao vivo | [Catálogo no app](https://capim-dourado-experience.vercel.app/catalogo) · [Como foi feito](#-componentização-a-tecnologia-do-desafio) |
-| 🎤 | **Roteiro da apresentação**: abertura, demonstração com plano B e perguntas dos jurados | [Roteiro](docs/pesquisa/apresentacao.md) |
-| 🔎 | **Pesquisa com fontes**: casos de gamificação, dados de mercado e regras legais | [Pesquisa](docs/pesquisa/README.md) |
-| 🗂️ | **Planejamento técnico**: telas, requisitos, arquitetura e tecnologias | [Planejamento](docs/planejamento-tecnico-inicial.md) |
-
-> [!TIP]
-> O app roda em **modo demonstração**, com dados locais: sem API, sem banco, sem GPS e sem câmera. Não precisa instalar nada.
-
 ## 🎬 Vídeo de apresentação
 
 [![Assistir ao vídeo de apresentação no Loom (1:36)](https://img.shields.io/badge/%E2%96%B6_Assistir_ao_v%C3%ADdeo-1%3A36_%C2%B7_Loom-625DF5?style=for-the-badge&logo=loom&logoColor=white)](https://www.loom.com/share/0a9c97fa3a8c4f5c8b72695631d0392f)
@@ -63,6 +44,32 @@ Tudo o que precisa para avaliar o projeto está nesta tabela. Cada item abre em 
 Vídeo de **1:36**, gravado e narrado pelo próprio time, com o app em uso. Ele apresenta o desafio 05 (engajar e fidelizar o visitante) e a solução de gamificação do shopping.
 
 Link direto: <https://www.loom.com/share/0a9c97fa3a8c4f5c8b72695631d0392f>
+
+## 📚 Documentação
+
+Para quem vai avaliar, **comece pelo Resumo do Projeto**: ele reúne o problema, o público, a solução, o MVP, as tecnologias, o diferencial e a viabilidade no shopping.
+
+| Resumo do Projeto | |
+|---|---|
+| 📄 **PDF** (abre direto no GitHub) | [Resumo do Projeto - Capim Dourado Experience.pdf](entrega/Resumo%20do%20Projeto%20-%20Capim%20Dourado%20Experience.pdf) |
+| 📝 **Word** (baixa o arquivo) | [Resumo do Projeto - Capim Dourado Experience.docx](entrega/Resumo%20do%20Projeto%20-%20Capim%20Dourado%20Experience.docx) |
+
+Os demais documentos do projeto:
+
+| Documento | Para quê |
+|---|---|
+| [Roteiro da apresentação](docs/pesquisa/apresentacao.md) | Abertura, roteiro de 5 minutos, demonstração com plano B e perguntas dos jurados |
+| [Pesquisa](docs/pesquisa/README.md) | Casos de gamificação, dados de mercado com fonte, fatos do shopping e regras legais |
+| [Planejamento técnico](docs/planejamento-tecnico-inicial.md) | Telas, requisitos, arquitetura e tecnologias |
+| [Guia da Caça no Shopping](docs/guia/guia-gamificacao-shopping.html) | Mecânica explicada do zero e prompts de cada tela |
+| [Guia de Vercel e Supabase](docs/guia-vercel-supabase.md) | Passo a passo de publicação e configuração |
+| [Proposta do chat e das promoções](docs/proposta-chat-promocoes.md) | Como o chat da Capi e as promoções dos lojistas funcionam e o que falta no backend |
+| [Revisão de componentização](docs/revisao-componentizacao.md) | Oportunidades de reuso de componentes em aberto |
+| [Orquestração de agentes](docs/agentes.md) | Como o trabalho é dividido entre agentes e pessoas |
+| [AGENTS.md](AGENTS.md) | Regras para quem (ou o que) escreve código aqui |
+
+> [!TIP]
+> Quer ver o app sem instalar nada? Abra [capim-dourado-experience.vercel.app](https://capim-dourado-experience.vercel.app/) no celular. Ele roda em **modo demonstração**, com dados locais: sem API, sem banco, sem GPS e sem câmera. O [catálogo de componentes](https://capim-dourado-experience.vercel.app/catalogo) mostra a componentização, a tecnologia sorteada, com troca de temporada ao vivo.
 
 ## 🎯 O desafio
 
@@ -259,21 +266,6 @@ O que falta está nas [issues do repositório](https://github.com/keven-rdr/capi
 | **Keven Rodrigues** | [@keven-rdr](https://github.com/keven-rdr) | Base do monorepo, CI, contrato `@cde/shared`, API e Supabase, biblioteca de componentes, roleta e painel da loja, easter eggs, chat no design system, pesquisa, README e vídeo |
 | **Guilherme** | [@DevGuilherme-cpu](https://github.com/DevGuilherme-cpu) | Planejamento técnico, Capi 3D, vitrine com lista de desejos, temas Natal e Black Friday, roupa da Capi por tema |
 | **Eduardo Campos** | [@EduardoCampos123](https://github.com/EduardoCampos123) | Chat da Capi, promoções do lojista, Capi flutuante e proposta do chat |
-
-## 📚 Documentos
-
-| Documento | Para quê |
-|---|---|
-| [Resumo do projeto (PDF)](entrega/Resumo%20do%20Projeto%20-%20Capim%20Dourado%20Experience.pdf) | Resumo para os avaliadores: problema, solução, MVP, tecnologias, diferencial e viabilidade ([versão em Word](entrega/Resumo%20do%20Projeto%20-%20Capim%20Dourado%20Experience.docx)) |
-| [Roteiro da apresentação](docs/pesquisa/apresentacao.md) | Abertura, roteiro de 5 minutos, demonstração com plano B e perguntas dos jurados |
-| [Pesquisa](docs/pesquisa/README.md) | Casos de gamificação, dados de mercado com fonte, fatos do shopping e regras legais |
-| [Planejamento técnico](docs/planejamento-tecnico-inicial.md) | Telas, requisitos, arquitetura e tecnologias |
-| [Guia da Caça no Shopping](docs/guia/guia-gamificacao-shopping.html) | Mecânica explicada do zero e prompts de cada tela |
-| [Guia de Vercel e Supabase](docs/guia-vercel-supabase.md) | Passo a passo de publicação e configuração |
-| [Proposta do chat e das promoções](docs/proposta-chat-promocoes.md) | Como o chat da Capi e as promoções dos lojistas funcionam e o que falta no backend |
-| [Revisão de componentização](docs/revisao-componentizacao.md) | Oportunidades de reuso de componentes em aberto |
-| [Orquestração de agentes](docs/agentes.md) | Como o trabalho é dividido entre agentes e pessoas |
-| [AGENTS.md](AGENTS.md) | Regras para quem (ou o que) escreve código aqui |
 
 ## 🤝 Contribuindo
 
