@@ -76,7 +76,7 @@ export function FilterChips<T extends string>({
   return (
     <fieldset className={cx('min-w-0', className)}>
       <legend className="sr-only">{label}</legend>
-      <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-2 pt-0.5 [scrollbar-width:none]">
+      <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-2 pt-0.5">
         {options.map((option) => (
           <Chip
             key={option.value}

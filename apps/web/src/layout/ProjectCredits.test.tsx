@@ -1,6 +1,12 @@
-import { render, screen, within } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-import { AboutProject, CONTRIBUTORS, CONTRIBUTORS_URL, SiteFooter } from './ProjectCredits';
+import {
+  AboutProject,
+  avatarUrl,
+  CONTRIBUTORS,
+  CONTRIBUTORS_URL,
+  SiteFooter,
+} from './ProjectCredits';
 
 describe.each([
   ['SiteFooter', <SiteFooter key="footer" />],
@@ -25,6 +31,27 @@ describe.each([
       expect(links[index]).toHaveAttribute('rel', 'noopener noreferrer');
       expect(links[index]).toHaveAccessibleName(`${person.login} no GitHub`);
     });
+  });
+
+  it('busca a foto de cada contribuinte no GitHub, sem enviar o referrer', () => {
+    render(ui);
+    const list = screen.getByRole('list', { name: 'Contribuintes do projeto no GitHub' });
+    const images = list.querySelectorAll('img');
+    expect(images).toHaveLength(CONTRIBUTORS.length);
+    CONTRIBUTORS.forEach((person, index) => {
+      expect(images[index]).toHaveAttribute('src', avatarUrl(person.login));
+      expect(images[index]).toHaveAttribute('referrerpolicy', 'no-referrer');
+    });
+  });
+
+  it('mostra a inicial do login quando a foto não carrega', () => {
+    render(ui);
+    const list = screen.getByRole('list', { name: 'Contribuintes do projeto no GitHub' });
+    const first = list.querySelector('img');
+    expect(first).not.toBeNull();
+    if (first) fireEvent.error(first);
+    expect(list.querySelectorAll('img')).toHaveLength(CONTRIBUTORS.length - 1);
+    expect(within(list).getByText(CONTRIBUTORS[0].login.charAt(0))).toBeInTheDocument();
   });
 
   it('tem o link para todos os contribuintes do repositório', () => {

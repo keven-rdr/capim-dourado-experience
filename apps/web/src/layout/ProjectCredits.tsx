@@ -1,14 +1,24 @@
 import { Card, cx } from '@cde/ui';
+import { useState } from 'react';
 
 const REPO_URL = 'https://github.com/keven-rdr/capim-dourado-experience';
 export const CONTRIBUTORS_URL = `${REPO_URL}/graphs/contributors`;
 
-/** Quem contribuiu no repositório. Os avatares são cópias locais (96 px), para o app funcionar offline. */
+/**
+ * Quem contribuiu no repositório. Para incluir alguém, basta o login do GitHub: a foto vem do
+ * próprio GitHub, não há arquivo para salvar no projeto.
+ */
 export const CONTRIBUTORS = [
-  { login: 'keven-rdr', avatar: '/brand/contributors/keven-rdr.jpg' },
-  { login: 'DevGuilherme-cpu', avatar: '/brand/contributors/DevGuilherme-cpu.jpg' },
-  { login: 'EduardoCampos123', avatar: '/brand/contributors/EduardoCampos123.jpg' },
+  { login: 'keven-rdr' },
+  { login: 'DevGuilherme-cpu' },
+  { login: 'EduardoCampos123' },
+  { login: 'robertdronejr' },
 ] as const;
+
+/** Foto de perfil do GitHub pelo login (sem redirecionamento e liberada para qualquer origem). */
+export function avatarUrl(login: string): string {
+  return `https://avatars.githubusercontent.com/${encodeURIComponent(login)}?s=96`;
+}
 
 const LINK_PROPS = { target: '_blank', rel: 'noopener noreferrer' } as const;
 
@@ -29,6 +39,38 @@ function LogoBadge({ className }: { className?: string }) {
   );
 }
 
+/**
+ * Foto do GitHub. Sem internet (ou se o GitHub não responder), mostra a inicial do login no lugar,
+ * para o rodapé não ficar com imagem quebrada. O referrer não é enviado ao GitHub.
+ */
+function Avatar({ login }: { login: string }) {
+  const [failed, setFailed] = useState(false);
+  const circle = 'size-10 rounded-full bg-surface chunk-thin';
+  if (failed) {
+    return (
+      <span
+        aria-hidden="true"
+        className={cx(circle, 'grid place-items-center font-display text-sm font-bold uppercase')}
+      >
+        {login.charAt(0)}
+      </span>
+    );
+  }
+  return (
+    <img
+      src={avatarUrl(login)}
+      alt=""
+      width={96}
+      height={96}
+      loading="lazy"
+      decoding="async"
+      referrerPolicy="no-referrer"
+      onError={() => setFailed(true)}
+      className={cx(circle, 'object-cover')}
+    />
+  );
+}
+
 function ContributorAvatars() {
   return (
     <ul className="flex items-center gap-1.5" aria-label="Contribuintes do projeto no GitHub">
@@ -41,13 +83,7 @@ function ContributorAvatars() {
             className="grid size-11 place-items-center rounded-full focus-ring"
             {...LINK_PROPS}
           >
-            <img
-              src={person.avatar}
-              alt=""
-              width={96}
-              height={96}
-              className="size-10 rounded-full bg-surface object-cover chunk-thin"
-            />
+            <Avatar login={person.login} />
           </a>
         </li>
       ))}
