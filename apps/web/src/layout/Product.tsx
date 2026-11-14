@@ -1,4 +1,4 @@
-import { Button, ExampleTag, Icon, Sheet, Tag } from '@cde/ui';
+import { Button, Icon, Sheet, Tag } from '@cde/ui';
 import { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -234,7 +234,6 @@ export function ProductSheet({
         {product.oldPrice && product.oldPrice > price && (
           <s className="text-sm text-ink-soft">{brl(product.oldPrice)}</s>
         )}
-        <ExampleTag className="ml-auto" />
       </div>
 
       <div className="mt-3 rounded-md bg-surface-2 p-3">

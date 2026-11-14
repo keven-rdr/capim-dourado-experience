@@ -29,7 +29,7 @@ describe('componentes da @cde/ui', () => {
     expect(screen.getByRole('status', { name: 'Verificando' })).toBeInTheDocument();
   });
 
-  it('CouponTicket tem os estados disponível, resgatado e sem saldo, sempre com "exemplo"', () => {
+  it('CouponTicket tem os estados disponível, resgatado e sem saldo, sem o selo "exemplo"', () => {
     const onRedeem = vi.fn();
     const { rerender } = render(
       <CouponTicket
@@ -40,7 +40,7 @@ describe('componentes da @cde/ui', () => {
         onRedeem={onRedeem}
       />,
     );
-    expect(screen.getByText('exemplo')).toBeInTheDocument();
+    expect(screen.queryByText('exemplo')).not.toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: 'Resgatar' }));
     expect(onRedeem).toHaveBeenCalled();
 

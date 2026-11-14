@@ -3,7 +3,6 @@ import {
   Button,
   Capi,
   Card,
-  ExampleTag,
   Icon,
   type IconName,
   MissionCard,
@@ -26,10 +25,10 @@ import { brl, productById, productsFor } from '../lib/catalog';
 import { HUNT_NOUN, levelInfo, lookOf, SEASON_COPY, seasonInfo } from '../lib/content';
 import { useWishlist, wishStatus } from '../lib/wishlist';
 
-const FLOOR_SHORTCUTS: Array<{ id: Floor; short: string; tilt: string }> = [
-  { id: 'subsolo', short: 'Subsolo 1', tilt: 'rotate-1' },
-  { id: 'terreo', short: 'Térreo', tilt: '-rotate-1' },
-  { id: 'segundo', short: '2º Pav.', tilt: 'rotate-[0.6deg]' },
+const FLOOR_SHORTCUTS: Array<{ id: Floor; short: string }> = [
+  { id: 'subsolo', short: 'Subsolo 1' },
+  { id: 'terreo', short: 'Térreo' },
+  { id: 'segundo', short: '2º Pav.' },
 ];
 
 export function Home() {
@@ -69,7 +68,7 @@ export function Home() {
           aria-label="Abrir perfil"
         >
           <span className="grid size-12 place-items-end overflow-hidden rounded-blob bg-gold chunk">
-            <Capi size={46} look={look} expression="animada" className="-mb-2" />
+            <Capi size={46} look={look} expression="animada" face className="-mb-2" />
           </span>
           <span className="leading-tight">
             <span className="block font-display text-lg font-extrabold">Oi, {profile.name}!</span>
@@ -88,7 +87,6 @@ export function Home() {
           <h2 id="vitrine" className="font-display text-xl font-extrabold">
             Vitrine para você · {TRAIL_LABEL[profile.trail]}
           </h2>
-          <ExampleTag />
         </div>
         <div className="-mx-4 flex snap-x gap-3 overflow-x-auto px-4 pb-2">
           {productsFor(profile.trail).map((p) => (
@@ -263,7 +261,7 @@ export function Home() {
           <li key={f.id}>
             <Link
               to={`/mapa?andar=${f.id}`}
-              className={`flex min-h-14 items-center justify-between rounded-md bg-surface px-4 py-2 chunk shadow-hard-sm focus-ring pressable ${f.tilt}`}
+              className={`flex min-h-14 items-center justify-between rounded-md bg-surface px-4 py-2 chunk shadow-hard-sm focus-ring pressable`}
             >
               <span>
                 <span className="font-mono text-xs font-bold text-ink-soft">

@@ -15,6 +15,7 @@ export {
 } from './BottomNav';
 export { Button, type ButtonProps, type ButtonSize, type ButtonVariant } from './Button';
 export {
+  CAPI_ART,
   CAPI_EXPRESSIONS,
   CAPI_LOOKS,
   Capi,

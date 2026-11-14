@@ -138,7 +138,7 @@ export function MissionCard({
   const shell = cx(
     'relative block w-full text-left chunk',
     featured
-      ? 'rounded-blob p-5 shadow-hard-lg -rotate-[1.4deg]'
+      ? 'rounded-lg p-5 shadow-hard-lg'
       : compact
         ? 'rounded-md px-4 py-3 shadow-hard-sm'
         : 'rounded-lg p-4 shadow-hard',

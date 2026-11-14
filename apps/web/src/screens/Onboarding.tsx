@@ -1,7 +1,7 @@
 import { POINT_RULES, TRAIL_LABEL, type Trail } from '@cde/shared';
 import { Button, CAPI_LOOKS, Capi, type CapiLook, cx, SpeechBubble, SystemNote } from '@cde/ui';
 import { AnimatePresence, motion } from 'motion/react';
-import { type FormEvent, useId, useState } from 'react';
+import { type FormEvent, useEffect, useId, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { friendlyError } from '../data/errors';
 import { useGame } from '../data/GameProvider';
@@ -15,6 +15,29 @@ const TRAILS: Array<{ id: Trail; tilt: string; tone: string }> = [
   { id: 'ele', tilt: '-rotate-1', tone: 'bg-accent text-on-accent' },
   { id: 'todos', tilt: 'rotate-2', tone: 'bg-secondary text-on-secondary' },
 ];
+
+const WELCOME_LINES = [
+  'Eu sou a Capi. Bora caçar?',
+  'Tem presente escondido em cada andar.',
+  'Leia os QR codes e junte Capicoins.',
+  'Às 12h, 18h e 20h tem oferta relâmpago.',
+  'Salve o que gostou: eu aviso quando baixar.',
+];
+
+/** Capi parada no centro, com o balão ao lado trocando de mensagem a cada 4 s. */
+function WelcomeCapi() {
+  const [line, setLine] = useState(0);
+  useEffect(() => {
+    const t = window.setInterval(() => setLine((i) => (i + 1) % WELCOME_LINES.length), 4000);
+    return () => window.clearInterval(t);
+  }, []);
+  return (
+    <div className="mt-8 flex items-center justify-center gap-2">
+      <Capi3D size={150} still />
+      <SpeechBubble className="max-w-44">{WELCOME_LINES[line]}</SpeechBubble>
+    </div>
+  );
+}
 
 export function Onboarding() {
   const { api, mode, refresh, notify } = useGame();
@@ -106,10 +129,7 @@ export function Onboarding() {
                     jogo.
                   </span>
                 </h1>
-                <div className="mt-8 flex items-end gap-1">
-                  <Capi3D size={170} intro="Acenar" />
-                  <SpeechBubble className="mb-28">Eu sou a Capi. Bora caçar?</SpeechBubble>
-                </div>
+                <WelcomeCapi />
               </div>
               <Button size="lg" block iconRight="arrowRight" onClick={() => setStep(1)}>
                 Começar a caça
@@ -239,6 +259,7 @@ export function Onboarding() {
                       size={84}
                       look={l.id}
                       expression={look === l.id ? 'comemorando' : 'animada'}
+                      illustrated
                     />
                     <span className="font-display text-lg font-extrabold">{l.name}</span>
                     <span className="text-center text-xs leading-snug">{l.bio}</span>

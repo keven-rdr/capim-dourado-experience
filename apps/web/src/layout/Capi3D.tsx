@@ -32,6 +32,7 @@ interface ModelViewerElement extends HTMLElement {
   animationName: string | undefined;
   timeScale: number;
   play(options?: { repetitions?: number }): void;
+  pause(): void;
 }
 
 declare module 'react' {
@@ -67,6 +68,8 @@ export interface Capi3DProps {
   idleReactions?: boolean;
   /** Chamado quando tocam na Capi (além do gesto aleatório). */
   onTap?: () => void;
+  /** Parada na pose de repouso: sem animação, nem ao toque. */
+  still?: boolean;
   className?: string;
 }
 
@@ -88,6 +91,7 @@ export function Capi3D({
   say,
   idleReactions = false,
   onTap: onTapProp,
+  still = false,
   className,
 }: Capi3DProps) {
   const reduce = useReducedMotion();
@@ -143,7 +147,10 @@ export function Capi3D({
     if (!libReady || !el) return;
     const onLoad = () => {
       loadedRef.current = true;
-      if (intro) once(intro, intro === 'Acenar' ? 4 : 1);
+      if (still) {
+        el.animationName = rest;
+        el.pause();
+      } else if (intro) once(intro, intro === 'Acenar' ? 4 : 1);
       else backToMood();
     };
     el.addEventListener('load', onLoad);
@@ -152,7 +159,7 @@ export function Capi3D({
       el.removeEventListener('load', onLoad);
       el.removeEventListener('finished', backToMood);
     };
-  }, [libReady, intro, once, backToMood]);
+  }, [libReady, intro, once, backToMood, still, rest]);
 
   // gesto pedido de fora, uma vez por id; antes do modelo carregar, a intro cuida da entrada
   const cueRef = useRef(cue);
@@ -196,7 +203,7 @@ export function Capi3D({
 
   const onTap = () => {
     onTapProp?.();
-    if (moodRef.current !== 'normal') return; // o toque já acorda pelo evento de atividade
+    if (still || moodRef.current !== 'normal') return; // o toque já acorda pelo evento de atividade
     const [clip, times] = TAP_CLIPS[Math.floor(Math.random() * TAP_CLIPS.length)] ?? ['Acenar', 4];
     once(clip, times);
   };

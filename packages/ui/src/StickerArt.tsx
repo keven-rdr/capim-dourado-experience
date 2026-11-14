@@ -30,7 +30,7 @@ export function StickerArt({ motif, silhouette = false, size = 84 }: StickerArtP
   if (motif === 'capi') {
     return (
       <span className={silhouette ? 'opacity-25 brightness-0' : undefined}>
-        <Capi size={size * 0.9} expression={silhouette ? 'dormindo' : 'animada'} />
+        <Capi size={size * 0.9} expression={silhouette ? 'dormindo' : 'animada'} illustrated />
       </span>
     );
   }

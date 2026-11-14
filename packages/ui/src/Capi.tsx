@@ -44,8 +44,18 @@ export interface CapiProps {
   animate?: boolean;
   /** Texto alternativo. Sem ele, o desenho é decorativo. */
   title?: string;
+  /** Só o rosto (para avatares pequenos). Vale para a imagem 3D. */
+  face?: boolean;
+  /** Força o desenho 2D mesmo com imagem 3D configurada (ex.: figurinhas). */
+  illustrated?: boolean;
   className?: string;
 }
+
+/**
+ * Imagem da Capi 3D, configurada pelo app (URLs do próprio app). Vazia: usa o desenho 2D.
+ * Só a personagem Capi tem versão 3D; as outras da turma seguem desenhadas.
+ */
+export const CAPI_ART = { full: '', face: '' };
 
 /**
  * A Capi, mascote original do Capim Dourado Experience: capivara de formas simples,
@@ -59,10 +69,24 @@ export function Capi({
   size = 160,
   animate = false,
   title,
+  face = false,
+  illustrated = false,
   className,
 }: CapiProps) {
   const ctx = useSeason();
   const season = seasonProp ?? ctx.season;
+  const art = face ? CAPI_ART.face : CAPI_ART.full;
+  if (look === 'capi' && art && !illustrated) {
+    return (
+      <img
+        src={art}
+        alt={title ?? ''}
+        width={size}
+        className={cx('h-auto select-none', animate && 'animate-bob', className)}
+        draggable={false}
+      />
+    );
+  }
   const c = FUR[look];
   const cheer = expression === 'comemorando';
   const asleep = expression === 'dormindo';

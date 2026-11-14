@@ -11,13 +11,14 @@ import { cx } from './cx';
 
 /** Temporadas suportadas pelos temas. Mesmo formato de `SeasonId` em `@cde/shared`. */
 export type Season = 'natal' | 'pascoa' | 'halloween';
-export const SEASON_IDS: readonly Season[] = ['natal', 'pascoa', 'halloween'];
+/** Temas que aparecem para escolher. `pascoa` segue no tipo só para os dados antigos. */
+export const SEASON_IDS: readonly Season[] = ['natal', 'halloween'];
 
 /** Metadados visuais de cada tema (rótulo curto e se é escuro). */
 export const SEASON_THEME: Record<Season, { label: string; dark: boolean }> = {
   natal: { label: 'Natal', dark: false },
   pascoa: { label: 'Páscoa', dark: false },
-  halloween: { label: 'Halloween', dark: true },
+  halloween: { label: 'Black Friday', dark: true },
 };
 
 interface SeasonContextValue {

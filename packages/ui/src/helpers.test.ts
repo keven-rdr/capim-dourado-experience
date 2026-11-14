@@ -17,8 +17,9 @@ describe('helpers da biblioteca', () => {
     expect(daysToChest(8)).toBe(6);
   });
 
-  it('tem tema para as três temporadas e só Halloween é escuro', () => {
-    expect(SEASON_IDS).toEqual(['natal', 'pascoa', 'halloween']);
+  it('mostra só Natal (claro) e Black Friday (escura)', () => {
+    expect(SEASON_IDS).toEqual(['natal', 'halloween']);
+    expect(SEASON_THEME.halloween.label).toBe('Black Friday');
     expect(SEASON_IDS.filter((s) => SEASON_THEME[s].dark)).toEqual(['halloween']);
   });
 
